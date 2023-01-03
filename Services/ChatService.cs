@@ -39,6 +39,8 @@ public class ChatService
             buscado.Titulo = modif.Titulo;
             buscado.Fecha = modif.Fecha;
             buscado.IdPublicacion = modif.IdPublicacion;
+            buscado.IdModificador = modif.IdModificador;
+            buscado.FechaModificacion = DateTime.UtcNow;
 
             await ctx.SaveChangesAsync();
         }
@@ -50,7 +52,7 @@ public class ChatService
 
         if (buscado != null)
         {
-            ctx.Chats.Remove(buscado);
+            buscado.Activo = false;
             await ctx.SaveChangesAsync();
         }
     }

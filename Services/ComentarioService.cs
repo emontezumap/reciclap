@@ -41,6 +41,8 @@ public class ComentarioService
             buscado.Fecha = modif.Fecha;
             buscado.Texto = modif.Texto;
             buscado.IdComentario = modif.IdComentario;
+            buscado.IdModificador = modif.IdModificador;
+            buscado.FechaModificacion = DateTime.UtcNow;
 
             await ctx.SaveChangesAsync();
         }
@@ -52,7 +54,7 @@ public class ComentarioService
 
         if (buscado != null)
         {
-            ctx.Comentarios.Remove(buscado);
+            buscado.Activo = false;
             await ctx.SaveChangesAsync();
         }
     }

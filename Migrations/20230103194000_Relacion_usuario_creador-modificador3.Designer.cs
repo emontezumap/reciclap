@@ -4,6 +4,7 @@ using Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace wapi.Migrations
 {
     [DbContext(typeof(SSDBContext))]
-    partial class SSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230103194000_Relacion_usuario_creador-modificador3")]
+    partial class Relacion_usuario_creadormodificador3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -586,11 +588,11 @@ namespace wapi.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_ciudad");
 
-                    b.Property<Guid>("IdCreador")
+                    b.Property<Guid?>("IdCreador")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_creador");
 
-                    b.Property<Guid>("IdModificador")
+                    b.Property<Guid?>("IdModificador")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_modificador");
 
@@ -634,10 +636,6 @@ namespace wapi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("IdCiudad");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.HasIndex("IdProfesion");
 
@@ -932,26 +930,10 @@ namespace wapi.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.Profesion", null)
                         .WithMany("Usuarios")
                         .HasForeignKey("IdProfesion")
                         .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
                 });
 
             modelBuilder.Entity("Entidades.Chat", b =>

@@ -16,13 +16,18 @@ public class Chat
     public string Titulo { get; set; } = "";
     [Column("fecha")]
     public DateTime Fecha { get; set; } = DateTime.UtcNow;
-    [Column("creado_por")]
-    public Guid CreadoPor { get; set; }
+    [Column("id_creador")]
+    public Guid IdCreador { get; set; }
     [Column("fecha_creacion")]
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
-    [Column("modificado_por")]
-    public Guid ModificadoPor { get; set; }
-    [Column("ultima_modificacion")]
-    public DateTime UltimaModificacion { get; set; } = DateTime.UtcNow;
+    [Column("id_modificador")]
+    public Guid IdModificador { get; set; }
+    [Column("fecha_modificacion")]
+    public DateTime FechaModificacion { get; set; } = DateTime.UtcNow;
+    [Column("activo")]
+    public bool Activo { get; set; } = true;
+
     public virtual ICollection<Comentario>? Comentarios { get; set; }
+    public virtual Usuario Creador { get; set; }
+    public virtual Usuario Modificador { get; set; }
 }

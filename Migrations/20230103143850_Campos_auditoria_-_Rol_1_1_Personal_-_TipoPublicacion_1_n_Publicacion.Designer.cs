@@ -4,6 +4,7 @@ using Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace wapi.Migrations
 {
     [DbContext(typeof(SSDBContext))]
-    partial class SSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230103143850_Campos_auditoria_-_Rol_1_1_Personal_-_TipoPublicacion_1_n_Publicacion")]
+    partial class Campos_auditoria__Rol_1_1_Personal__TipoPublicacion_1_n_Publicacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,6 +32,10 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
+
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha");
@@ -38,21 +44,13 @@ namespace wapi.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
-
-                    b.Property<Guid>("IdCreador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
-
-                    b.Property<Guid>("IdModificador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
-
                     b.Property<Guid>("IdPublicacion")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_publicacion");
+
+                    b.Property<Guid>("ModificadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("modificado_por");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
@@ -60,11 +58,11 @@ namespace wapi.Migrations
                         .HasColumnType("nvarchar(300)")
                         .HasColumnName("titulo");
 
+                    b.Property<DateTime>("UltimaModificacion")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ultima_modificacion");
+
                     b.HasKey("Id");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.HasIndex("IdPublicacion");
 
@@ -79,25 +77,21 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
+
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
-
-                    b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
-
-                    b.Property<Guid>("IdCreador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
 
                     b.Property<Guid>("IdEstado")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_estado");
 
-                    b.Property<Guid>("IdModificador")
+                    b.Property<Guid>("ModificadoPor")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
+                        .HasColumnName("modificado_por");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -105,13 +99,13 @@ namespace wapi.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("nombre");
 
+                    b.Property<DateTime>("UltimaModificacion")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ultima_modificacion");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdCreador");
-
                     b.HasIndex("IdEstado");
-
-                    b.HasIndex("IdModificador");
 
                     b.ToTable("ciudades");
                 });
@@ -124,6 +118,10 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
+
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha");
@@ -131,10 +129,6 @@ namespace wapi.Migrations
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
-
-                    b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid>("IdChat")
                         .HasColumnType("uniqueidentifier")
@@ -144,32 +138,28 @@ namespace wapi.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_comentario");
 
-                    b.Property<Guid>("IdCreador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
-
-                    b.Property<Guid>("IdModificador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
-
                     b.Property<Guid>("IdUsuario")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_usuario");
+
+                    b.Property<Guid>("ModificadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("modificado_por");
 
                     b.Property<string>("Texto")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("comentario");
 
+                    b.Property<DateTime>("UltimaModificacion")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ultima_modificacion");
+
                     b.HasKey("Id");
 
                     b.HasIndex("IdChat");
 
                     b.HasIndex("IdComentario");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.HasIndex("IdUsuario");
 
@@ -184,25 +174,21 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
+
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
-
-                    b.Property<Guid>("IdCreador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
-
-                    b.Property<Guid>("IdModificador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
-
                     b.Property<Guid>("IdPais")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_pais");
+
+                    b.Property<Guid>("ModificadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("modificado_por");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -210,11 +196,11 @@ namespace wapi.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("nombre");
 
+                    b.Property<DateTime>("UltimaModificacion")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ultima_modificacion");
+
                     b.HasKey("Id");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.HasIndex("IdPais");
 
@@ -229,6 +215,10 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -239,23 +229,15 @@ namespace wapi.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime>("FechaModificacion")
+                    b.Property<Guid>("ModificadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("modificado_por");
+
+                    b.Property<DateTime>("UltimaModificacion")
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
-
-                    b.Property<Guid>("IdCreador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
-
-                    b.Property<Guid>("IdModificador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
+                        .HasColumnName("ultima_modificacion");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.ToTable("estatus_publicaciones");
                 });
@@ -268,21 +250,17 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
+
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
-
-                    b.Property<Guid>("IdCreador")
+                    b.Property<Guid>("ModificadoPor")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
-
-                    b.Property<Guid>("IdModificador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
+                        .HasColumnName("modificado_por");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -290,11 +268,11 @@ namespace wapi.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("nombre");
 
+                    b.Property<DateTime>("UltimaModificacion")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ultima_modificacion");
+
                     b.HasKey("Id");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.ToTable("paises");
                 });
@@ -309,6 +287,10 @@ namespace wapi.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_usuario");
 
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
+
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha");
@@ -317,27 +299,19 @@ namespace wapi.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
-
-                    b.Property<Guid>("IdCreador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
-
-                    b.Property<Guid>("IdModificador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
-
                     b.Property<Guid>("IdRol")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_rol");
 
+                    b.Property<Guid>("ModificadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("modificado_por");
+
+                    b.Property<DateTime>("UltimaModificacion")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ultima_modificacion");
+
                     b.HasKey("IdPublicacion", "IdUsuario");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.HasIndex("IdRol")
                         .IsUnique();
@@ -355,6 +329,10 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -365,23 +343,15 @@ namespace wapi.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime>("FechaModificacion")
+                    b.Property<Guid>("ModificadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("modificado_por");
+
+                    b.Property<DateTime>("UltimaModificacion")
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
-
-                    b.Property<Guid>("IdCreador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
-
-                    b.Property<Guid>("IdModificador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
+                        .HasColumnName("ultima_modificacion");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.ToTable("profesiones");
                 });
@@ -393,6 +363,10 @@ namespace wapi.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
+
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
@@ -407,29 +381,21 @@ namespace wapi.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
-
                     b.Property<int>("Gustan")
                         .HasColumnType("int")
                         .HasColumnName("gustan");
-
-                    b.Property<Guid>("IdCreador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
 
                     b.Property<Guid>("IdEstatus")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_estatus");
 
-                    b.Property<Guid>("IdModificador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
-
                     b.Property<Guid>("IdTipoPublicacion")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_tipo_publicacion");
+
+                    b.Property<Guid>("ModificadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("modificado_por");
 
                     b.Property<int>("NoGustan")
                         .HasColumnType("int")
@@ -441,13 +407,13 @@ namespace wapi.Migrations
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("titulo");
 
+                    b.Property<DateTime>("UltimaModificacion")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ultima_modificacion");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdCreador");
-
                     b.HasIndex("IdEstatus");
-
-                    b.HasIndex("IdModificador");
 
                     b.HasIndex("IdTipoPublicacion");
 
@@ -462,37 +428,33 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
+
+                    b.Property<bool>("Creador")
+                        .HasColumnType("bit")
+                        .HasColumnName("creador");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("descripcion");
 
-                    b.Property<bool>("EsCreador")
-                        .HasColumnType("bit")
-                        .HasColumnName("es_creador");
-
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime>("FechaModificacion")
+                    b.Property<Guid>("ModificadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("modificado_por");
+
+                    b.Property<DateTime>("UltimaModificacion")
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
-
-                    b.Property<Guid>("IdCreador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
-
-                    b.Property<Guid>("IdModificador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
+                        .HasColumnName("ultima_modificacion");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.ToTable("roles");
                 });
@@ -502,8 +464,11 @@ namespace wapi.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("newid()");
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
@@ -515,25 +480,17 @@ namespace wapi.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime>("FechaModificacion")
+                    b.Property<Guid>("ModificadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("modificado_por");
+
+                    b.Property<DateTime>("UltimaModificacion")
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
-
-                    b.Property<Guid>("IdCreador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
-
-                    b.Property<Guid>("IdModificador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
+                        .HasColumnName("ultima_modificacion");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
-
-                    b.ToTable("TiposPublicacion");
+                    b.ToTable("TipoPublicacion");
                 });
 
             modelBuilder.Entity("Entidades.Usuario", b =>
@@ -555,6 +512,10 @@ namespace wapi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("segundo_apellido");
+
+                    b.Property<Guid>("CreadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("creado_por");
 
                     b.Property<string>("Direccion")
                         .IsRequired()
@@ -578,21 +539,9 @@ namespace wapi.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
-
                     b.Property<Guid>("IdCiudad")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_ciudad");
-
-                    b.Property<Guid>("IdCreador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador");
-
-                    b.Property<Guid>("IdModificador")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador");
 
                     b.Property<Guid?>("IdProfesion")
                         .HasColumnType("uniqueidentifier")
@@ -601,6 +550,10 @@ namespace wapi.Migrations
                     b.Property<int>("MaximoPublicaciones")
                         .HasColumnType("int")
                         .HasColumnName("max_publicaciones");
+
+                    b.Property<Guid>("ModificadoPor")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("modificado_por");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -631,13 +584,13 @@ namespace wapi.Migrations
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("telefono2");
 
+                    b.Property<DateTime>("UltimaModificacion")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ultima_modificacion");
+
                     b.HasKey("Id");
 
                     b.HasIndex("IdCiudad");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.HasIndex("IdProfesion");
 
@@ -646,52 +599,20 @@ namespace wapi.Migrations
 
             modelBuilder.Entity("Entidades.Chat", b =>
                 {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.Publicacion", null)
                         .WithMany("Chats")
                         .HasForeignKey("IdPublicacion")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
                 });
 
             modelBuilder.Entity("Entidades.Ciudad", b =>
                 {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.Estado", null)
                         .WithMany("Ciudades")
                         .HasForeignKey("IdEstado")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
                 });
 
             modelBuilder.Entity("Entidades.Comentario", b =>
@@ -707,106 +628,24 @@ namespace wapi.Migrations
                         .HasForeignKey("IdComentario")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.Usuario", null)
                         .WithMany("Comentarios")
                         .HasForeignKey("IdUsuario")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
                 });
 
             modelBuilder.Entity("Entidades.Estado", b =>
                 {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.Pais", null)
                         .WithMany("Estados")
                         .HasForeignKey("IdPais")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-                });
-
-            modelBuilder.Entity("Entidades.EstatusPublicacion", b =>
-                {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-                });
-
-            modelBuilder.Entity("Entidades.Pais", b =>
-                {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
                 });
 
             modelBuilder.Entity("Entidades.Personal", b =>
                 {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.Publicacion", "Publicacion")
                         .WithMany("PublicacionesLink")
                         .HasForeignKey("IdPublicacion")
@@ -825,10 +664,6 @@ namespace wapi.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-
                     b.Navigation("Publicacion");
 
                     b.Navigation("RolLink");
@@ -836,42 +671,11 @@ namespace wapi.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Entidades.Profesion", b =>
-                {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-                });
-
             modelBuilder.Entity("Entidades.Publicacion", b =>
                 {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.EstatusPublicacion", null)
                         .WithMany("Publicaciones")
                         .HasForeignKey("IdEstatus")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -880,48 +684,6 @@ namespace wapi.Migrations
                         .HasForeignKey("IdTipoPublicacion")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-                });
-
-            modelBuilder.Entity("Entidades.Rol", b =>
-                {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-                });
-
-            modelBuilder.Entity("Entidades.TipoPublicacion", b =>
-                {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
                 });
 
             modelBuilder.Entity("Entidades.Usuario", b =>
@@ -932,26 +694,10 @@ namespace wapi.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.Profesion", null)
                         .WithMany("Usuarios")
                         .HasForeignKey("IdProfesion")
                         .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
                 });
 
             modelBuilder.Entity("Entidades.Chat", b =>

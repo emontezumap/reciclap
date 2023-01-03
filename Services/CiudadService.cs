@@ -38,6 +38,8 @@ public class CiudadService
         {
             buscado.Nombre = modif.Nombre;
             buscado.IdEstado = modif.IdEstado;
+            buscado.IdModificador = modif.IdModificador;
+            buscado.FechaModificacion = DateTime.UtcNow;
 
             await ctx.SaveChangesAsync();
         }
@@ -49,7 +51,7 @@ public class CiudadService
 
         if (buscado != null)
         {
-            ctx.Ciudades.Remove(buscado);
+            buscado.Activo = false;
             await ctx.SaveChangesAsync();
         }
     }

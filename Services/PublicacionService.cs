@@ -42,6 +42,8 @@ public class PublicacionService
             buscado.Gustan = modif.Gustan;
             buscado.NoGustan = modif.NoGustan;
             buscado.IdEstatus = modif.IdEstatus;
+            buscado.IdModificador = modif.IdModificador;
+            buscado.FechaModificacion = DateTime.UtcNow;
 
             await ctx.SaveChangesAsync();
         }
@@ -53,7 +55,7 @@ public class PublicacionService
 
         if (buscado != null)
         {
-            ctx.Publicaciones.Remove(buscado);
+            buscado.Activo = false;
             await ctx.SaveChangesAsync();
         }
     }

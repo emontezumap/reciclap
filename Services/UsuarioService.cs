@@ -22,33 +22,35 @@ public class UsuarioService
         return await ctx.Usuarios.FindAsync(id);
     }
 
-    public async Task<Usuario> Crear(Usuario usr)
+    public async Task<Usuario> Crear(Usuario nuevo)
     {
-        ctx.Usuarios.Add(usr);
+        ctx.Usuarios.Add(nuevo);
         await ctx.SaveChangesAsync();
 
-        return usr;
+        return nuevo;
     }
 
-    public async Task Modificar(Usuario usr)
+    public async Task Modificar(Usuario modif)
     {
-        var buscado = await PorId(usr.Id);
+        var buscado = await PorId(modif.Id);
 
         if (buscado != null)
         {
-            buscado.Apellido = usr.Apellido;
-            buscado.Apellido2 = usr.Apellido2;
-            buscado.Direccion = usr.Direccion;
-            buscado.Email = usr.Email;
-            buscado.Email2 = usr.Email2;
-            buscado.IdCiudad = usr.IdCiudad;
-            buscado.IdProfesion = usr.IdProfesion;
-            buscado.MaximoPublicaciones = usr.MaximoPublicaciones;
-            buscado.Nombre = usr.Nombre;
-            buscado.Nombre2 = usr.Nombre2;
-            buscado.Perfil = usr.Perfil;
-            buscado.Telefono = usr.Telefono;
-            buscado.Telefono2 = usr.Telefono2;
+            buscado.Apellido = modif.Apellido;
+            buscado.Apellido2 = modif.Apellido2;
+            buscado.Direccion = modif.Direccion;
+            buscado.Email = modif.Email;
+            buscado.Email2 = modif.Email2;
+            buscado.IdCiudad = modif.IdCiudad;
+            buscado.IdProfesion = modif.IdProfesion;
+            buscado.MaximoPublicaciones = modif.MaximoPublicaciones;
+            buscado.Nombre = modif.Nombre;
+            buscado.Nombre2 = modif.Nombre2;
+            buscado.Perfil = modif.Perfil;
+            buscado.Telefono = modif.Telefono;
+            buscado.Telefono2 = modif.Telefono2;
+            buscado.IdModificador = modif.IdModificador;
+            buscado.FechaModificacion = DateTime.UtcNow;
 
             await ctx.SaveChangesAsync();
         }
@@ -60,7 +62,7 @@ public class UsuarioService
 
         if (buscado != null)
         {
-            ctx.Usuarios.Remove(buscado);
+            buscado.Activo = false;
             await ctx.SaveChangesAsync();
         }
     }

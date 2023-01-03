@@ -38,6 +38,8 @@ public class PersonalService
         {
             buscado.Fecha = modif.Fecha;
             buscado.IdRol = modif.IdRol;
+            buscado.IdModificador = modif.IdModificador;
+            buscado.FechaModificacion = DateTime.UtcNow;
 
             await ctx.SaveChangesAsync();
         }
@@ -49,7 +51,7 @@ public class PersonalService
 
         if (buscado != null)
         {
-            ctx.Personal.Remove(buscado);
+            buscado.Activo = false;
             await ctx.SaveChangesAsync();
         }
     }

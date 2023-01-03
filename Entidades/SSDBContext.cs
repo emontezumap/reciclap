@@ -14,6 +14,7 @@ public class SSDBContext : DbContext
     public DbSet<Profesion>? Profesiones { get; set; }
     public DbSet<Publicacion>? Publicaciones { get; set; }
     public DbSet<Rol>? Roles { get; set; }
+    public DbSet<TipoPublicacion>? TiposPublicacion { get; set; }
     public DbSet<Usuario>? Usuarios { get; set; }
 
 
@@ -60,6 +61,10 @@ public class SSDBContext : DbContext
             .Property(c => c.Id)
             .HasDefaultValueSql("newid()");
 
+        mb.Entity<TipoPublicacion>()
+            .Property(c => c.Id)
+            .HasDefaultValueSql("newid()");
+
         mb.Entity<Usuario>()
             .Property(c => c.Id)
             .HasDefaultValueSql("newid()");
@@ -71,10 +76,34 @@ public class SSDBContext : DbContext
             .HasForeignKey(p => p.IdChat)
             .OnDelete(DeleteBehavior.NoAction);
 
+        mb.Entity<Chat>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Chat>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+
         mb.Entity<Ciudad>()
             .HasMany(p => p.Usuarios)
             .WithOne()
             .HasForeignKey(p => p.IdCiudad)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Ciudad>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Ciudad>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
             .OnDelete(DeleteBehavior.NoAction);
 
         mb.Entity<Comentario>()
@@ -83,10 +112,34 @@ public class SSDBContext : DbContext
             .HasForeignKey(p => p.IdComentario)
             .OnDelete(DeleteBehavior.NoAction);
 
+        mb.Entity<Comentario>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Comentario>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+
         mb.Entity<Estado>()
             .HasMany(p => p.Ciudades)
             .WithOne()
             .HasForeignKey(p => p.IdEstado)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Estado>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Estado>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
             .OnDelete(DeleteBehavior.NoAction);
 
         mb.Entity<EstatusPublicacion>()
@@ -95,10 +148,34 @@ public class SSDBContext : DbContext
             .HasForeignKey(p => p.IdEstatus)
             .OnDelete(DeleteBehavior.NoAction);
 
+        mb.Entity<EstatusPublicacion>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<EstatusPublicacion>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+
         mb.Entity<Pais>()
             .HasMany(p => p.Estados)
             .WithOne()
             .HasForeignKey(p => p.IdPais)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Pais>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Pais>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
             .OnDelete(DeleteBehavior.NoAction);
 
         mb.Entity<Personal>()
@@ -113,16 +190,52 @@ public class SSDBContext : DbContext
             .HasForeignKey(p => p.IdUsuario)
             .OnDelete(DeleteBehavior.NoAction);
 
+        mb.Entity<Personal>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Personal>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+
         mb.Entity<Profesion>()
             .HasMany(p => p.Usuarios)
             .WithOne()
             .HasForeignKey(p => p.IdProfesion)
             .OnDelete(DeleteBehavior.NoAction);
 
+        mb.Entity<Profesion>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Profesion>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+
         mb.Entity<Publicacion>()
             .HasMany(p => p.Chats)
             .WithOne()
             .HasForeignKey(p => p.IdPublicacion)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Publicacion>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Publicacion>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
             .OnDelete(DeleteBehavior.NoAction);
 
         // mb.Entity<Rol>()
@@ -137,16 +250,52 @@ public class SSDBContext : DbContext
             .HasForeignKey<Personal>(p => p.IdRol)
             .OnDelete(DeleteBehavior.NoAction);
 
+        mb.Entity<Rol>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Rol>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+
         mb.Entity<TipoPublicacion>()
             .HasMany(p => p.PublicacionesLink)
             .WithOne()
             .HasForeignKey(p => p.IdTipoPublicacion)
             .OnDelete(DeleteBehavior.NoAction);
 
+        mb.Entity<TipoPublicacion>()
+           .HasOne(p => p.Creador)
+           .WithMany()
+           .HasForeignKey(p => p.IdCreador)
+           .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<TipoPublicacion>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+
         mb.Entity<Usuario>()
             .HasMany(p => p.Comentarios)
             .WithOne()
             .HasForeignKey(p => p.IdUsuario)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Usuario>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Usuario>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
             .OnDelete(DeleteBehavior.NoAction);
     }
 }

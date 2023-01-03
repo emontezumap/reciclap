@@ -37,6 +37,8 @@ public class EstatusPublicacionService
         if (buscado != null)
         {
             buscado.Descripcion = modif.Descripcion;
+            buscado.IdModificador = modif.IdModificador;
+            buscado.FechaModificacion = DateTime.UtcNow;
 
             await ctx.SaveChangesAsync();
         }
@@ -48,7 +50,7 @@ public class EstatusPublicacionService
 
         if (buscado != null)
         {
-            ctx.EstatusPublicaciones.Remove(buscado);
+            buscado.Activo = false;
             await ctx.SaveChangesAsync();
         }
     }

@@ -4,6 +4,7 @@ using Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace wapi.Migrations
 {
     [DbContext(typeof(SSDBContext))]
-    partial class SSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230103184233_Relacion_usuario-ciudad_creador-modificador")]
+    partial class Relacion_usuariociudad_creadormodificador
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,10 +169,6 @@ namespace wapi.Migrations
 
                     b.HasIndex("IdComentario");
 
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
-
                     b.HasIndex("IdUsuario");
 
                     b.ToTable("comentarios");
@@ -212,10 +210,6 @@ namespace wapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
-
                     b.HasIndex("IdPais");
 
                     b.ToTable("estados");
@@ -253,10 +247,6 @@ namespace wapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
-
                     b.ToTable("estatus_publicaciones");
                 });
 
@@ -291,10 +281,6 @@ namespace wapi.Migrations
                         .HasColumnName("nombre");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.ToTable("paises");
                 });
@@ -335,10 +321,6 @@ namespace wapi.Migrations
 
                     b.HasKey("IdPublicacion", "IdUsuario");
 
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
-
                     b.HasIndex("IdRol")
                         .IsUnique();
 
@@ -378,10 +360,6 @@ namespace wapi.Migrations
                         .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.ToTable("profesiones");
                 });
@@ -443,11 +421,7 @@ namespace wapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdCreador");
-
                     b.HasIndex("IdEstatus");
-
-                    b.HasIndex("IdModificador");
 
                     b.HasIndex("IdTipoPublicacion");
 
@@ -490,10 +464,6 @@ namespace wapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
-
                     b.ToTable("roles");
                 });
 
@@ -528,10 +498,6 @@ namespace wapi.Migrations
                         .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
 
                     b.ToTable("TiposPublicacion");
                 });
@@ -635,10 +601,6 @@ namespace wapi.Migrations
 
                     b.HasIndex("IdCiudad");
 
-                    b.HasIndex("IdCreador");
-
-                    b.HasIndex("IdModificador");
-
                     b.HasIndex("IdProfesion");
 
                     b.ToTable("usuarios");
@@ -707,106 +669,24 @@ namespace wapi.Migrations
                         .HasForeignKey("IdComentario")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.Usuario", null)
                         .WithMany("Comentarios")
                         .HasForeignKey("IdUsuario")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
                 });
 
             modelBuilder.Entity("Entidades.Estado", b =>
                 {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.Pais", null)
                         .WithMany("Estados")
                         .HasForeignKey("IdPais")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-                });
-
-            modelBuilder.Entity("Entidades.EstatusPublicacion", b =>
-                {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-                });
-
-            modelBuilder.Entity("Entidades.Pais", b =>
-                {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
                 });
 
             modelBuilder.Entity("Entidades.Personal", b =>
                 {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.Publicacion", "Publicacion")
                         .WithMany("PublicacionesLink")
                         .HasForeignKey("IdPublicacion")
@@ -825,10 +705,6 @@ namespace wapi.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-
                     b.Navigation("Publicacion");
 
                     b.Navigation("RolLink");
@@ -836,42 +712,11 @@ namespace wapi.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Entidades.Profesion", b =>
-                {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-                });
-
             modelBuilder.Entity("Entidades.Publicacion", b =>
                 {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.EstatusPublicacion", null)
                         .WithMany("Publicaciones")
                         .HasForeignKey("IdEstatus")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -880,48 +725,6 @@ namespace wapi.Migrations
                         .HasForeignKey("IdTipoPublicacion")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-                });
-
-            modelBuilder.Entity("Entidades.Rol", b =>
-                {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
-                });
-
-            modelBuilder.Entity("Entidades.TipoPublicacion", b =>
-                {
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
                 });
 
             modelBuilder.Entity("Entidades.Usuario", b =>
@@ -932,26 +735,10 @@ namespace wapi.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Entidades.Usuario", "Creador")
-                        .WithMany()
-                        .HasForeignKey("IdCreador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entidades.Usuario", "Modificador")
-                        .WithMany()
-                        .HasForeignKey("IdModificador")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Entidades.Profesion", null)
                         .WithMany("Usuarios")
                         .HasForeignKey("IdProfesion")
                         .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Creador");
-
-                    b.Navigation("Modificador");
                 });
 
             modelBuilder.Entity("Entidades.Chat", b =>

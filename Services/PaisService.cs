@@ -37,6 +37,8 @@ public class PaisService
         if (buscado != null)
         {
             buscado.Nombre = modif.Nombre;
+            buscado.IdModificador = modif.IdModificador;
+            buscado.FechaModificacion = DateTime.UtcNow;
 
             await ctx.SaveChangesAsync();
         }
@@ -48,7 +50,7 @@ public class PaisService
 
         if (buscado != null)
         {
-            ctx.Paises.Remove(buscado);
+            buscado.Activo = false;
             await ctx.SaveChangesAsync();
         }
     }

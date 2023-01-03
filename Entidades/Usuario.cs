@@ -7,7 +7,6 @@ namespace Entidades;
 [Table("usuarios")]
 public class Usuario
 {
-
     [Column("id")]
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -49,17 +48,22 @@ public class Usuario
     public Guid? IdProfesion { get; set; }
     [Column("max_publicaciones")]
     public int MaximoPublicaciones { get; set; } = 0;
-    [Column("creado_por")]
-    public Guid CreadoPor { get; set; }
+    [Column("id_creador")]
+    public Guid IdCreador { get; set; }
     [Column("fecha_creacion")]
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
-    [Column("modificado_por")]
-    public Guid ModificadoPor { get; set; }
-    [Column("ultima_modificacion")]
-    public DateTime UltimaModificacion { get; set; } = DateTime.UtcNow;
+    [Column("id_modificador")]
+    public Guid IdModificador { get; set; }
+    [Column("fecha_modificacion")]
+    public DateTime FechaModificacion { get; set; } = DateTime.UtcNow;
+    [Column("activo")]
+    public bool Activo { get; set; } = true;
 
+    public virtual Usuario Creador { get; set; }
+    public virtual Usuario Modificador { get; set; }
     [JsonIgnore]
     public virtual ICollection<Comentario>? Comentarios { get; set; }
     [JsonIgnore]
     public virtual ICollection<Personal>? UsuariosLink { get; set; }
+
 }

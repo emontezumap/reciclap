@@ -3,41 +3,40 @@ using Entidades;
 
 namespace Services;
 
-public class RolService
+public class TipoPublicacionService
 {
     private readonly SSDBContext ctx;
 
-    public RolService(SSDBContext ctx)
+    public TipoPublicacionService(SSDBContext ctx)
     {
         this.ctx = ctx;
     }
 
-    public async Task<IEnumerable<Rol>> Todos()
+    public async Task<IEnumerable<TipoPublicacion>> Todos()
     {
-        return await ctx.Roles.ToListAsync<Rol>();
+        return await ctx.TiposPublicacion.ToListAsync<TipoPublicacion>();
     }
 
-    public async Task<Rol?> PorId(Guid id)
+    public async Task<TipoPublicacion?> PorId(Guid id)
     {
-        return await ctx.Roles.FindAsync(id);
+        return await ctx.TiposPublicacion.FindAsync(id);
     }
 
-    public async Task<Rol> Crear(Rol nuevo)
+    public async Task<TipoPublicacion> Crear(TipoPublicacion nuevo)
     {
-        ctx.Roles.Add(nuevo);
+        ctx.TiposPublicacion.Add(nuevo);
         await ctx.SaveChangesAsync();
 
         return nuevo;
     }
 
-    public async Task Modificar(Rol modif)
+    public async Task Modificar(TipoPublicacion modif)
     {
         var buscado = await PorId(modif.Id);
 
         if (buscado != null)
         {
             buscado.Descripcion = modif.Descripcion;
-            buscado.EsCreador = modif.EsCreador;
             buscado.IdModificador = modif.IdModificador;
             buscado.FechaModificacion = DateTime.UtcNow;
 
