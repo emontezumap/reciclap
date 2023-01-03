@@ -14,6 +14,14 @@ public class Estado
     public string Nombre { get; set; } = "";
     [Column("id_pais")]
     public Guid IdPais { get; set; }
+    [Column("creado_por")]
+    public Guid CreadoPor { get; set; }
+    [Column("fecha_creacion")]
+    public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+    [Column("modificado_por")]
+    public Guid ModificadoPor { get; set; }
+    [Column("ultima_modificacion")]
+    public DateTime UltimaModificacion { get; set; } = DateTime.UtcNow;
 
     public virtual ICollection<Ciudad>? Ciudades { get; set; }
 }

@@ -26,7 +26,7 @@ public class UsuarioController : ControllerBase
     public async Task<ActionResult<Usuario>> PorId(Guid id)
     {
         var usr = await svc.PorId(id);
-        return usr is null ? NotFound() : usr;
+        return usr is null ? UsuarioNoExiste(id) : usr;
     }
 
     [HttpPost]
@@ -39,10 +39,14 @@ public class UsuarioController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Modificar(Guid id, Usuario modif)
     {
-        if (id != modif.Id) return BadRequest();
+        if (id != modif.Id)
+            return BadRequest(new
+            {
+                message = $"El id de usuario especificado ({id}) para modificar no coincide con el id de usuario ({modif.Id}) del objeto modificado"
+            });
 
         var buscado = await svc.PorId(id);
-        if (buscado is null) return NotFound();
+        if (buscado is null) return UsuarioNoExiste(id);
         await svc.Modificar(modif);
         return NoContent();
     }
@@ -55,5 +59,13 @@ public class UsuarioController : ControllerBase
 
         await svc.Eliminar(id);
         return Ok();
+    }
+
+    public NotFoundObjectResult UsuarioNoExiste(Guid id)
+    {
+        return NotFound(new
+        {
+            message = $"El id de usuario {id} no existe en la base de datos"
+        });
     }
 }

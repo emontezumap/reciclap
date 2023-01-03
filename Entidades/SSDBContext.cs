@@ -125,10 +125,22 @@ public class SSDBContext : DbContext
             .HasForeignKey(p => p.IdPublicacion)
             .OnDelete(DeleteBehavior.NoAction);
 
+        // mb.Entity<Rol>()
+        //     .HasMany(p => p.Asignados)
+        //     .WithOne()
+        //     .HasForeignKey(p => p.IdRol)
+        //     .OnDelete(DeleteBehavior.NoAction);
+
         mb.Entity<Rol>()
-            .HasMany(p => p.Asignados)
+            .HasOne(p => p.PersonalLink)
+            .WithOne(p => p.RolLink)
+            .HasForeignKey<Personal>(p => p.IdRol)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<TipoPublicacion>()
+            .HasMany(p => p.PublicacionesLink)
             .WithOne()
-            .HasForeignKey(p => p.IdRol)
+            .HasForeignKey(p => p.IdTipoPublicacion)
             .OnDelete(DeleteBehavior.NoAction);
 
         mb.Entity<Usuario>()

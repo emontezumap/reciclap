@@ -1,27 +1,26 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Entidades;
-
-[Table("roles")]
-public class Rol
+public class TipoPublicacion
 {
     [Column("id")]
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
     [Column("descripcion")]
-    [MaxLength(200)]
+    [MaxLength(200, ErrorMessage = "La descripción del tipo de publicación no debe exceder los 200 caracteres")]
     public string Descripcion { get; set; } = "";
-    [Column("creador")]
-    public bool Creador { get; set; } = false;
     [Column("creado_por")]
-    public Guid CreadoPor { get; set; }
+    public Guid CreadoPor { get; set; } = new Guid();
     [Column("fecha_creacion")]
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     [Column("modificado_por")]
-    public Guid ModificadoPor { get; set; }
+    public Guid ModificadoPor { get; set; } = new Guid();
     [Column("ultima_modificacion")]
     public DateTime UltimaModificacion { get; set; } = DateTime.UtcNow;
 
-    public virtual Personal PersonalLink { get; set; } = new Personal();
+    [JsonIgnore]
+    public virtual ICollection<Publicacion> PublicacionesLink { get; set; } = new List<Publicacion>();
+
 }
