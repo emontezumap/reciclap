@@ -4,6 +4,7 @@ using Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace wapi.Migrations
 {
     [DbContext(typeof(SSDBContext))]
-    partial class SSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230105204721_Valor_por_defecto6")]
+    partial class Valor_por_defecto6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,20 +114,16 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("getutcdate()");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid>("IdEstado")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_estado");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -247,16 +245,12 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("getutcdate()");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.Property<Guid>("IdPais")
                         .HasColumnType("uniqueidentifier")
@@ -316,16 +310,12 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("getutcdate()");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
 
@@ -377,16 +367,12 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("getutcdate()");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
 
@@ -424,16 +410,12 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("getutcdate()");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -487,16 +469,12 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("getutcdate()");
 
                     b.Property<Guid>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.Property<Guid>("IdRol")
                         .HasColumnType("uniqueidentifier")
@@ -551,16 +529,12 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("getutcdate()");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
 
@@ -700,16 +674,12 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("getutcdate()");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
 
@@ -755,16 +725,12 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("getutcdate()");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
 
@@ -846,20 +812,16 @@ namespace wapi.Migrations
                         .HasColumnName("id_ciudad");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid>("IdGrupo")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_grupo");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.Property<Guid?>("IdProfesion")
                         .HasColumnType("uniqueidentifier")

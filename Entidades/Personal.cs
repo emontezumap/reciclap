@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Entidades;
 
@@ -25,9 +26,14 @@ public class Personal
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
+    [JsonIgnore]
     public virtual Usuario Creador { get; set; }
+    [JsonIgnore]
     public virtual Usuario Modificador { get; set; }
+    [JsonIgnore]
     public virtual Publicacion Publicacion { get; set; } = new Publicacion();
+    [JsonIgnore]
     public virtual Usuario Usuario { get; set; } = new Usuario();
+    [JsonIgnore]
     public virtual Rol RolLink { get; set; } = new Rol();
 }

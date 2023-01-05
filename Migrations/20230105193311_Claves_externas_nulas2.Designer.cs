@@ -4,6 +4,7 @@ using Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace wapi.Migrations
 {
     [DbContext(typeof(SSDBContext))]
-    partial class SSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230105193311_Claves_externas_nulas2")]
+    partial class Claves_externas_nulas2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,28 +33,20 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("newid()");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<DateTime>("Fecha")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid>("IdCreador")
                         .HasColumnType("uniqueidentifier")
@@ -68,11 +62,9 @@ namespace wapi.Migrations
 
                     b.Property<string>("Titulo")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)")
-                        .HasColumnName("titulo")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("titulo");
 
                     b.HasKey("Id");
 
@@ -94,46 +86,34 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("newid()");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid>("IdEstado")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_estado");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
-                        .HasColumnName("nombre")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("nombre");
 
                     b.HasKey("Id");
 
@@ -155,28 +135,20 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("newid()");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<DateTime>("Fecha")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid>("IdChat")
                         .HasColumnType("uniqueidentifier")
@@ -200,10 +172,8 @@ namespace wapi.Migrations
 
                     b.Property<string>("Texto")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
-                        .HasColumnName("comentario")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("comentario");
 
                     b.HasKey("Id");
 
@@ -229,34 +199,24 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("newid()");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.Property<Guid>("IdPais")
                         .HasColumnType("uniqueidentifier")
@@ -264,11 +224,9 @@ namespace wapi.Migrations
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
-                        .HasColumnName("nombre")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("nombre");
 
                     b.HasKey("Id");
 
@@ -290,42 +248,30 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("newid()");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
-                        .HasColumnName("descripcion")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("descripcion");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
 
@@ -345,48 +291,34 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("newid()");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
-                        .HasColumnName("descripcion")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("descripcion");
 
                     b.Property<bool>("EsAdministrador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false)
                         .HasColumnName("es_administrador");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
 
@@ -406,42 +338,30 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("newid()");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
-                        .HasColumnName("nombre")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("nombre");
 
                     b.HasKey("Id");
 
@@ -463,40 +383,28 @@ namespace wapi.Migrations
                         .HasColumnName("id_usuario");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<DateTime>("Fecha")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.Property<Guid>("IdRol")
                         .HasColumnType("uniqueidentifier")
@@ -525,42 +433,30 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("newid()");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
-                        .HasColumnName("descripcion")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("descripcion");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
 
@@ -580,40 +476,28 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("newid()");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
-                        .HasColumnName("descripcion")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("descripcion");
 
                     b.Property<DateTime>("Fecha")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<int>("Gustan")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasDefaultValue(0)
                         .HasColumnName("gustan");
 
                     b.Property<Guid>("IdCreador")
@@ -633,18 +517,14 @@ namespace wapi.Migrations
                         .HasColumnName("id_tipo_publicacion");
 
                     b.Property<int>("NoGustan")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasDefaultValue(0)
                         .HasColumnName("no_gustan");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
-                        .HasColumnName("titulo")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("titulo");
 
                     b.HasKey("Id");
 
@@ -668,48 +548,34 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("newid()");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
-                        .HasColumnName("descripcion")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("descripcion");
 
                     b.Property<bool>("EsCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false)
                         .HasColumnName("es_creador");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
 
@@ -729,42 +595,30 @@ namespace wapi.Migrations
                         .HasDefaultValueSql("newid()");
 
                     b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true)
                         .HasColumnName("activo");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
-                        .HasColumnName("descripcion")
-                        .HasDefaultValueSql("''");
+                        .HasColumnName("descripcion");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_creacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnName("fecha_modificacion");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.HasKey("Id");
 
@@ -846,20 +700,16 @@ namespace wapi.Migrations
                         .HasColumnName("id_ciudad");
 
                     b.Property<Guid?>("IdCreador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_creador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_creador");
 
                     b.Property<Guid>("IdGrupo")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_grupo");
 
                     b.Property<Guid?>("IdModificador")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_modificador")
-                        .HasDefaultValueSql("null");
+                        .HasColumnName("id_modificador");
 
                     b.Property<Guid?>("IdProfesion")
                         .HasColumnType("uniqueidentifier")

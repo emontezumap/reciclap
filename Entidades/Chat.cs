@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Entidades;
 
@@ -27,7 +28,10 @@ public class Chat
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
+    [JsonIgnore]
     public virtual ICollection<Comentario>? Comentarios { get; set; }
+    [JsonIgnore]
     public virtual Usuario Creador { get; set; }
+    [JsonIgnore]
     public virtual Usuario Modificador { get; set; }
 }

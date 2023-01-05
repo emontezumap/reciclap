@@ -4,15 +4,17 @@ using System.Text.Json.Serialization;
 
 namespace Entidades;
 
-[Table("paises")]
-public class Pais
+[Table("grupos")]
+public class Grupo
 {
     [Column("id")]
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
-    [Column("nombre")]
-    [MaxLength(50)]
-    public string Nombre { get; set; } = "";
+    [Column("descripcion")]
+    [MaxLength(100, ErrorMessage = "La descripción del grupo no debe exceder los 100 caracteres")]
+    public string Descripcion { get; set; } = "";
+    [Column("es_administrador")]
+    public bool EsAdministrador { get; set; } = false;
     [Column("id_creador")]
     public Guid? IdCreador { get; set; }
     [Column("fecha_creacion")]
@@ -28,5 +30,7 @@ public class Pais
     public virtual Usuario Creador { get; set; }
     [JsonIgnore]
     public virtual Usuario Modificador { get; set; }
-    public virtual ICollection<Estado>? Estados { get; set; }
+    [JsonIgnore]
+    public virtual ICollection<Usuario>? Usuarios { get; set; }
+
 }
