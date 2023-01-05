@@ -38,6 +38,9 @@ public class SSDBContext : DbContext
         TipoPublicacionValoresPorDefecto(mb);
         UsuarioValoresPorDefecto(mb);
 
+        // Indices
+        Indices(mb);
+
         // Relaciones
         ChatRelaciones(mb);
         CiudadRelaciones(mb);
@@ -54,6 +57,7 @@ public class SSDBContext : DbContext
         UsuarioRelaciones(mb);
     }
 
+    // Valores por defecto
     private void ChatValoresPorDefecto(ModelBuilder mb)
     {
         mb.Entity<Chat>()
@@ -264,9 +268,6 @@ public class SSDBContext : DbContext
     }
     private void PersonalValoresPorDefecto(ModelBuilder mb)
     {
-        mb.Entity<Personal>()
-            .HasKey(c => new { c.IdPublicacion, c.IdUsuario });
-
         mb.Entity<Personal>()
              .Property(c => c.Fecha)
              .HasDefaultValueSql("getutcdate()");
@@ -496,6 +497,47 @@ public class SSDBContext : DbContext
             .HasDefaultValue(1);
     }
 
+    // Indices
+    private void Indices(ModelBuilder mb)
+    {
+        mb.Entity<Chat>()
+            .HasIndex(p => p.Titulo).IsUnique();
+
+        mb.Entity<Ciudad>()
+            .HasIndex(p => p.Nombre).IsUnique();
+
+        mb.Entity<Estado>()
+            .HasIndex(p => p.Nombre).IsUnique();
+
+        mb.Entity<EstatusPublicacion>()
+            .HasIndex(p => p.Descripcion).IsUnique();
+
+        mb.Entity<Grupo>()
+           .HasIndex(p => p.Descripcion).IsUnique();
+
+        mb.Entity<Pais>()
+            .HasIndex(p => p.Nombre).IsUnique();
+
+        mb.Entity<Personal>()
+           .HasKey(c => new { c.IdPublicacion, c.IdUsuario });
+
+        mb.Entity<Profesion>()
+            .HasIndex(p => p.Descripcion).IsUnique();
+
+        mb.Entity<Publicacion>()
+            .HasIndex(p => p.Titulo).IsUnique();
+
+        mb.Entity<Rol>()
+            .HasIndex(p => p.Descripcion).IsUnique();
+
+        mb.Entity<TipoPublicacion>()
+            .HasIndex(p => p.Descripcion).IsUnique();
+
+        mb.Entity<Usuario>()
+            .HasIndex(p => new { p.Nombre, p.Nombre2, p.Apellido, p.Apellido2 }).IsUnique();
+    }
+
+    // Relaciones
     private void ChatRelaciones(ModelBuilder mb)
     {
         mb.Entity<Chat>()
