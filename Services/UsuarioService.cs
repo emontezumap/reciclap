@@ -14,7 +14,13 @@ public class UsuarioService
 
     public async Task<IEnumerable<Usuario>> Todos()
     {
-        return await ctx.Usuarios.ToListAsync<Usuario>();
+        // string ultimoApellido = "A";
+        return await ctx.Usuarios
+        // .OrderBy(u => u.Apellido)
+        // .ThenBy(u => u.Apellido2)
+        // .Where(u => u.Apellido.CompareTo(ultimoApellido) > 0)
+        // .Take(10)
+        .ToListAsync<Usuario>();
     }
 
     public async Task<Usuario?> PorId(Guid id)

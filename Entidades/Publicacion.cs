@@ -36,8 +36,8 @@ public class Publicacion
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
-    public virtual Usuario Creador { get; set; }
-    public virtual Usuario Modificador { get; set; }
+    public virtual Usuario? Creador { get; set; }
+    public virtual Usuario? Modificador { get; set; }
     [JsonIgnore]
     public virtual ICollection<Chat>? Chats { get; set; }
     [JsonIgnore]

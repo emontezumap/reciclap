@@ -31,7 +31,7 @@ public class Chat
     [JsonIgnore]
     public virtual ICollection<Comentario>? Comentarios { get; set; }
     [JsonIgnore]
-    public virtual Usuario Creador { get; set; }
+    public virtual Usuario? Creador { get; set; }
     [JsonIgnore]
-    public virtual Usuario Modificador { get; set; }
+    public virtual Usuario? Modificador { get; set; }
 }

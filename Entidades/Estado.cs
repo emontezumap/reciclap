@@ -27,9 +27,9 @@ public class Estado
     public bool Activo { get; set; } = true;
 
     [JsonIgnore]
-    public virtual Usuario Creador { get; set; }
+    public virtual Usuario? Creador { get; set; }
     [JsonIgnore]
-    public virtual Usuario Modificador { get; set; }
+    public virtual Usuario? Modificador { get; set; }
     [JsonIgnore]
     public virtual ICollection<Ciudad>? Ciudades { get; set; }
 }
