@@ -68,6 +68,6 @@ public class Usuario
     [JsonIgnore]
     public virtual ICollection<Comentario>? Comentarios { get; set; }
     [JsonIgnore]
-    public virtual ICollection<Personal>? UsuariosLink { get; set; }
+    public virtual ICollection<Personal>? PublicacionesLink { get; set; }
 
 }

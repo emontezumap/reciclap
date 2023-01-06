@@ -41,5 +41,5 @@ public class Publicacion
     [JsonIgnore]
     public virtual ICollection<Chat>? Chats { get; set; }
     [JsonIgnore]
-    public virtual ICollection<Personal>? PublicacionesLink { get; set; }
+    public virtual ICollection<Personal>? UsuariosLink { get; set; }
 }

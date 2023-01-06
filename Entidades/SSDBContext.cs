@@ -689,13 +689,13 @@ public class SSDBContext : DbContext
     {
         mb.Entity<Personal>()
             .HasOne(p => p.Publicacion)
-            .WithMany(p => p.PublicacionesLink)
+            .WithMany(p => p.UsuariosLink)
             .HasForeignKey(p => p.IdPublicacion)
             .OnDelete(DeleteBehavior.NoAction);
 
         mb.Entity<Personal>()
             .HasOne(p => p.Usuario)
-            .WithMany(p => p.UsuariosLink)
+            .WithMany(p => p.PublicacionesLink)
             .HasForeignKey(p => p.IdUsuario)
             .OnDelete(DeleteBehavior.NoAction);
 
@@ -763,9 +763,9 @@ public class SSDBContext : DbContext
         //     .OnDelete(DeleteBehavior.NoAction);
 
         mb.Entity<Rol>()
-            .HasOne(p => p.PersonalLink)
-            .WithOne(p => p.RolLink)
-            .HasForeignKey<Personal>(p => p.IdRol)
+            .HasMany(p => p.RolesAsignados)
+            .WithOne()
+            .HasForeignKey(p => p.IdRol)
             .OnDelete(DeleteBehavior.NoAction);
 
         mb.Entity<Rol>()

@@ -34,6 +34,4 @@ public class Personal
     public virtual Publicacion Publicacion { get; set; } = new Publicacion();
     [JsonIgnore]
     public virtual Usuario Usuario { get; set; } = new Usuario();
-    [JsonIgnore]
-    public virtual Rol RolLink { get; set; } = new Rol();
 }
