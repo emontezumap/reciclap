@@ -521,6 +521,9 @@ public class SSDBContext : DbContext
         mb.Entity<Personal>()
            .HasKey(c => new { c.IdPublicacion, c.IdUsuario });
 
+        mb.Entity<Personal>()
+            .HasIndex(p => new { p.IdPublicacion, p.IdRol }).IsUnique();
+
         mb.Entity<Profesion>()
             .HasIndex(p => p.Descripcion).IsUnique();
 
