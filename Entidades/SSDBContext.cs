@@ -477,6 +477,10 @@ public class SSDBContext : DbContext
             .HasDefaultValue(0);
 
         mb.Entity<Usuario>()
+            .Property(c => c.IdProfesion)
+            .HasDefaultValueSql("null");
+
+        mb.Entity<Usuario>()
             .Property(c => c.IdCreador)
             .HasDefaultValueSql("null");
 
