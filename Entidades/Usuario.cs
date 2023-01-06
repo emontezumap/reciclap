@@ -45,7 +45,7 @@ public class Usuario
     [MaxLength(250, ErrorMessage = "La dirección de correo opcional no debe exceder los 250 caracteres")]
     public string Email2 { get; set; } = "";
     [Column("id_profesion")]
-    public Guid IdProfesion { get; set; }
+    public Guid? IdProfesion { get; set; }
     [Column("max_publicaciones")]
     public int MaximoPublicaciones { get; set; } = 0;
     [Column("id_grupo")]
