@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Entidades;
 using Services;
 
 namespace Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 
@@ -29,6 +31,7 @@ public class UsuarioController : ControllerBase
         return usr is null ? UsuarioNoExiste(id) : usr;
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Crear(Usuario nuevo)
     {
@@ -36,6 +39,7 @@ public class UsuarioController : ControllerBase
         return CreatedAtAction(nameof(PorId), new { id = nuevo.Id }, nuevo);
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Modificar(Guid id, Usuario modif)
     {
@@ -51,6 +55,7 @@ public class UsuarioController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Eliminar(Guid id)
     {

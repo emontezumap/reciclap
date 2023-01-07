@@ -542,6 +542,9 @@ public class SSDBContext : DbContext
 
         mb.Entity<Usuario>()
             .HasIndex(p => new { p.Nombre, p.Nombre2, p.Apellido, p.Apellido2 }).IsUnique();
+
+        mb.Entity<Usuario>()
+            .HasIndex(p => p.Email).IsUnique();
     }
 
     // Relaciones

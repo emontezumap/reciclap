@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Entidades;
 using Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 
@@ -29,6 +31,7 @@ public class PersonalController : ControllerBase
         return buscado is null ? NotFound() : buscado;
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Crear(Personal nuevo)
     {
@@ -36,6 +39,7 @@ public class PersonalController : ControllerBase
         return CreatedAtAction(nameof(PorId), new { IdPublicacion = nuevo.IdPublicacion, IdUsuario = nuevo.IdUsuario }, nuevo);
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Modificar(Guid idPub, Guid idUsr, Personal modif)
     {
@@ -47,6 +51,7 @@ public class PersonalController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Eliminar(Guid idPub, Guid idUsr)
     {

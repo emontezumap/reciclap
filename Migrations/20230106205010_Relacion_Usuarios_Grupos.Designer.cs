@@ -4,6 +4,7 @@ using Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace wapi.Migrations
 {
     [DbContext(typeof(SSDBContext))]
-    partial class SSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230106205010_Relacion_Usuarios_Grupos")]
+    partial class Relacion_Usuarios_Grupos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1265,7 +1267,7 @@ namespace wapi.Migrations
                         .HasForeignKey("IdCreador")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Entidades.Grupo", null)
+                    b.HasOne("Entidades.Grupo", "Grupo")
                         .WithMany("Usuarios")
                         .HasForeignKey("IdGrupo")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -1282,6 +1284,8 @@ namespace wapi.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Creador");
+
+                    b.Navigation("Grupo");
 
                     b.Navigation("Modificador");
                 });

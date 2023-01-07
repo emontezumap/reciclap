@@ -41,6 +41,9 @@ public class Usuario
     [EmailAddress]
     [MaxLength(250, ErrorMessage = "La dirección de correo no debe exceder los 250 caracteres")]
     public string Email { get; set; } = "";
+    [Column("clave")]
+    [MaxLength(256)]
+    public string Clave { get; set; } = "";
     [Column("email2")]
     [MaxLength(250, ErrorMessage = "La dirección de correo opcional no debe exceder los 250 caracteres")]
     public string Email2 { get; set; } = "";
@@ -65,6 +68,8 @@ public class Usuario
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]
     public virtual Usuario? Modificador { get; set; }
+    // [JsonIgnore]
+    // public virtual Grupo Grupo { get; set; }
     [JsonIgnore]
     public virtual ICollection<Comentario>? Comentarios { get; set; }
     [JsonIgnore]
