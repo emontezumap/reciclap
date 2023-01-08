@@ -657,7 +657,7 @@ public class SSDBContext : DbContext
     {
         mb.Entity<Grupo>()
             .HasMany(p => p.Usuarios)
-            .WithOne()
+            .WithOne(p => p.Grupo)
             .HasForeignKey(p => p.IdGrupo)
             .OnDelete(DeleteBehavior.NoAction);
 

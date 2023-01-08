@@ -48,7 +48,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 builder.Services.AddAuthorization(options =>
-    options.AddPolicy("Admin", policy => policy.RequireClaim("IdGrupo", "97cfae57-45b6-4194-83c4-1311e3346e42"))
+    options.AddPolicy("Admin", policy => policy.RequireClaim("Grupo", "Administradores"))
 );
 
 var app = builder.Build();

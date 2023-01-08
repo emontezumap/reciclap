@@ -44,7 +44,7 @@ public class LoginController : ControllerBase
             new Claim(ClaimTypes.Name, usr.Nombre),
             new Claim(ClaimTypes.Surname, usr.Apellido),
             new Claim(ClaimTypes.Email, usr.Email),
-            new Claim("IdGrupo", usr.IdGrupo.ToString() )
+            new Claim("Grupo", usr.Grupo.Descripcion )
         };
 
         var clave = new SymmetricSecurityKey(
