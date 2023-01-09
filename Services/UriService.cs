@@ -13,9 +13,9 @@ public class UriService : IUriService
 
     public Uri GetPageUri(FiltroPaginacion filtro, string ruta)
     {
-        var _enpointUri = new Uri(string.Concat(baseUri, ruta));
-        var modifiedUri = QueryHelpers.AddQueryString(_enpointUri.ToString(), "pageNumber", filtro.PaginaNro.ToString());
-        modifiedUri = QueryHelpers.AddQueryString(modifiedUri, "pageSize", filtro.TamañoPagina.ToString());
+        var _endpointUri = new Uri(string.Concat(baseUri, ruta));
+        var modifiedUri = QueryHelpers.AddQueryString(_endpointUri.ToString(), "paginaNro", filtro.PaginaNro.ToString());
+        modifiedUri = QueryHelpers.AddQueryString(modifiedUri, "tamañoPagina", filtro.TamañoPagina.ToString());
         return new Uri(modifiedUri);
     }
 }

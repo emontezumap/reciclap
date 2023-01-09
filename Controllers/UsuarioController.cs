@@ -23,8 +23,9 @@ public class UsuarioController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Todos([FromQuery] FiltroPaginacion fp)
     {
-        var filtroValido = new FiltroPaginacion(fp.PaginaNro, fp.TamañoPagina);
-        var resp = await svc.Todos(filtroValido);
+        var fv = new FiltroPaginacion(fp.PaginaNro, fp.TamañoPagina);
+        var ruta = Request.Path.Value;
+        var resp = await svc.Todos(fv, ruta);
 
         return Ok(resp);
     }

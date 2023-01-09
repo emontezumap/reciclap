@@ -8,23 +8,25 @@ namespace Services;
 public class UsuarioService
 {
     private readonly SSDBContext ctx;
+    private readonly IUriService uriService;
 
-    public UsuarioService(SSDBContext ctx)
+    public UsuarioService(SSDBContext ctx, IUriService uriService)
     {
         this.ctx = ctx;
+        this.uriService = uriService;
     }
 
-    public async Task<IEnumerable<Usuario>> Todos(FiltroPaginacion fp)
+    // public async Task<IEnumerable<Usuario>> Todos(FiltroPaginacion fp, string ruta)
+    public async Task<RespuestaPagina<List<Usuario>>> Todos(FiltroPaginacion fp, string ruta)
     {
-        // return await ctx.Usuarios.ToListAsync<Usuario>();
-
         var pagDatos = await ctx.Usuarios
             .Skip<Usuario>((fp.PaginaNro - 1) * fp.TamañoPagina)
             .Take<Usuario>(fp.TamañoPagina)
             .ToListAsync<Usuario>();
 
         var totalRegistros = await ctx.Usuarios.CountAsync();
-        return pagDatos;
+        var resp = Paginador.CrearPaginaRespuesta<Usuario>(pagDatos, fp, totalRegistros, uriService, ruta);
+        return resp;
     }
 
     public async Task<Usuario?> PorId(Guid id)

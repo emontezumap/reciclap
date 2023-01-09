@@ -21,6 +21,15 @@ builder.Services.AddDbContext<SSDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IUriService>(o =>
+    {
+        var accessor = o.GetRequiredService<IHttpContextAccessor>();
+        var request = accessor.HttpContext.Request;
+        var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+        return new UriService(uri);
+    });
+
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<CiudadService>();
 builder.Services.AddScoped<ComentarioService>();
@@ -47,9 +56,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
+
 builder.Services.AddAuthorization(options =>
     options.AddPolicy("Admin", policy => policy.RequireClaim("Grupo", "Administradores"))
 );
+
 
 var app = builder.Build();
 
