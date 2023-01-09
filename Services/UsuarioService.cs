@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
+using Contenedores;
+using Filtros;
 
 namespace Services;
 
@@ -12,15 +14,17 @@ public class UsuarioService
         this.ctx = ctx;
     }
 
-    public async Task<IEnumerable<Usuario>> Todos()
+    public async Task<IEnumerable<Usuario>> Todos(FiltroPaginacion fp)
     {
-        // string ultimoApellido = "A";
-        return await ctx.Usuarios
-        // .OrderBy(u => u.Apellido)
-        // .ThenBy(u => u.Apellido2)
-        // .Where(u => u.Apellido.CompareTo(ultimoApellido) > 0)
-        // .Take(10)
-        .ToListAsync<Usuario>();
+        // return await ctx.Usuarios.ToListAsync<Usuario>();
+
+        var pagDatos = await ctx.Usuarios
+            .Skip<Usuario>((fp.PaginaNro - 1) * fp.TamañoPagina)
+            .Take<Usuario>(fp.TamañoPagina)
+            .ToListAsync<Usuario>();
+
+        var totalRegistros = await ctx.Usuarios.CountAsync();
+        return pagDatos;
     }
 
     public async Task<Usuario?> PorId(Guid id)

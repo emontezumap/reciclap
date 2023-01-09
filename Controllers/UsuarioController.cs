@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Entidades;
 using Services;
+using Contenedores;
+using Filtros;
 
 namespace Controllers;
 
@@ -19,16 +21,19 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IEnumerable<Usuario>> Todos()
+    public async Task<IActionResult> Todos([FromQuery] FiltroPaginacion fp)
     {
-        return await svc.Todos();
+        var filtroValido = new FiltroPaginacion(fp.PaginaNro, fp.TamañoPagina);
+        var resp = await svc.Todos(filtroValido);
+
+        return Ok(resp);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Usuario>> PorId(Guid id)
     {
         var usr = await svc.PorId(id);
-        return usr is null ? UsuarioNoExiste(id) : usr;
+        return usr == null ? UsuarioNoExiste(id) : Ok(new Respuesta<Usuario>(usr));
     }
 
     [Authorize(Policy = "Admin")]

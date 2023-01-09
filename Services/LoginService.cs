@@ -20,10 +20,8 @@ public class LoginService
             u.Clave == Cripto.CodigoSHA256(usuario.Clave));
 
         if (usr != null)
-        {
             ctx.Entry(usr)
               .Reference(u => u.Grupo).Load();
-        }
 
         return usr;
     }

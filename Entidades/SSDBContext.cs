@@ -4,19 +4,19 @@ namespace Entidades;
 
 public class SSDBContext : DbContext
 {
-    public DbSet<Chat>? Chats { get; set; }
-    public DbSet<Ciudad>? Ciudades { get; set; }
-    public DbSet<Comentario>? Comentarios { get; set; }
-    public DbSet<Estado>? Estados { get; set; }
-    public DbSet<EstatusPublicacion>? EstatusPublicaciones { get; set; }
-    public DbSet<Grupo>? Grupos { get; set; }
-    public DbSet<Pais>? Paises { get; set; }
-    public DbSet<Personal>? Personal { get; set; }
-    public DbSet<Profesion>? Profesiones { get; set; }
-    public DbSet<Publicacion>? Publicaciones { get; set; }
-    public DbSet<Rol>? Roles { get; set; }
-    public DbSet<TipoPublicacion>? TiposPublicacion { get; set; }
-    public DbSet<Usuario>? Usuarios { get; set; }
+    public DbSet<Chat> Chats { get; set; }
+    public DbSet<Ciudad> Ciudades { get; set; }
+    public DbSet<Comentario> Comentarios { get; set; }
+    public DbSet<Estado> Estados { get; set; }
+    public DbSet<EstatusPublicacion> EstatusPublicaciones { get; set; }
+    public DbSet<Grupo> Grupos { get; set; }
+    public DbSet<Pais> Paises { get; set; }
+    public DbSet<Personal> Personal { get; set; }
+    public DbSet<Profesion> Profesiones { get; set; }
+    public DbSet<Publicacion> Publicaciones { get; set; }
+    public DbSet<Rol> Roles { get; set; }
+    public DbSet<TipoPublicacion> TiposPublicacion { get; set; }
+    public DbSet<Usuario> Usuarios { get; set; }
 
 
     public SSDBContext(DbContextOptions<SSDBContext> options) : base(options) { }

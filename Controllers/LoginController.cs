@@ -29,7 +29,7 @@ public class LoginController : ControllerBase
     {
         var usr = await loginSvc.BuscarUsuario(login);
 
-        if (usr is null)
+        if (usr == null)
             return BadRequest(new { message = "No autorizado" });
 
         string jwt = GenerarToken(usr);
