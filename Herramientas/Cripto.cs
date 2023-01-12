@@ -1,6 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
 
+namespace Herramientas;
+
 public class Cripto
 {
     public static string CodigoSHA256(string str)

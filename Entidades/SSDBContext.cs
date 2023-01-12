@@ -766,12 +766,6 @@ public class SSDBContext : DbContext
 
     private void RolRelaciones(ModelBuilder mb)
     {
-        // mb.Entity<Rol>()
-        //     .HasMany(p => p.Asignados)
-        //     .WithOne()
-        //     .HasForeignKey(p => p.IdRol)
-        //     .OnDelete(DeleteBehavior.NoAction);
-
         mb.Entity<Rol>()
             .HasMany(p => p.RolesAsignados)
             .WithOne()

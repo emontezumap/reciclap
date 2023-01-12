@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
+using Herramientas;
 
 namespace Services;
 
@@ -20,8 +21,7 @@ public class LoginService
             u.Clave == Cripto.CodigoSHA256(usuario.Clave));
 
         if (usr != null)
-            ctx.Entry(usr)
-              .Reference(u => u.Grupo).Load();
+            ctx.Entry(usr).Reference(u => u.Grupo).Load();
 
         return usr;
     }
