@@ -4,6 +4,7 @@ using Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace wapi.Migrations
 {
     [DbContext(typeof(SSDBContext))]
-    partial class SSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230113022137_Relacion_Estados_Ciudades")]
+    partial class Relacion_Estados_Ciudades
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1069,7 +1071,7 @@ namespace wapi.Migrations
                         .HasForeignKey("IdModificador")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Entidades.Pais", "Pais")
+                    b.HasOne("Entidades.Pais", null)
                         .WithMany("Estados")
                         .HasForeignKey("IdPais")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -1078,8 +1080,6 @@ namespace wapi.Migrations
                     b.Navigation("Creador");
 
                     b.Navigation("Modificador");
-
-                    b.Navigation("Pais");
                 });
 
             modelBuilder.Entity("Entidades.EstatusPublicacion", b =>

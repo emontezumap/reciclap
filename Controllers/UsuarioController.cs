@@ -25,6 +25,10 @@ public class UsuarioController : ControllerBase
     {
         var fv = new FiltroPaginacion(fp.PaginaNro, fp.TamañoPagina);
         var ruta = Request.Path.Value;
+
+        if (ruta == null)
+            ruta = "";
+
         var resp = await svc.Todos(fv, ruta);
 
         return Ok(resp);

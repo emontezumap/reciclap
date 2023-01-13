@@ -4,19 +4,19 @@ namespace Entidades;
 
 public class SSDBContext : DbContext
 {
-    public DbSet<Chat> Chats { get; set; }
-    public DbSet<Ciudad> Ciudades { get; set; }
-    public DbSet<Comentario> Comentarios { get; set; }
-    public DbSet<Estado> Estados { get; set; }
-    public DbSet<EstatusPublicacion> EstatusPublicaciones { get; set; }
-    public DbSet<Grupo> Grupos { get; set; }
-    public DbSet<Pais> Paises { get; set; }
-    public DbSet<Personal> Personal { get; set; }
-    public DbSet<Profesion> Profesiones { get; set; }
-    public DbSet<Publicacion> Publicaciones { get; set; }
-    public DbSet<Rol> Roles { get; set; }
-    public DbSet<TipoPublicacion> TiposPublicacion { get; set; }
-    public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Chat> Chats { get; set; } = null!;
+    public DbSet<Ciudad> Ciudades { get; set; } = null!;
+    public DbSet<Comentario> Comentarios { get; set; } = null!;
+    public DbSet<Estado> Estados { get; set; } = null!;
+    public DbSet<EstatusPublicacion> EstatusPublicaciones { get; set; } = null!;
+    public DbSet<Grupo> Grupos { get; set; } = null!;
+    public DbSet<Pais> Paises { get; set; } = null!;
+    public DbSet<Personal> Personal { get; set; } = null!;
+    public DbSet<Profesion> Profesiones { get; set; } = null!;
+    public DbSet<Publicacion> Publicaciones { get; set; } = null!;
+    public DbSet<Rol> Roles { get; set; } = null!;
+    public DbSet<TipoPublicacion> TiposPublicacion { get; set; } = null!;
+    public DbSet<Usuario> Usuarios { get; set; } = null!;
 
 
     public SSDBContext(DbContextOptions<SSDBContext> options) : base(options) { }
@@ -82,7 +82,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Chat>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
 
     private void CiudadValoresPorDefecto(ModelBuilder mb)
@@ -113,7 +113,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Ciudad>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
 
     private void ComentarioValoresPorDefecto(ModelBuilder mb)
@@ -140,7 +140,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Comentario>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
     private void EstadoValoresPorDefecto(ModelBuilder mb)
     {
@@ -170,7 +170,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Estado>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
     private void EstatusPublicacionValoresPorDefecto(ModelBuilder mb)
     {
@@ -200,7 +200,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<EstatusPublicacion>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
     private void GrupoValoresPorDefecto(ModelBuilder mb)
     {
@@ -214,7 +214,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Grupo>()
              .Property(c => c.EsAdministrador)
-             .HasDefaultValue(0);
+             .HasDefaultValueSql("0");
 
         mb.Entity<Grupo>()
             .Property(c => c.IdCreador)
@@ -234,7 +234,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Grupo>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
     private void PaisValoresPorDefecto(ModelBuilder mb)
     {
@@ -264,7 +264,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Pais>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
     private void PersonalValoresPorDefecto(ModelBuilder mb)
     {
@@ -290,7 +290,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Personal>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
     private void ProfesionValoresPorDefecto(ModelBuilder mb)
     {
@@ -320,7 +320,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Profesion>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
 
     private void PublicacionValoresPorDefecto(ModelBuilder mb)
@@ -359,7 +359,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Publicacion>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
     private void RolValoresPorDefecto(ModelBuilder mb)
     {
@@ -393,7 +393,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Rol>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
     private void TipoPublicacionValoresPorDefecto(ModelBuilder mb)
     {
@@ -423,7 +423,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<TipoPublicacion>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
 
     private void UsuarioValoresPorDefecto(ModelBuilder mb)
@@ -498,7 +498,7 @@ public class SSDBContext : DbContext
 
         mb.Entity<Usuario>()
             .Property(c => c.Activo)
-            .HasDefaultValue(1);
+            .HasDefaultValueSql("1");
     }
 
     // Indices
@@ -615,7 +615,7 @@ public class SSDBContext : DbContext
     {
         mb.Entity<Estado>()
             .HasMany(p => p.Ciudades)
-            .WithOne()
+            .WithOne(p => p.Estado)
             .HasForeignKey(p => p.IdEstado)
             .OnDelete(DeleteBehavior.NoAction);
 
@@ -678,7 +678,7 @@ public class SSDBContext : DbContext
     {
         mb.Entity<Pais>()
             .HasMany(p => p.Estados)
-            .WithOne()
+            .WithOne(p => p.Pais)
             .HasForeignKey(p => p.IdPais)
             .OnDelete(DeleteBehavior.NoAction);
 

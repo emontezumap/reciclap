@@ -1,5 +1,3 @@
-using Entidades;
-using Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Entidades;
+using Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -25,7 +26,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IUriService>(o =>
     {
         var accessor = o.GetRequiredService<IHttpContextAccessor>();
-        var request = accessor.HttpContext.Request;
+        var request = accessor!.HttpContext!.Request;
         var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
         return new UriService(uri);
     });
@@ -42,6 +43,8 @@ builder.Services.AddScoped<PublicacionService>();
 builder.Services.AddScoped<RolService>();
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<LoginService>();
+
+builder.Services.AddScoped<ConsultaService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -61,6 +64,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Admin", policy => policy.RequireClaim("Grupo", "Administradores"))
 );
 
+builder.Services.AddGraphQLServer()
+    .AddQueryType<ConsultaService>()
+        .AddProjections().AddFiltering().AddSorting();
 
 var app = builder.Build();
 
@@ -80,4 +86,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapGraphQL("/gql");
+
 app.Run();

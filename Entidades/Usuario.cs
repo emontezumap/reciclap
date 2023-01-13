@@ -82,7 +82,7 @@ public class Usuario
     public DateTime FechaModificacion { get; set; } = DateTime.UtcNow;
 
     [Column("activo")]
-    public bool Activo { get; set; } = true;
+    public bool? Activo { get; set; } = true;
 
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }

@@ -4,6 +4,7 @@ using Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace wapi.Migrations
 {
     [DbContext(typeof(SSDBContext))]
-    partial class SSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230113020208_Valores_por_defecto_Activo2")]
+    partial class Valores_por_defecto_Activo2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +32,7 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<bool?>("Activo")
+                    b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("activo")
@@ -160,7 +162,7 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<bool?>("Activo")
+                    b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("activo")
@@ -234,7 +236,7 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<bool?>("Activo")
+                    b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("activo")
@@ -298,7 +300,7 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<bool?>("Activo")
+                    b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("activo")
@@ -356,7 +358,7 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<bool?>("Activo")
+                    b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("activo")
@@ -370,7 +372,7 @@ namespace wapi.Migrations
                         .HasColumnName("descripcion")
                         .HasDefaultValueSql("''");
 
-                    b.Property<bool?>("EsAdministrador")
+                    b.Property<bool>("EsAdministrador")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("es_administrador")
@@ -420,7 +422,7 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<bool?>("Activo")
+                    b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("activo")
@@ -480,7 +482,7 @@ namespace wapi.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id_usuario");
 
-                    b.Property<bool?>("Activo")
+                    b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("activo")
@@ -544,7 +546,7 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<bool?>("Activo")
+                    b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("activo")
@@ -602,7 +604,7 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<bool?>("Activo")
+                    b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("activo")
@@ -693,7 +695,7 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<bool?>("Activo")
+                    b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("activo")
@@ -757,7 +759,7 @@ namespace wapi.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<bool?>("Activo")
+                    b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("activo")
@@ -1003,7 +1005,7 @@ namespace wapi.Migrations
                         .HasForeignKey("IdCreador")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Entidades.Estado", "Estado")
+                    b.HasOne("Entidades.Estado", null)
                         .WithMany("Ciudades")
                         .HasForeignKey("IdEstado")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -1015,8 +1017,6 @@ namespace wapi.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Creador");
-
-                    b.Navigation("Estado");
 
                     b.Navigation("Modificador");
                 });
@@ -1069,7 +1069,7 @@ namespace wapi.Migrations
                         .HasForeignKey("IdModificador")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Entidades.Pais", "Pais")
+                    b.HasOne("Entidades.Pais", null)
                         .WithMany("Estados")
                         .HasForeignKey("IdPais")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -1078,8 +1078,6 @@ namespace wapi.Migrations
                     b.Navigation("Creador");
 
                     b.Navigation("Modificador");
-
-                    b.Navigation("Pais");
                 });
 
             modelBuilder.Entity("Entidades.EstatusPublicacion", b =>

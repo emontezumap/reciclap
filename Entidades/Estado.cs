@@ -24,12 +24,16 @@ public class Estado
     [Column("fecha_modificacion")]
     public DateTime FechaModificacion { get; set; } = DateTime.UtcNow;
     [Column("activo")]
-    public bool Activo { get; set; } = true;
+    public bool? Activo { get; set; } = true;
 
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]
     public virtual Usuario? Modificador { get; set; }
+
+    [JsonIgnore]
+    public virtual Pais? Pais { get; set; }
+
     [JsonIgnore]
     public virtual ICollection<Ciudad>? Ciudades { get; set; }
 }

@@ -34,7 +34,7 @@ public class Publicacion
     [Column("fecha_modificacion")]
     public DateTime FechaModificacion { get; set; } = DateTime.UtcNow;
     [Column("activo")]
-    public bool Activo { get; set; } = true;
+    public bool? Activo { get; set; } = true;
 
     public virtual Usuario? Creador { get; set; }
     public virtual Usuario? Modificador { get; set; }

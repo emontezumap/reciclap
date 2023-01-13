@@ -14,7 +14,7 @@ public class Grupo
     [MaxLength(100, ErrorMessage = "La descripción del grupo no debe exceder los 100 caracteres")]
     public string Descripcion { get; set; } = "";
     [Column("es_administrador")]
-    public bool EsAdministrador { get; set; } = false;
+    public bool? EsAdministrador { get; set; } = false;
     [Column("id_creador")]
     public Guid? IdCreador { get; set; }
     [Column("fecha_creacion")]
@@ -24,7 +24,7 @@ public class Grupo
     [Column("fecha_modificacion")]
     public DateTime FechaModificacion { get; set; } = DateTime.UtcNow;
     [Column("activo")]
-    public bool Activo { get; set; } = true;
+    public bool? Activo { get; set; } = true;
 
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
