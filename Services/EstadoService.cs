@@ -3,56 +3,73 @@ using Entidades;
 
 namespace Services;
 
+[ExtendObjectType("Mutacion")]
 public class EstadoService
 {
-    private readonly SSDBContext ctx;
+    private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public EstadoService(SSDBContext ctx)
+    public EstadoService(IDbContextFactory<SSDBContext> ctxFactory)
     {
-        this.ctx = ctx;
+        this.ctxFactory = ctxFactory;
     }
 
-    public async Task<IEnumerable<Estado>> Todos()
+    public async Task<IEnumerable<Estado>> TodosLosEstados()
     {
-        return await ctx.Estados.ToListAsync<Estado>();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Estados.ToListAsync<Estado>();
+        }
     }
 
-    public async Task<Estado?> PorId(Guid id)
+    public async Task<Estado?> EstadoPorId(Guid id)
     {
-        return await ctx.Estados.FindAsync(id);
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Estados.FindAsync(id);
+        }
     }
 
-    public async Task<Estado> Crear(Estado nuevo)
+    public async Task<Estado> CrearEstado(Estado nuevo)
     {
-        ctx.Estados.Add(nuevo);
-        await ctx.SaveChangesAsync();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            ctx.Estados.Add(nuevo);
+            await ctx.SaveChangesAsync();
+        }
 
         return nuevo;
     }
 
-    public async Task Modificar(Estado modif)
+    public async Task<bool> ModificarEstado(Estado modif)
     {
-        var buscado = await PorId(modif.Id);
+        var buscado = await EstadoPorId(modif.Id);
 
         if (buscado != null)
         {
-            buscado.Nombre = modif.Nombre;
-            buscado.IdPais = modif.IdPais;
-            buscado.IdModificador = modif.IdModificador;
-            buscado.FechaModificacion = DateTime.UtcNow;
-
-            await ctx.SaveChangesAsync();
+            using (var ctx = ctxFactory.CreateDbContext())
+            {
+                ctx.Update(modif);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
         }
+
+        return false;
     }
 
-    public async Task Eliminar(Guid id)
+    public async Task<bool> EliminarEstado(Guid id)
     {
-        var buscado = await PorId(id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            buscado.Activo = false;
-            await ctx.SaveChangesAsync();
+            var buscado = await EstadoPorId(id);
+
+            if (buscado != null)
+            {
+                buscado.Activo = false;
+                return await ModificarEstado(buscado);
+            }
+
+            return false;
         }
     }
 }

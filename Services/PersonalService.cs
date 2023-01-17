@@ -3,56 +3,73 @@ using Entidades;
 
 namespace Services;
 
+[ExtendObjectType("Mutacion")]
 public class PersonalService
 {
-    private readonly SSDBContext ctx;
+    private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public PersonalService(SSDBContext ctx)
+    public PersonalService(IDbContextFactory<SSDBContext> ctxFactory)
     {
-        this.ctx = ctx;
+        this.ctxFactory = ctxFactory;
     }
 
-    public async Task<IEnumerable<Personal>> Todos()
+    public async Task<IEnumerable<Personal>> TodoElPersonal()
     {
-        return await ctx.Personal.ToListAsync<Personal>();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Personal.ToListAsync<Personal>();
+        }
     }
 
-    public async Task<Personal?> PorId(Guid idPub, Guid idUsr)
+    public async Task<Personal?> PersonalPorId(Guid idPub, Guid idUsr)
     {
-        return await ctx.Personal.FindAsync(idPub, idUsr);
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Personal.FindAsync(idPub, idUsr);
+        }
     }
 
-    public async Task<Personal> Crear(Personal nuevo)
+    public async Task<Personal> CrearPersonal(Personal nuevo)
     {
-        ctx.Personal.Add(nuevo);
-        await ctx.SaveChangesAsync();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            ctx.Personal.Add(nuevo);
+            await ctx.SaveChangesAsync();
+        }
 
         return nuevo;
     }
 
-    public async Task Modificar(Personal modif)
+    public async Task<bool> ModificarPersonal(Personal modif)
     {
-        var buscado = await PorId(modif.IdPublicacion, modif.IdUsuario);
+        var buscado = await PersonalPorId(modif.IdPublicacion, modif.IdUsuario);
 
         if (buscado != null)
         {
-            buscado.Fecha = modif.Fecha;
-            buscado.IdRol = modif.IdRol;
-            buscado.IdModificador = modif.IdModificador;
-            buscado.FechaModificacion = DateTime.UtcNow;
-
-            await ctx.SaveChangesAsync();
+            using (var ctx = ctxFactory.CreateDbContext())
+            {
+                ctx.Update(modif);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
         }
+
+        return false;
     }
 
-    public async Task Eliminar(Guid idPub, Guid idUsr)
+    public async Task<bool> EliminarPersonal(Guid idPub, Guid idUsr)
     {
-        var buscado = await PorId(idPub, idUsr);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            buscado.Activo = false;
-            await ctx.SaveChangesAsync();
+            var buscado = await PersonalPorId(idPub, idUsr);
+
+            if (buscado != null)
+            {
+                buscado.Activo = false;
+                return await ModificarPersonal(buscado);
+            }
+
+            return false;
         }
     }
 }

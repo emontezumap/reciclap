@@ -4,54 +4,48 @@ using Entidades;
 namespace Services;
 
 [ExtendObjectType("Mutacion")]
-public class ChatService
+public class GrupoService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public ChatService(IDbContextFactory<SSDBContext> ctxFactory)
+    public GrupoService(IDbContextFactory<SSDBContext> ctxFactory)
     {
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<IEnumerable<Chat>> TodosLosChats()
+    public async Task<IEnumerable<Grupo>> TodosLosGrupos()
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            return await ctx.Chats.ToListAsync<Chat>();
+            return await ctx.Grupos.ToListAsync<Grupo>();
         }
     }
 
-    public async Task<Chat?> ChatPorId(Guid id)
+    public async Task<Grupo?> GrupoPorId(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            return await ctx.Chats.FindAsync(id);
+            return await ctx.Grupos.FindAsync(id);
         }
     }
 
-    public async Task<Chat> CrearChat(Chat nuevo)
+    public async Task<Grupo> CrearGrupo(Grupo nuevo)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Chats.Add(nuevo);
+            ctx.Grupos.Add(nuevo);
             await ctx.SaveChangesAsync();
         }
 
         return nuevo;
     }
 
-    public async Task<bool> ModificarChat(Chat modif)
+    public async Task<bool> ModificarGrupo(Grupo modif)
     {
-        var buscado = await ChatPorId(modif.Id);
+        var buscado = await GrupoPorId(modif.Id);
 
         if (buscado != null)
         {
-            //     buscado.Titulo = modif.Titulo;
-            //     buscado.Fecha = modif.Fecha;
-            //     buscado.IdPublicacion = modif.IdPublicacion;
-            //     buscado.IdModificador = modif.IdModificador;
-            //     buscado.FechaModificacion = DateTime.UtcNow;
-
             using (var ctx = ctxFactory.CreateDbContext())
             {
                 ctx.Update(modif);
@@ -63,16 +57,16 @@ public class ChatService
         return false;
     }
 
-    public async Task<bool> EliminarChat(Guid id)
+    public async Task<bool> EliminarGrupo(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await ChatPorId(id);
+            var buscado = await GrupoPorId(id);
 
             if (buscado != null)
             {
                 buscado.Activo = false;
-                return await ModificarChat(buscado);
+                return await ModificarGrupo(buscado);
             }
 
             return false;

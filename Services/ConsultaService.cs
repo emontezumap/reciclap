@@ -1,53 +1,132 @@
+using Microsoft.EntityFrameworkCore;
 using Entidades;
 
 namespace Services;
 
-public class ConsultaService
+public class Consulta
 {
-    private readonly SSDBContext ctx;
+    private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public ConsultaService(SSDBContext ctx)
+    public Consulta(IDbContextFactory<SSDBContext> ctxFactory)
     {
-        this.ctx = ctx;
+        this.ctxFactory = ctxFactory;
     }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Chat> Chats() => ctx.Chats;
+    public IQueryable<Chat> Chats()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.Chats;
+        }
+    }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Ciudad> Ciudades() => ctx.Ciudades;
+    public IQueryable<Ciudad> Ciudades()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.Ciudades;
+        }
+    }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Comentario> Comentarios() => ctx.Comentarios;
+    public IQueryable<Comentario> Comentarios()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.Comentarios;
+        }
+    }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Estado> Estados() => ctx.Estados;
+    public IQueryable<Estado> Estados()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.Estados;
+        }
+    }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<EstatusPublicacion> EstatusPublicaciones() => ctx.EstatusPublicaciones;
+    public IQueryable<EstatusPublicacion> EstatusPublicaciones()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.EstatusPublicaciones;
+        }
+    }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Grupo> Grupos() => ctx.Grupos;
+    public IQueryable<Grupo> Grupos()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.Grupos;
+        }
+    }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Pais> Paises() => ctx.Paises;
+    public IQueryable<Pais> Paises()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.Paises;
+        }
+    }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Personal> Personal() => ctx.Personal;
+    public IQueryable<Personal> Personal()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.Personal;
+        }
+    }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Profesion> Profesiones() => ctx.Profesiones;
+    public IQueryable<Profesion> Profesiones()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.Profesiones;
+        }
+    }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Publicacion> Publicaciones() => ctx.Publicaciones;
+    public IQueryable<Publicacion> Publicaciones()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.Publicaciones;
+        }
+    }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Rol> Roles() => ctx.Roles;
+    public IQueryable<Rol> Roles()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.Roles;
+        }
+    }
 
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<TipoPublicacion> TiposPublicacion() => ctx.TiposPublicacion;
+    public IQueryable<TipoPublicacion> TiposPublicacion()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.TiposPublicacion;
+        }
+    }
 
     [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Usuario> Usuarios() => ctx.Usuarios;
+    public IQueryable<Usuario> Usuarios()
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return ctx.Usuarios;
+        }
+    }
 }

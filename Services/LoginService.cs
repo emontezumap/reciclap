@@ -7,22 +7,25 @@ namespace Services;
 
 public class LoginService
 {
-    private readonly SSDBContext ctx;
+    private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public LoginService(SSDBContext ctx)
+    public LoginService(IDbContextFactory<SSDBContext> ctxFactory)
     {
-        this.ctx = ctx;
+        this.ctxFactory = ctxFactory;
     }
 
     public async Task<Usuario?> BuscarUsuario(LoginDTO usuario)
     {
-        var usr = await ctx.Usuarios.SingleOrDefaultAsync(u =>
-            u.Email == usuario.Email &&
-            u.Clave == Cripto.CodigoSHA256(usuario.Clave));
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            var usr = await ctx.Usuarios.SingleOrDefaultAsync(u =>
+                u.Email == usuario.Email &&
+                u.Clave == Cripto.CodigoSHA256(usuario.Clave));
 
-        if (usr != null)
-            ctx.Entry(usr).Reference(u => u.Grupo).Load();
+            if (usr != null)
+                ctx.Entry(usr).Reference(u => u.Grupo).Load();
 
-        return usr;
+            return usr;
+        }
     }
 }

@@ -3,55 +3,73 @@ using Entidades;
 
 namespace Services;
 
+[ExtendObjectType("Mutacion")]
 public class ProfesionService
 {
-    private readonly SSDBContext ctx;
+    private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public ProfesionService(SSDBContext ctx)
+    public ProfesionService(IDbContextFactory<SSDBContext> ctxFactory)
     {
-        this.ctx = ctx;
+        this.ctxFactory = ctxFactory;
     }
 
-    public async Task<IEnumerable<Profesion>> Todos()
+    public async Task<IEnumerable<Profesion>> TodasLasProfesiones()
     {
-        return await ctx.Profesiones.ToListAsync<Profesion>();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Profesiones.ToListAsync<Profesion>();
+        }
     }
 
-    public async Task<Profesion?> PorId(Guid id)
+    public async Task<Profesion?> ProfesionPorId(Guid id)
     {
-        return await ctx.Profesiones.FindAsync(id);
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Profesiones.FindAsync(id);
+        }
     }
 
-    public async Task<Profesion> Crear(Profesion nuevo)
+    public async Task<Profesion> CrearProfesion(Profesion nuevo)
     {
-        ctx.Profesiones.Add(nuevo);
-        await ctx.SaveChangesAsync();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            ctx.Profesiones.Add(nuevo);
+            await ctx.SaveChangesAsync();
+        }
 
         return nuevo;
     }
 
-    public async Task Modificar(Profesion modif)
+    public async Task<bool> ModificarProfesion(Profesion modif)
     {
-        var buscado = await PorId(modif.Id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            buscado.Descripcion = modif.Descripcion;
-            buscado.IdModificador = modif.IdModificador;
-            buscado.FechaModificacion = DateTime.UtcNow;
+            var buscado = await ProfesionPorId(modif.Id);
 
-            await ctx.SaveChangesAsync();
+            if (buscado != null)
+            {
+                ctx.Update(modif);
+                await ctx.SaveChangesAsync();
+
+                return true;
+            }
+            return false;
         }
     }
 
-    public async Task Eliminar(Guid id)
+    public async Task<bool> EliminarProfesion(Guid id)
     {
-        var buscado = await PorId(id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            buscado.Activo = false;
-            await ctx.SaveChangesAsync();
+            var buscado = await ProfesionPorId(id);
+
+            if (buscado != null)
+            {
+                buscado.Activo = false;
+                return await ModificarProfesion(buscado);
+            }
+
+            return false;
         }
     }
 }

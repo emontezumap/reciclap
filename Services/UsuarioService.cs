@@ -5,77 +5,74 @@ using Filtros;
 
 namespace Services;
 
+[ExtendObjectType("Mutacion")]
 public class UsuarioService
 {
-    private readonly SSDBContext ctx;
-    private readonly IUriService uriService;
+    private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public UsuarioService(SSDBContext ctx, IUriService uriService)
+    public UsuarioService(IDbContextFactory<SSDBContext> ctxFactory)
     {
-        this.ctx = ctx;
-        this.uriService = uriService;
+        this.ctxFactory = ctxFactory;
     }
 
     // public async Task<IEnumerable<Usuario>> Todos(FiltroPaginacion fp, string ruta)
-    public async Task<RespuestaPagina<List<Usuario>>> Todos(FiltroPaginacion fp, string ruta)
+    public async Task<IEnumerable<Usuario>> TodosLosUsuarios()
     {
-        var pagDatos = await ctx.Usuarios
-            .Skip<Usuario>((fp.PaginaNro - 1) * fp.TamañoPagina)
-            .Take<Usuario>(fp.TamañoPagina)
-            .ToListAsync<Usuario>();
-
-        var totalRegistros = await ctx.Usuarios.CountAsync();
-        var resp = Paginador.CrearPaginaRespuesta<Usuario>(pagDatos, fp, totalRegistros, uriService, ruta);
-        return resp;
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Usuarios.ToListAsync<Usuario>();
+        }
     }
 
-    public async Task<Usuario?> PorId(Guid id)
+    public async Task<Usuario?> UsuarioPorId(Guid id)
     {
-        return await ctx.Usuarios.FindAsync(id);
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Usuarios.FindAsync(id);
+        }
     }
 
-    public async Task<Usuario> Crear(Usuario nuevo)
+    public async Task<Usuario> CrearUsuario(Usuario nuevo)
     {
-        ctx.Usuarios.Add(nuevo);
-        await ctx.SaveChangesAsync();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            ctx.Usuarios.Add(nuevo);
+            await ctx.SaveChangesAsync();
+        }
 
         return nuevo;
     }
 
-    public async Task Modificar(Usuario modif)
+    public async Task<bool> ModificarUsuario(Usuario modif)
     {
-        var buscado = await PorId(modif.Id);
+        var buscado = await UsuarioPorId(modif.Id);
 
         if (buscado != null)
         {
-            buscado.Apellido = modif.Apellido;
-            buscado.Apellido2 = modif.Apellido2;
-            buscado.Direccion = modif.Direccion;
-            buscado.Email = modif.Email;
-            buscado.Email2 = modif.Email2;
-            buscado.IdCiudad = modif.IdCiudad;
-            buscado.IdProfesion = modif.IdProfesion;
-            buscado.MaximoPublicaciones = modif.MaximoPublicaciones;
-            buscado.Nombre = modif.Nombre;
-            buscado.Nombre2 = modif.Nombre2;
-            buscado.Perfil = modif.Perfil;
-            buscado.Telefono = modif.Telefono;
-            buscado.Telefono2 = modif.Telefono2;
-            buscado.IdModificador = modif.IdModificador;
-            buscado.FechaModificacion = DateTime.UtcNow;
-
-            await ctx.SaveChangesAsync();
+            using (var ctx = ctxFactory.CreateDbContext())
+            {
+                ctx.Update(modif);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
         }
+
+        return false;
     }
 
-    public async Task Eliminar(Guid id)
+    public async Task<bool> EliminarUsuario(Guid id)
     {
-        var buscado = await PorId(id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            buscado.Activo = false;
-            await ctx.SaveChangesAsync();
+            var buscado = await UsuarioPorId(id);
+
+            if (buscado != null)
+            {
+                buscado.Activo = false;
+                return await ModificarUsuario(buscado);
+            }
+
+            return false;
         }
     }
 }

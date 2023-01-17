@@ -18,8 +18,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<SSDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+// builder.Services.AddDbContext<SSDBContext>(options =>
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+// );
+
+builder.Services.AddPooledDbContextFactory<SSDBContext>(o =>
+    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 builder.Services.AddHttpContextAccessor();
@@ -31,20 +35,22 @@ builder.Services.AddSingleton<IUriService>(o =>
         return new UriService(uri);
     });
 
-builder.Services.AddScoped<ChatService>();
-builder.Services.AddScoped<CiudadService>();
-builder.Services.AddScoped<ComentarioService>();
-builder.Services.AddScoped<EstadoService>();
-builder.Services.AddScoped<EstatusPublicacionService>();
-builder.Services.AddScoped<PaisService>();
-builder.Services.AddScoped<PersonalService>();
-builder.Services.AddScoped<ProfesionService>();
-builder.Services.AddScoped<PublicacionService>();
-builder.Services.AddScoped<RolService>();
-builder.Services.AddScoped<UsuarioService>();
-builder.Services.AddScoped<LoginService>();
+// builder.Services.AddScoped<ChatService>();
+// builder.Services.AddScoped<CiudadService>();
+// builder.Services.AddScoped<ComentarioService>();
+// builder.Services.AddScoped<EstadoService>();
+// builder.Services.AddScoped<EstatusPublicacionService>();
+// builder.Services.AddScoped<GrupoService>();
+// builder.Services.AddScoped<PaisService>();
+// builder.Services.AddScoped<PersonalService>();
+// builder.Services.AddScoped<ProfesionService>();
+// builder.Services.AddScoped<PublicacionService>();
+// builder.Services.AddScoped<RolService>();
+// builder.Services.AddScoped<TipoPublicacionService>();
+// builder.Services.AddScoped<UsuarioService>();
 
-builder.Services.AddScoped<ConsultaService>();
+// builder.Services.AddScoped<LoginService>();
+// builder.Services.AddScoped<Consulta>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -65,16 +71,35 @@ builder.Services.AddAuthorization(options =>
 );
 
 builder.Services.AddGraphQLServer()
-    .AddQueryType<ConsultaService>()
-        .AddProjections().AddFiltering().AddSorting();
+    .AddQueryType<Consulta>()
+        .AddProjections().AddFiltering().AddSorting()
+    .AddMutationType(m => m.Name("Mutacion"))
+        .AddType<ChatService>()
+        .AddType<CiudadService>()
+        .AddType<ComentarioService>()
+        .AddType<EstadoService>()
+        .AddType<EstatusPublicacionService>()
+        .AddType<GrupoService>()
+        .AddType<PaisService>()
+        .AddType<PersonalService>()
+        .AddType<ProfesionService>()
+        .AddType<PublicacionService>()
+        .AddType<RolService>()
+        .AddType<TipoPublicacionService>()
+        .AddType<UsuarioService>();
 
 var app = builder.Build();
 
-// using (var scope = app.Services.CreateScope())
-// {
-//     var ctx = scope.ServiceProvider.GetRequiredService<SSDBContext>();
-//     ctx.Database.Migrate();
-// }
+using (var scope = app.Services.CreateScope())
+{
+    IDbContextFactory<SSDBContext> ctxFactory = scope.ServiceProvider
+        .GetRequiredService<IDbContextFactory<SSDBContext>>();
+
+    using (SSDBContext ctx = ctxFactory.CreateDbContext())
+    {
+        ctx.Database.Migrate();
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

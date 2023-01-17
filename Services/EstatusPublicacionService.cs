@@ -3,55 +3,73 @@ using Entidades;
 
 namespace Services;
 
+[ExtendObjectType("Mutacion")]
 public class EstatusPublicacionService
 {
-    private readonly SSDBContext ctx;
+    private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public EstatusPublicacionService(SSDBContext ctx)
+    public EstatusPublicacionService(IDbContextFactory<SSDBContext> ctxFactory)
     {
-        this.ctx = ctx;
+        this.ctxFactory = ctxFactory;
     }
 
-    public async Task<IEnumerable<EstatusPublicacion>> Todos()
+    public async Task<IEnumerable<EstatusPublicacion>> TodosLosEstatusPublicacion()
     {
-        return await ctx.EstatusPublicaciones.ToListAsync<EstatusPublicacion>();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.EstatusPublicaciones.ToListAsync<EstatusPublicacion>();
+        }
     }
 
-    public async Task<EstatusPublicacion?> PorId(Guid id)
+    public async Task<EstatusPublicacion?> EstatusPublicacionPorId(Guid id)
     {
-        return await ctx.EstatusPublicaciones.FindAsync(id);
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.EstatusPublicaciones.FindAsync(id);
+        }
     }
 
-    public async Task<EstatusPublicacion> Crear(EstatusPublicacion nuevo)
+    public async Task<EstatusPublicacion> CrearEstatusPublicacion(EstatusPublicacion nuevo)
     {
-        ctx.EstatusPublicaciones.Add(nuevo);
-        await ctx.SaveChangesAsync();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            ctx.EstatusPublicaciones.Add(nuevo);
+            await ctx.SaveChangesAsync();
+        }
 
         return nuevo;
     }
 
-    public async Task Modificar(EstatusPublicacion modif)
+    public async Task<bool> ModificarEstatusPublicacion(EstatusPublicacion modif)
     {
-        var buscado = await PorId(modif.Id);
+        var buscado = await EstatusPublicacionPorId(modif.Id);
 
         if (buscado != null)
         {
-            buscado.Descripcion = modif.Descripcion;
-            buscado.IdModificador = modif.IdModificador;
-            buscado.FechaModificacion = DateTime.UtcNow;
-
-            await ctx.SaveChangesAsync();
+            using (var ctx = ctxFactory.CreateDbContext())
+            {
+                ctx.Update(modif);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
         }
+
+        return false;
     }
 
-    public async Task Eliminar(Guid id)
+    public async Task<bool> EliminarEstatusPublicacion(Guid id)
     {
-        var buscado = await PorId(id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            buscado.Activo = false;
-            await ctx.SaveChangesAsync();
+            var buscado = await EstatusPublicacionPorId(id);
+
+            if (buscado != null)
+            {
+                buscado.Activo = false;
+                return await ModificarEstatusPublicacion(buscado);
+            }
+
+            return false;
         }
     }
 }

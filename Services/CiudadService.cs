@@ -3,56 +3,73 @@ using Entidades;
 
 namespace Services;
 
+[ExtendObjectType("Mutacion")]
 public class CiudadService
 {
-    private readonly SSDBContext ctx;
+    private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public CiudadService(SSDBContext ctx)
+    public CiudadService(IDbContextFactory<SSDBContext> ctxFactory)
     {
-        this.ctx = ctx;
+        this.ctxFactory = ctxFactory;
     }
 
-    public async Task<IEnumerable<Ciudad>> Todos()
+    public async Task<IEnumerable<Ciudad>> TodasLasCiudades()
     {
-        return await ctx.Ciudades.ToListAsync<Ciudad>();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Ciudades.ToListAsync<Ciudad>();
+        }
     }
 
-    public async Task<Ciudad?> PorId(Guid id)
+    public async Task<Ciudad?> CiudadPorId(Guid id)
     {
-        return await ctx.Ciudades.FindAsync(id);
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Ciudades.FindAsync(id);
+        }
     }
 
-    public async Task<Ciudad> Crear(Ciudad nuevo)
+    public async Task<Ciudad> CrearCiudad(Ciudad nuevo)
     {
-        ctx.Ciudades.Add(nuevo);
-        await ctx.SaveChangesAsync();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            ctx.Ciudades.Add(nuevo);
+            await ctx.SaveChangesAsync();
+        }
 
         return nuevo;
     }
 
-    public async Task Modificar(Ciudad modif)
+    public async Task<bool> ModificarCiudad(Ciudad modif)
     {
-        var buscado = await PorId(modif.Id);
+        var buscado = await CiudadPorId(modif.Id);
 
         if (buscado != null)
         {
-            buscado.Nombre = modif.Nombre;
-            buscado.IdEstado = modif.IdEstado;
-            buscado.IdModificador = modif.IdModificador;
-            buscado.FechaModificacion = DateTime.UtcNow;
-
-            await ctx.SaveChangesAsync();
+            using (var ctx = ctxFactory.CreateDbContext())
+            {
+                ctx.Update(modif);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
         }
+
+        return false;
     }
 
-    public async Task Eliminar(Guid id)
+    public async Task<bool> EliminarCiudad(Guid id)
     {
-        var buscado = await PorId(id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            buscado.Activo = false;
-            await ctx.SaveChangesAsync();
+            var buscado = await CiudadPorId(id);
+
+            if (buscado != null)
+            {
+                buscado.Activo = false;
+                return await ModificarCiudad(buscado);
+            }
+
+            return false;
         }
     }
 }

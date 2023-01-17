@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Entidades;
 
-namespace Entidades;
+namespace Services;
 
 public class SSDBContext : DbContext
 {

@@ -3,60 +3,76 @@ using Entidades;
 
 namespace Services;
 
+[ExtendObjectType("Mutacion")]
 public class PublicacionService
 {
-    private readonly SSDBContext ctx;
+    private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public PublicacionService(SSDBContext ctx)
+    public PublicacionService(IDbContextFactory<SSDBContext> ctxFactory)
     {
-        this.ctx = ctx;
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            this.ctxFactory = ctxFactory;
+        }
     }
 
-    public async Task<IEnumerable<Publicacion>> Todos()
+    public async Task<IEnumerable<Publicacion>> TodasLasPublicaciones()
     {
-        return await ctx.Publicaciones.ToListAsync<Publicacion>();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Publicaciones.ToListAsync<Publicacion>();
+        }
     }
 
-    public async Task<Publicacion?> PorId(Guid id)
+    public async Task<Publicacion?> PublicacionPorId(Guid id)
     {
-        return await ctx.Publicaciones.FindAsync(id);
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            return await ctx.Publicaciones.FindAsync(id);
+        }
     }
 
-    public async Task<Publicacion> Crear(Publicacion nuevo)
+    public async Task<Publicacion> CrearPublicacion(Publicacion nuevo)
     {
-        ctx.Publicaciones.Add(nuevo);
-        await ctx.SaveChangesAsync();
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            ctx.Publicaciones.Add(nuevo);
+            await ctx.SaveChangesAsync();
+        }
 
         return nuevo;
     }
 
-    public async Task Modificar(Publicacion modif)
+    public async Task<bool> ModificarPublicacion(Publicacion modif)
     {
-        var buscado = await PorId(modif.Id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            buscado.Titulo = modif.Titulo;
-            buscado.Descripcion = modif.Descripcion;
-            buscado.Fecha = modif.Fecha;
-            buscado.Gustan = modif.Gustan;
-            buscado.NoGustan = modif.NoGustan;
-            buscado.IdEstatus = modif.IdEstatus;
-            buscado.IdModificador = modif.IdModificador;
-            buscado.FechaModificacion = DateTime.UtcNow;
+            var buscado = await PublicacionPorId(modif.Id);
 
-            await ctx.SaveChangesAsync();
+            if (buscado != null)
+            {
+                ctx.Update(modif);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
     }
 
-    public async Task Eliminar(Guid id)
+    public async Task<bool> EliminarPublicacion(Guid id)
     {
-        var buscado = await PorId(id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            buscado.Activo = false;
-            await ctx.SaveChangesAsync();
+            var buscado = await PublicacionPorId(id);
+
+            if (buscado != null)
+            {
+                buscado.Activo = false;
+                return await ModificarPublicacion(buscado);
+            }
+
+            return false;
         }
     }
 }
