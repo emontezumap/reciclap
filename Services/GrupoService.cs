@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
+using DTOs;
 
 namespace Services;
 
@@ -21,7 +22,7 @@ public class GrupoService
         }
     }
 
-    public async Task<Grupo?> GrupoPorId(Guid id)
+    public async Task<Grupo?> UnGrupo(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -29,26 +30,43 @@ public class GrupoService
         }
     }
 
-    public async Task<Grupo> CrearGrupo(Grupo nuevo)
+    public async Task<Grupo> CrearGrupo(GrupoDTO nuevo)
     {
+        Grupo grp = new Grupo()
+        {
+            Activo = nuevo.Activo,
+            Descripcion = nuevo.Descripcion,
+            EsAdministrador = nuevo.EsAdministrador,
+            FechaCreacion = DateTime.UtcNow,
+            FechaModificacion = DateTime.UtcNow,
+            Id = Guid.NewGuid()
+            // IdCreador =
+            // IdModificador = 
+        };
+
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Grupos.Add(nuevo);
+            ctx.Grupos.Add(grp);
             await ctx.SaveChangesAsync();
         }
 
-        return nuevo;
+        return grp;
     }
 
-    public async Task<bool> ModificarGrupo(Grupo modif)
+    public async Task<bool> ModificarGrupo(GrupoDTO modif)
     {
-        var buscado = await GrupoPorId(modif.Id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            using (var ctx = ctxFactory.CreateDbContext())
+            var buscado = await ctx.Grupos.FindAsync(modif.Id);
+
+            if (buscado != null)
             {
-                ctx.Update(modif);
+                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
+                buscado.EsAdministrador = modif.EsAdministrador == null ? buscado.EsAdministrador : modif.EsAdministrador;
+                buscado.FechaModificacion = DateTime.UtcNow;
+                // buscado.IdModificador = 
+
                 await ctx.SaveChangesAsync();
                 return true;
             }
@@ -59,17 +77,12 @@ public class GrupoService
 
     public async Task<bool> EliminarGrupo(Guid id)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
+        GrupoDTO grp = new GrupoDTO()
         {
-            var buscado = await GrupoPorId(id);
+            Id = id,
+            Activo = false
+        };
 
-            if (buscado != null)
-            {
-                buscado.Activo = false;
-                return await ModificarGrupo(buscado);
-            }
-
-            return false;
-        }
+        return await ModificarGrupo(grp);
     }
 }

@@ -31,19 +31,20 @@ public class ComentarioService
 
     public async Task<Comentario> CrearComentario(ComentarioDTO nuevo)
     {
-        Comentario com = new Comentario();
-
-        com.Activo = nuevo.Activo;
-        com.Fecha = (DateTime)nuevo.Fecha;
-        com.FechaCreacion = DateTime.UtcNow;
-        com.FechaModificacion = com.FechaCreacion;
-        com.Id = Guid.NewGuid();
-        com.IdChat = (Guid)nuevo.IdChat;
-        com.IdComentario = (Guid)nuevo.IdComentario;
-        // com.IdCreador = 
-        com.IdModificador = com.IdCreador;
-        com.IdUsuario = (Guid)nuevo.IdUsuario;
-        com.Texto = nuevo.Texto;
+        Comentario com = new Comentario()
+        {
+            Activo = nuevo.Activo,
+            Fecha = (DateTime)nuevo.Fecha,
+            FechaCreacion = DateTime.UtcNow,
+            FechaModificacion = DateTime.UtcNow,
+            Id = Guid.NewGuid(),
+            IdChat = (Guid)nuevo.IdChat,
+            IdComentario = (Guid)nuevo.IdComentario,
+            // IdCreador = 
+            // IdModificador = 
+            IdUsuario = (Guid)nuevo.IdUsuario,
+            Texto = nuevo.Texto,
+        };
 
         using (var ctx = ctxFactory.CreateDbContext())
         {

@@ -35,29 +35,30 @@ public class UsuarioService
 
     public async Task<Usuario> CrearUsuario(UsuarioDTO nuevo)
     {
-        Usuario usr = new Usuario();
-
-        usr.Activo = nuevo.Activo;
-        usr.Apellido = nuevo.Apellido;
-        usr.Apellido2 = nuevo.Apellido2;
-        usr.Clave = Cripto.CodigoSHA256(nuevo.Clave);
-        usr.Direccion = nuevo.Direccion;
-        usr.Email = nuevo.Email;
-        usr.Email2 = nuevo.Email2;
-        usr.FechaCreacion = DateTime.UtcNow;
-        usr.FechaModificacion = usr.FechaCreacion;
-        usr.Id = Guid.NewGuid();
-        usr.IdCiudad = (Guid)nuevo.IdCiudad;
-        // usr.IdCreador = 
-        usr.IdGrupo = (Guid)nuevo.IdGrupo;
-        usr.IdModificador = usr.IdCreador;
-        usr.IdProfesion = nuevo.IdProfesion;
-        usr.MaximoPublicaciones = (int)nuevo.MaximoPublicaciones;
-        usr.Nombre = nuevo.Nombre;
-        usr.Nombre2 = nuevo.Nombre2;
-        usr.Perfil = nuevo.Perfil;
-        usr.Telefono = nuevo.Telefono;
-        usr.Telefono = nuevo.Telefono;
+        Usuario usr = new Usuario()
+        {
+            Activo = nuevo.Activo,
+            Apellido = nuevo.Apellido,
+            Apellido2 = nuevo.Apellido2,
+            Clave = Cripto.CodigoSHA256(nuevo.Clave),
+            Direccion = nuevo.Direccion,
+            Email = nuevo.Email,
+            Email2 = nuevo.Email2,
+            FechaCreacion = DateTime.UtcNow,
+            FechaModificacion = DateTime.UtcNow,
+            Id = Guid.NewGuid(),
+            IdCiudad = (Guid)nuevo.IdCiudad,
+            // IdCreador = 
+            IdGrupo = (Guid)nuevo.IdGrupo,
+            // IdModificador = 
+            IdProfesion = nuevo.IdProfesion,
+            MaximoPublicaciones = (int)nuevo.MaximoPublicaciones,
+            Nombre = nuevo.Nombre,
+            Nombre2 = nuevo.Nombre2,
+            Perfil = nuevo.Perfil,
+            Telefono = nuevo.Telefono,
+            Telefono2 = nuevo.Telefono2
+        };
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -76,8 +77,6 @@ public class UsuarioService
 
             if (buscado != null)
             {
-                Usuario usr = new Usuario();
-
                 buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
                 buscado.Apellido = modif.Apellido == null ? buscado.Apellido : modif.Apellido;
                 buscado.Apellido2 = modif.Apellido2 == null ? buscado.Apellido2 : modif.Apellido2;

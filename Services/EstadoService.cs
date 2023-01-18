@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
+using DTOs;
 
 namespace Services;
 
@@ -21,7 +22,7 @@ public class EstadoService
         }
     }
 
-    public async Task<Estado?> EstadoPorId(Guid id)
+    public async Task<Estado?> UnEstado(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -29,26 +30,46 @@ public class EstadoService
         }
     }
 
-    public async Task<Estado> CrearEstado(Estado nuevo)
+    public async Task<Estado> CrearEstado(EstadoDTO nuevo)
     {
+        Estado est = new Estado()
+        {
+            Activo = nuevo.Activo,
+            FechaCreacion = DateTime.UtcNow,
+            FechaModificacion = DateTime.UtcNow,
+            Id = Guid.NewGuid(),
+            // IdCreador =
+            // IdModificador = 
+            IdPais = (Guid)nuevo.IdPais,
+            Nombre = nuevo.Nombre
+        };
+
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Estados.Add(nuevo);
+            ctx.Estados.Add(est);
             await ctx.SaveChangesAsync();
         }
 
-        return nuevo;
+        return est;
     }
 
-    public async Task<bool> ModificarEstado(Estado modif)
+    public async Task<bool> ModificarEstado(EstadoDTO modif)
     {
-        var buscado = await EstadoPorId(modif.Id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            using (var ctx = ctxFactory.CreateDbContext())
+            var buscado = await ctx.Estados.FindAsync(modif.Id);
+
+            if (buscado != null)
             {
-                ctx.Update(modif);
+                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                buscado.FechaCreacion = DateTime.UtcNow;
+                buscado.FechaModificacion = DateTime.UtcNow;
+                buscado.Id = Guid.NewGuid();
+                // buscado.IdCreador =;
+                // buscado.IdModificador = ;
+                buscado.IdPais = modif.IdPais == null ? buscado.IdPais : (Guid)modif.IdPais;
+                buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
+
                 await ctx.SaveChangesAsync();
                 return true;
             }
@@ -59,17 +80,12 @@ public class EstadoService
 
     public async Task<bool> EliminarEstado(Guid id)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
+        EstadoDTO est = new EstadoDTO()
         {
-            var buscado = await EstadoPorId(id);
+            Id = id,
+            Activo = false
+        };
 
-            if (buscado != null)
-            {
-                buscado.Activo = false;
-                return await ModificarEstado(buscado);
-            }
-
-            return false;
-        }
+        return await ModificarEstado(est);
     }
 }

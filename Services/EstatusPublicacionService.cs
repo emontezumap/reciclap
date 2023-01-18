@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
+using DTOs;
 
 namespace Services;
 
@@ -21,7 +22,7 @@ public class EstatusPublicacionService
         }
     }
 
-    public async Task<EstatusPublicacion?> EstatusPublicacionPorId(Guid id)
+    public async Task<EstatusPublicacion?> UnEstatusPublicacion(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -29,26 +30,35 @@ public class EstatusPublicacionService
         }
     }
 
-    public async Task<EstatusPublicacion> CrearEstatusPublicacion(EstatusPublicacion nuevo)
+    public async Task<EstatusPublicacion> CrearEstatusPublicacion(EstatusPublicacionDTO nuevo)
     {
+        EstatusPublicacion ep = new EstatusPublicacion()
+        {
+            Activo = nuevo.Activo,
+            Descripcion = nuevo.Descripcion,
+            Id = (Guid)nuevo.Id
+        };
+
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.EstatusPublicaciones.Add(nuevo);
+            ctx.EstatusPublicaciones.Add(ep);
             await ctx.SaveChangesAsync();
         }
 
-        return nuevo;
+        return ep;
     }
 
-    public async Task<bool> ModificarEstatusPublicacion(EstatusPublicacion modif)
+    public async Task<bool> ModificarEstatusPublicacion(EstatusPublicacionDTO modif)
     {
-        var buscado = await EstatusPublicacionPorId(modif.Id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            using (var ctx = ctxFactory.CreateDbContext())
+            var buscado = await ctx.EstatusPublicaciones.FindAsync(modif.Id);
+
+            if (buscado != null)
             {
-                ctx.Update(modif);
+                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
+
                 await ctx.SaveChangesAsync();
                 return true;
             }
@@ -59,17 +69,12 @@ public class EstatusPublicacionService
 
     public async Task<bool> EliminarEstatusPublicacion(Guid id)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
+        EstatusPublicacionDTO ep = new EstatusPublicacionDTO()
         {
-            var buscado = await EstatusPublicacionPorId(id);
+            Id = id,
+            Activo = false
+        };
 
-            if (buscado != null)
-            {
-                buscado.Activo = false;
-                return await ModificarEstatusPublicacion(buscado);
-            }
-
-            return false;
-        }
+        return await ModificarEstatusPublicacion(ep);
     }
 }

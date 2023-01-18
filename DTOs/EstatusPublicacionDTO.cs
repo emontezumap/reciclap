@@ -1,6 +1,6 @@
 namespace DTOs;
 
-public class EstatusPublicacion
+public class EstatusPublicacionDTO
 {
     public Guid? Id { get; set; } = null;
     public string? Descripcion { get; set; } = null;

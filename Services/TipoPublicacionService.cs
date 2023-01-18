@@ -30,46 +30,60 @@ public class TipoPublicacionService
         }
     }
 
-    public async Task<TipoPublicacion> CrearTipoPublicacion(TipoPublicacion nuevo)
+    public async Task<TipoPublicacion> CrearTipoPublicacion(TipoPublicacionDTO nuevo)
     {
+        TipoPublicacion tp = new TipoPublicacion()
+        {
+            Activo = nuevo.Activo,
+            Descripcion = nuevo.Descripcion,
+            FechaCreacion = DateTime.UtcNow,
+            FechaModificacion = DateTime.UtcNow,
+            Id = Guid.NewGuid(),
+            // IdCreador = 
+            // IdModificador = 
+        };
+
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.TiposPublicacion.Add(nuevo);
+            ctx.TiposPublicacion.Add(tp);
             await ctx.SaveChangesAsync();
         }
 
-        return nuevo;
+        return tp;
     }
 
-    public async Task<bool> ModificarTipoPublicacion(TipoPublicacion modif)
+    public async Task<bool> ModificarTipoPublicacion(TipoPublicacionDTO modif)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await UnTipoPublicacion(modif.Id);
+            var buscado = await ctx.TiposPublicacion.FindAsync(modif.Id);
 
             if (buscado != null)
             {
+                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
+                buscado.FechaCreacion = DateTime.UtcNow;
+                buscado.FechaModificacion = DateTime.UtcNow;
+                buscado.Id = Guid.NewGuid();
+                // IdCreador = 
+                // IdModificador = 
+
                 await ctx.SaveChangesAsync();
                 return true;
-            }
-        }
-
-        return false;
-    }
-
-    public async Task<bool> EliminarTipoPublicacion(Guid id)
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            var buscado = await UnTipoPublicacion(id);
-
-            if (buscado != null)
-            {
-                buscado.Activo = false;
-                return await ModificarTipoPublicacion(buscado);
             }
 
             return false;
         }
+    }
+
+    public async Task<bool> EliminarTipoPublicacion(Guid id)
+    {
+        TipoPublicacionDTO tp = new TipoPublicacionDTO()
+        {
+            Id = id,
+            Activo = false
+        };
+
+        return await ModificarTipoPublicacion(tp);
     }
 }

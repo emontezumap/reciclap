@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
+using DTOs;
 
 namespace Services;
 
@@ -21,7 +22,7 @@ public class ChatService
         }
     }
 
-    public async Task<Chat?> ChatPorId(Guid id)
+    public async Task<Chat?> UnChat(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -29,53 +30,61 @@ public class ChatService
         }
     }
 
-    public async Task<Chat> CrearChat(Chat nuevo)
+    public async Task<Chat> CrearChat(ChatDTO nuevo)
     {
+        Chat chat = new Chat()
+        {
+            Activo = nuevo.Activo,
+            Fecha = (DateTime)nuevo.Fecha,
+            FechaCreacion = DateTime.UtcNow,
+            FechaModificacion = DateTime.UtcNow,
+            Id = Guid.NewGuid(),
+            // IdCreador = 
+            // IdModificador = 
+            IdPublicacion = (Guid)nuevo.IdPublicacion,
+            Titulo = nuevo.Titulo
+        };
+
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Chats.Add(nuevo);
+            ctx.Chats.Add(chat);
             await ctx.SaveChangesAsync();
         }
 
-        return nuevo;
+        return chat;
     }
 
-    public async Task<bool> ModificarChat(Chat modif)
-    {
-        var buscado = await ChatPorId(modif.Id);
-
-        if (buscado != null)
-        {
-            //     buscado.Titulo = modif.Titulo;
-            //     buscado.Fecha = modif.Fecha;
-            //     buscado.IdPublicacion = modif.IdPublicacion;
-            //     buscado.IdModificador = modif.IdModificador;
-            //     buscado.FechaModificacion = DateTime.UtcNow;
-
-            using (var ctx = ctxFactory.CreateDbContext())
-            {
-                ctx.Update(modif);
-                await ctx.SaveChangesAsync();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public async Task<bool> EliminarChat(Guid id)
+    public async Task<bool> ModificarChat(ChatDTO modif)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await ChatPorId(id);
+            var buscado = await ctx.Chats.FindAsync(modif.Id);
 
             if (buscado != null)
             {
-                buscado.Activo = false;
-                return await ModificarChat(buscado);
+                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
+                buscado.FechaModificacion = DateTime.UtcNow;
+                buscado.IdPublicacion = modif.IdPublicacion == null ? buscado.IdPublicacion : (Guid)modif.IdPublicacion;
+                // buscado.IdModificador = 
+                buscado.Titulo = modif.Titulo == null ? buscado.Titulo : modif.Titulo;
+
+                await ctx.SaveChangesAsync();
+                return true;
             }
 
             return false;
         }
+    }
+
+    public async Task<bool> EliminarChat(Guid id)
+    {
+        ChatDTO chat = new ChatDTO()
+        {
+            Id = id,
+            Activo = false
+        };
+
+        return await ModificarChat(chat);
     }
 }

@@ -1,6 +1,6 @@
 namespace DTOs;
 
-public class Rol
+public class RolDTO
 {
     public Guid? Id { get; set; } = null;
     public string? Descripcion { get; set; } = null;

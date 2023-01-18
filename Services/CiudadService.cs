@@ -32,18 +32,17 @@ public class CiudadService
 
     public async Task<Ciudad> CrearCiudad(CiudadDTO nuevo)
     {
-        Ciudad ciudad = new Ciudad();
-
-        ciudad.FechaCreacion = DateTime.UtcNow;
-        ciudad.FechaModificacion = ciudad.FechaCreacion;
-        ciudad.Id = Guid.NewGuid();
-
-        // if (nuevo.IdEstado == null)
-
-        // ciudad.IdCreador = 
-        ciudad.IdEstado = (Guid)nuevo.IdEstado;
-        // ciudad.IdModificador
-        ciudad.Nombre = (string)nuevo.Nombre;
+        Ciudad ciudad = new Ciudad()
+        {
+            Activo = nuevo.Activo,
+            FechaCreacion = DateTime.UtcNow,
+            FechaModificacion = DateTime.UtcNow,
+            Id = Guid.NewGuid(),
+            // ciudad.IdCreador = 
+            IdEstado = (Guid)nuevo.IdEstado,
+            // ciudad.IdModificador
+            Nombre = (string)nuevo.Nombre
+        };
 
         using (var ctx = ctxFactory.CreateDbContext())
         {

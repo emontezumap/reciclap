@@ -37,21 +37,22 @@ public class PublicacionService
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Publicacion pub = new Publicacion();
-
-            pub.Activo = nuevo.Activo;
-            pub.Descripcion = nuevo.Descripcion;
-            pub.Fecha = (DateTime)nuevo.Fecha;
-            pub.FechaCreacion = DateTime.UtcNow;
-            pub.FechaModificacion = pub.FechaCreacion;
-            pub.Gustan = (int)nuevo.Gustan;
-            pub.Id = Guid.NewGuid();
-            // pub.IdCreador = 
-            pub.IdEstatus = (Guid)nuevo.IdEstatus;
-            pub.IdModificador = pub.IdCreador;
-            pub.IdTipoPublicacion = (Guid)nuevo.IdTipoPublicacion;
-            pub.NoGustan = (int)nuevo.NoGustan;
-            pub.Titulo = nuevo.Titulo;
+            Publicacion pub = new Publicacion()
+            {
+                Activo = nuevo.Activo,
+                Descripcion = nuevo.Descripcion,
+                Fecha = (DateTime)nuevo.Fecha,
+                FechaCreacion = DateTime.UtcNow,
+                FechaModificacion = DateTime.UtcNow,
+                Gustan = (int)nuevo.Gustan,
+                Id = Guid.NewGuid(),
+                // IdCreador = 
+                IdEstatus = (Guid)nuevo.IdEstatus,
+                // IdModificador =
+                IdTipoPublicacion = (Guid)nuevo.IdTipoPublicacion,
+                NoGustan = (int)nuevo.NoGustan,
+                Titulo = nuevo.Titulo,
+            };
 
             ctx.Publicaciones.Add(pub);
             await ctx.SaveChangesAsync();

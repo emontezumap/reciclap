@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
+using DTOs;
 
 namespace Services;
 
@@ -21,7 +22,7 @@ public class RolService
         }
     }
 
-    public async Task<Rol?> RolPorId(Guid id)
+    public async Task<Rol?> UnRol(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -29,26 +30,44 @@ public class RolService
         }
     }
 
-    public async Task<Rol> CrearRol(Rol nuevo)
+    public async Task<Rol> CrearRol(RolDTO nuevo)
     {
+        Rol rol = new Rol()
+        {
+            Activo = nuevo.Activo,
+            Descripcion = nuevo.Descripcion,
+            EsCreador = (bool)nuevo.EsCreador,
+            FechaCreacion = DateTime.UtcNow,
+            FechaModificacion = DateTime.UtcNow,
+            Id = Guid.NewGuid(),
+            // IdCreador = 
+            // IdModificador = 
+        };
+
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Roles.Add(nuevo);
+            ctx.Roles.Add(rol);
             await ctx.SaveChangesAsync();
         }
 
-        return nuevo;
+        return rol;
     }
 
-    public async Task<bool> ModificarRol(Rol modif)
+    public async Task<bool> ModificarRol(RolDTO modif)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await RolPorId(modif.Id);
+            var buscado = await ctx.Roles.FindAsync(modif.Id);
 
             if (buscado != null)
             {
-                ctx.Update(modif);
+                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
+                buscado.EsCreador = modif.EsCreador == null ? buscado.EsCreador : (bool)modif.EsCreador;
+                buscado.FechaModificacion = DateTime.UtcNow;
+                // buscado.IdCreador = 
+                // buscado.IdModificador = 
+
                 await ctx.SaveChangesAsync();
                 return true;
             }
@@ -59,17 +78,12 @@ public class RolService
 
     public async Task<bool> EliminarRol(Guid id)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
+        RolDTO rol = new RolDTO()
         {
-            var buscado = await RolPorId(id);
+            Id = id,
+            Activo = false
+        };
 
-            if (buscado != null)
-            {
-                buscado.Activo = false;
-                return await ModificarRol(buscado);
-            }
-
-            return false;
-        }
+        return await ModificarRol(rol);
     }
 }
