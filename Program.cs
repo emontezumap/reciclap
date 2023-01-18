@@ -23,17 +23,17 @@ builder.Services.AddSwaggerGen();
 // );
 
 builder.Services.AddPooledDbContextFactory<SSDBContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")) //.LogTo(Console.WriteLine)
 );
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<IUriService>(o =>
-    {
-        var accessor = o.GetRequiredService<IHttpContextAccessor>();
-        var request = accessor!.HttpContext!.Request;
-        var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
-        return new UriService(uri);
-    });
+// builder.Services.AddSingleton<IUriService>(o =>
+//     {
+//         var accessor = o.GetRequiredService<IHttpContextAccessor>();
+//         var request = accessor!.HttpContext!.Request;
+//         var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+//         return new UriService(uri);
+//     });
 
 // builder.Services.AddScoped<ChatService>();
 // builder.Services.AddScoped<CiudadService>();
@@ -52,27 +52,26 @@ builder.Services.AddSingleton<IUriService>(o =>
 // builder.Services.AddScoped<LoginService>();
 // builder.Services.AddScoped<Consulta>();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])
-            ),
-            ValidateIssuer = false,
-            ValidateAudience = false
-        };
-    });
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(options =>
+//     {
+//         options.TokenValidationParameters = new TokenValidationParameters
+//         {
+//             ValidateIssuerSigningKey = true,
+//             IssuerSigningKey = new SymmetricSecurityKey(
+//                 Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])
+//             ),
+//             ValidateIssuer = false,
+//             ValidateAudience = false
+//         };
+//     });
 
-builder.Services.AddAuthorization(options =>
-    options.AddPolicy("Admin", policy => policy.RequireClaim("Grupo", "Administradores"))
-);
+// builder.Services.AddAuthorization(options =>
+//     options.AddPolicy("Admin", policy => policy.RequireClaim("Grupo", "Administradores"))
+// );
 
 builder.Services.AddGraphQLServer()
     .AddQueryType<Consulta>()
-        .AddProjections().AddFiltering().AddSorting()
     .AddMutationType(m => m.Name("Mutacion"))
         .AddType<ChatService>()
         .AddType<CiudadService>()
@@ -86,7 +85,8 @@ builder.Services.AddGraphQLServer()
         .AddType<PublicacionService>()
         .AddType<RolService>()
         .AddType<TipoPublicacionService>()
-        .AddType<UsuarioService>();
+        .AddType<UsuarioService>()
+    .AddProjections().AddFiltering().AddSorting();
 
 var app = builder.Build();
 
@@ -107,6 +107,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

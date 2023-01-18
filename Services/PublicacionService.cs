@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
+using DTOs;
 
 namespace Services;
 
@@ -24,7 +25,7 @@ public class PublicacionService
         }
     }
 
-    public async Task<Publicacion?> PublicacionPorId(Guid id)
+    public async Task<Publicacion?> UnaPublicacion(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -32,26 +33,52 @@ public class PublicacionService
         }
     }
 
-    public async Task<Publicacion> CrearPublicacion(Publicacion nuevo)
+    public async Task<Publicacion> CrearPublicacion(PublicacionDTO nuevo)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Publicaciones.Add(nuevo);
-            await ctx.SaveChangesAsync();
-        }
+            Publicacion pub = new Publicacion();
 
-        return nuevo;
+            pub.Activo = nuevo.Activo;
+            pub.Descripcion = nuevo.Descripcion;
+            pub.Fecha = (DateTime)nuevo.Fecha;
+            pub.FechaCreacion = DateTime.UtcNow;
+            pub.FechaModificacion = pub.FechaCreacion;
+            pub.Gustan = (int)nuevo.Gustan;
+            pub.Id = Guid.NewGuid();
+            // pub.IdCreador = 
+            pub.IdEstatus = (Guid)nuevo.IdEstatus;
+            pub.IdModificador = pub.IdCreador;
+            pub.IdTipoPublicacion = (Guid)nuevo.IdTipoPublicacion;
+            pub.NoGustan = (int)nuevo.NoGustan;
+            pub.Titulo = nuevo.Titulo;
+
+            ctx.Publicaciones.Add(pub);
+            await ctx.SaveChangesAsync();
+
+            return pub;
+        }
     }
 
-    public async Task<bool> ModificarPublicacion(Publicacion modif)
+    public async Task<bool> ModificarPublicacion(PublicacionDTO modif)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await PublicacionPorId(modif.Id);
+            var buscado = await ctx.Publicaciones.FindAsync(modif.Id);
 
             if (buscado != null)
             {
-                ctx.Update(modif);
+                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
+                buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
+                buscado.FechaModificacion = DateTime.UtcNow;
+                buscado.Gustan = modif.Gustan == null ? buscado.Gustan : (int)modif.Gustan;
+                buscado.IdEstatus = modif.IdEstatus == null ? buscado.IdEstatus : (Guid)modif.IdEstatus;
+                // buscado.IdModificador = 
+                buscado.IdTipoPublicacion = modif.IdTipoPublicacion == null ? buscado.IdTipoPublicacion : (Guid)modif.IdTipoPublicacion;
+                buscado.NoGustan = modif.NoGustan == null ? buscado.NoGustan : (int)modif.NoGustan;
+                buscado.Titulo = modif.Titulo == null ? buscado.Titulo : modif.Titulo;
+
                 await ctx.SaveChangesAsync();
                 return true;
             }
@@ -62,17 +89,12 @@ public class PublicacionService
 
     public async Task<bool> EliminarPublicacion(Guid id)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
+        PublicacionDTO pub = new PublicacionDTO()
         {
-            var buscado = await PublicacionPorId(id);
+            Id = id,
+            Activo = false
+        };
 
-            if (buscado != null)
-            {
-                buscado.Activo = false;
-                return await ModificarPublicacion(buscado);
-            }
-
-            return false;
-        }
+        return await ModificarPublicacion(pub);
     }
 }

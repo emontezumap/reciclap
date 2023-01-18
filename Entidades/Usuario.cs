@@ -52,6 +52,7 @@ public class Usuario
     [MaxLength(250, ErrorMessage = "La dirección de correo no debe exceder los 250 caracteres")]
     public string Email { get; set; } = "";
 
+    [JsonIgnore]
     [Column("clave")]
     [MaxLength(256)]
     public string Clave { get; set; } = "";

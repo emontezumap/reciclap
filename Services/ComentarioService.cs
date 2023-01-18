@@ -21,7 +21,7 @@ public class ComentarioService
         }
     }
 
-    public async Task<Comentario?> ComentarioPorId(Guid id)
+    public async Task<Comentario?> UnComentario(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -29,26 +29,50 @@ public class ComentarioService
         }
     }
 
-    public async Task<Comentario> CrearComentario(Comentario nuevo)
+    public async Task<Comentario> CrearComentario(ComentarioDTO nuevo)
     {
+        Comentario com = new Comentario();
+
+        com.Activo = nuevo.Activo;
+        com.Fecha = (DateTime)nuevo.Fecha;
+        com.FechaCreacion = DateTime.UtcNow;
+        com.FechaModificacion = com.FechaCreacion;
+        com.Id = Guid.NewGuid();
+        com.IdChat = (Guid)nuevo.IdChat;
+        com.IdComentario = (Guid)nuevo.IdComentario;
+        // com.IdCreador = 
+        com.IdModificador = com.IdCreador;
+        com.IdUsuario = (Guid)nuevo.IdUsuario;
+        com.Texto = nuevo.Texto;
+
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Comentarios.Add(nuevo);
+            ctx.Comentarios.Add(com);
             await ctx.SaveChangesAsync();
         }
 
-        return nuevo;
+        return com;
     }
 
-    public async Task<bool> ModificarComentario(Comentario modif)
+    public async Task<bool> ModificarComentario(ComentarioDTO modif)
     {
-        var buscado = await ComentarioPorId(modif.Id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            using (var ctx = ctxFactory.CreateDbContext())
+            var buscado = await ctx.Comentarios.FindAsync(modif.Id);
+
+            if (buscado != null)
             {
-                ctx.Update(modif);
+                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
+                buscado.FechaCreacion = DateTime.UtcNow == null ? buscado.FechaCreacion : DateTime.UtcNow;
+                buscado.FechaModificacion = buscado.FechaCreacion;
+                buscado.IdChat = modif.IdChat == null ? buscado.IdChat : (Guid)modif.IdChat;
+                buscado.IdComentario = modif.IdComentario == null ? buscado.IdComentario : (Guid)modif.IdComentario;
+                // buscado.IdCreador = 
+                buscado.IdModificador = buscado.IdCreador;
+                buscado.IdUsuario = modif.IdUsuario == null ? buscado.IdUsuario : (Guid)modif.IdUsuario;
+                buscado.Texto = modif.Texto == null ? buscado.Texto : modif.Texto;
+
                 await ctx.SaveChangesAsync();
                 return true;
             }
@@ -59,17 +83,12 @@ public class ComentarioService
 
     public async Task<bool> EliminarComentario(Guid id)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
+        ComentarioDTO com = new ComentarioDTO()
         {
-            var buscado = await ComentarioPorId(id);
+            Id = id,
+            Activo = false
+        };
 
-            if (buscado != null)
-            {
-                buscado.Activo = false;
-                return await ModificarComentario(buscado);
-            }
-
-            return false;
-        }
+        return await ModificarComentario(com);
     }
 }

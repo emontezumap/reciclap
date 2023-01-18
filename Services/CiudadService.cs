@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
+using DTOs;
 
 namespace Services;
 
@@ -21,7 +22,7 @@ public class CiudadService
         }
     }
 
-    public async Task<Ciudad?> CiudadPorId(Guid id)
+    public async Task<Ciudad?> UnaCiudad(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -29,26 +30,44 @@ public class CiudadService
         }
     }
 
-    public async Task<Ciudad> CrearCiudad(Ciudad nuevo)
+    public async Task<Ciudad> CrearCiudad(CiudadDTO nuevo)
     {
+        Ciudad ciudad = new Ciudad();
+
+        ciudad.FechaCreacion = DateTime.UtcNow;
+        ciudad.FechaModificacion = ciudad.FechaCreacion;
+        ciudad.Id = Guid.NewGuid();
+
+        // if (nuevo.IdEstado == null)
+
+        // ciudad.IdCreador = 
+        ciudad.IdEstado = (Guid)nuevo.IdEstado;
+        // ciudad.IdModificador
+        ciudad.Nombre = (string)nuevo.Nombre;
+
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Ciudades.Add(nuevo);
+            ctx.Ciudades.Add(ciudad);
             await ctx.SaveChangesAsync();
         }
 
-        return nuevo;
+        return ciudad;
     }
 
-    public async Task<bool> ModificarCiudad(Ciudad modif)
+    public async Task<bool> ModificarCiudad(CiudadDTO modif)
     {
-        var buscado = await CiudadPorId(modif.Id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            using (var ctx = ctxFactory.CreateDbContext())
+            var buscado = await ctx.Ciudades.FindAsync(modif.Id);
+
+            if (buscado != null)
             {
-                ctx.Update(modif);
+                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                buscado.FechaModificacion = DateTime.UtcNow;
+                buscado.IdEstado = modif.IdEstado == null ? buscado.IdEstado : (Guid)modif.IdEstado;
+                // buscado.IdModificador = 
+                buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
+
                 await ctx.SaveChangesAsync();
                 return true;
             }
@@ -59,17 +78,12 @@ public class CiudadService
 
     public async Task<bool> EliminarCiudad(Guid id)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
+        CiudadDTO ciudad = new CiudadDTO()
         {
-            var buscado = await CiudadPorId(id);
+            Id = id,
+            Activo = false
+        };
 
-            if (buscado != null)
-            {
-                buscado.Activo = false;
-                return await ModificarCiudad(buscado);
-            }
-
-            return false;
-        }
+        return await ModificarCiudad(ciudad);
     }
 }

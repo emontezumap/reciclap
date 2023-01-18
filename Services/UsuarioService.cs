@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
+using DTOs;
 using Contenedores;
 using Filtros;
+using Herramientas;
 
 namespace Services;
 
@@ -15,7 +17,6 @@ public class UsuarioService
         this.ctxFactory = ctxFactory;
     }
 
-    // public async Task<IEnumerable<Usuario>> Todos(FiltroPaginacion fp, string ruta)
     public async Task<IEnumerable<Usuario>> TodosLosUsuarios()
     {
         using (var ctx = ctxFactory.CreateDbContext())
@@ -24,7 +25,7 @@ public class UsuarioService
         }
     }
 
-    public async Task<Usuario?> UsuarioPorId(Guid id)
+    public async Task<Usuario?> UnUsuario(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -32,26 +33,70 @@ public class UsuarioService
         }
     }
 
-    public async Task<Usuario> CrearUsuario(Usuario nuevo)
+    public async Task<Usuario> CrearUsuario(UsuarioDTO nuevo)
     {
+        Usuario usr = new Usuario();
+
+        usr.Activo = nuevo.Activo;
+        usr.Apellido = nuevo.Apellido;
+        usr.Apellido2 = nuevo.Apellido2;
+        usr.Clave = Cripto.CodigoSHA256(nuevo.Clave);
+        usr.Direccion = nuevo.Direccion;
+        usr.Email = nuevo.Email;
+        usr.Email2 = nuevo.Email2;
+        usr.FechaCreacion = DateTime.UtcNow;
+        usr.FechaModificacion = usr.FechaCreacion;
+        usr.Id = Guid.NewGuid();
+        usr.IdCiudad = (Guid)nuevo.IdCiudad;
+        // usr.IdCreador = 
+        usr.IdGrupo = (Guid)nuevo.IdGrupo;
+        usr.IdModificador = usr.IdCreador;
+        usr.IdProfesion = nuevo.IdProfesion;
+        usr.MaximoPublicaciones = (int)nuevo.MaximoPublicaciones;
+        usr.Nombre = nuevo.Nombre;
+        usr.Nombre2 = nuevo.Nombre2;
+        usr.Perfil = nuevo.Perfil;
+        usr.Telefono = nuevo.Telefono;
+        usr.Telefono = nuevo.Telefono;
+
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Usuarios.Add(nuevo);
+            ctx.Usuarios.Add(usr);
             await ctx.SaveChangesAsync();
         }
 
-        return nuevo;
+        return usr;
     }
 
-    public async Task<bool> ModificarUsuario(Usuario modif)
+    public async Task<bool> ModificarUsuario(UsuarioDTO modif)
     {
-        var buscado = await UsuarioPorId(modif.Id);
-
-        if (buscado != null)
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            using (var ctx = ctxFactory.CreateDbContext())
+            var buscado = await ctx.Usuarios.FindAsync(modif.Id);
+
+            if (buscado != null)
             {
-                ctx.Update(modif);
+                Usuario usr = new Usuario();
+
+                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                buscado.Apellido = modif.Apellido == null ? buscado.Apellido : modif.Apellido;
+                buscado.Apellido2 = modif.Apellido2 == null ? buscado.Apellido2 : modif.Apellido2;
+                buscado.Clave = modif.Clave == null ? buscado.Clave : Cripto.CodigoSHA256(modif.Clave);
+                buscado.Direccion = modif.Direccion == null ? buscado.Direccion : modif.Direccion;
+                buscado.Email = modif.Email == null ? buscado.Email : modif.Email;
+                buscado.Email2 = modif.Email2 == null ? buscado.Email2 : modif.Email2;
+                buscado.FechaModificacion = DateTime.UtcNow;
+                buscado.IdCiudad = modif.IdCiudad == null ? buscado.IdCiudad : (Guid)modif.IdCiudad;
+                buscado.IdGrupo = modif.IdGrupo == null ? buscado.IdGrupo : (Guid)modif.IdGrupo;
+                // buscado.IdModificador = 
+                buscado.IdProfesion = modif.IdProfesion == null ? buscado.IdProfesion : modif.IdProfesion;
+                buscado.MaximoPublicaciones = modif.MaximoPublicaciones == null ? buscado.MaximoPublicaciones : (int)modif.MaximoPublicaciones;
+                buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
+                buscado.Nombre2 = modif.Nombre2 == null ? buscado.Nombre2 : modif.Nombre2;
+                buscado.Perfil = modif.Perfil == null ? buscado.Perfil : modif.Perfil;
+                buscado.Telefono = modif.Telefono == null ? buscado.Telefono : modif.Telefono;
+                buscado.Telefono2 = modif.Telefono2 == null ? buscado.Telefono2 : modif.Telefono2;
+
                 await ctx.SaveChangesAsync();
                 return true;
             }
@@ -62,17 +107,13 @@ public class UsuarioService
 
     public async Task<bool> EliminarUsuario(Guid id)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
+        UsuarioDTO usr = new UsuarioDTO()
         {
-            var buscado = await UsuarioPorId(id);
+            Id = id,
+            Activo = false
+        };
 
-            if (buscado != null)
-            {
-                buscado.Activo = false;
-                return await ModificarUsuario(buscado);
-            }
+        return await ModificarUsuario(usr);
 
-            return false;
-        }
     }
 }

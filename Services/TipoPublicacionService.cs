@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
+using DTOs;
 
 namespace Services;
 
@@ -21,7 +22,7 @@ public class TipoPublicacionService
         }
     }
 
-    public async Task<TipoPublicacion?> TipoPublicacionPorId(Guid id)
+    public async Task<TipoPublicacion?> UnTipoPublicacion(Guid id)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -44,7 +45,7 @@ public class TipoPublicacionService
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await TipoPublicacionPorId(modif.Id);
+            var buscado = await UnTipoPublicacion(modif.Id);
 
             if (buscado != null)
             {
@@ -60,7 +61,7 @@ public class TipoPublicacionService
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await TipoPublicacionPorId(id);
+            var buscado = await UnTipoPublicacion(id);
 
             if (buscado != null)
             {
