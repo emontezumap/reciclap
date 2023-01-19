@@ -29,6 +29,8 @@ public class Chat
     public bool? Activo { get; set; } = true;
 
     [JsonIgnore]
+    public virtual Publicacion? Publicacion { get; set; }
+    [JsonIgnore]
     public virtual ICollection<Comentario>? Comentarios { get; set; }
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }

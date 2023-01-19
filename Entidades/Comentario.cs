@@ -32,6 +32,10 @@ public class Comentario
     public bool? Activo { get; set; } = true;
 
     [JsonIgnore]
+    public virtual Chat? Chat { get; set; }
+    [JsonIgnore]
+    public virtual Usuario? Usuario { get; set; }
+    [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]
     public virtual Usuario? Modificador { get; set; }

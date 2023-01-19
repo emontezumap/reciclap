@@ -19,7 +19,6 @@ public class SSDBContext : DbContext
     public DbSet<TipoPublicacion> TiposPublicacion { get; set; } = null!;
     public DbSet<Usuario> Usuarios { get; set; } = null!;
 
-
     public SSDBContext(DbContextOptions<SSDBContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder mb)
@@ -40,7 +39,7 @@ public class SSDBContext : DbContext
         UsuarioValoresPorDefecto(mb);
 
         // Indices
-        Indices(mb);
+        CrearIndices(mb);
 
         // Relaciones
         ChatRelaciones(mb);
@@ -503,7 +502,7 @@ public class SSDBContext : DbContext
     }
 
     // Indices
-    private void Indices(ModelBuilder mb)
+    private void CrearIndices(ModelBuilder mb)
     {
         mb.Entity<Chat>()
             .HasIndex(p => p.Titulo).IsUnique();
@@ -553,7 +552,7 @@ public class SSDBContext : DbContext
     {
         mb.Entity<Chat>()
             .HasMany(p => p.Comentarios)
-            .WithOne()
+            .WithOne(p => p.Chat)
             .HasForeignKey(p => p.IdChat)
             .OnDelete(DeleteBehavior.NoAction);
 
@@ -574,7 +573,7 @@ public class SSDBContext : DbContext
     {
         mb.Entity<Ciudad>()
             .HasMany(p => p.Usuarios)
-            .WithOne()
+            .WithOne(p => p.Ciudad)
             .HasForeignKey(p => p.IdCiudad)
             .OnDelete(DeleteBehavior.NoAction);
 
@@ -637,7 +636,7 @@ public class SSDBContext : DbContext
     {
         mb.Entity<EstatusPublicacion>()
             .HasMany(p => p.Publicaciones)
-            .WithOne()
+            .WithOne(p => p.Estatus)
             .HasForeignKey(p => p.IdEstatus)
             .OnDelete(DeleteBehavior.NoAction);
 
@@ -727,7 +726,7 @@ public class SSDBContext : DbContext
     {
         mb.Entity<Profesion>()
             .HasMany(p => p.Usuarios)
-            .WithOne()
+            .WithOne(p => p.Profesion)
             .HasForeignKey(p => p.IdProfesion)
             .OnDelete(DeleteBehavior.NoAction);
 
@@ -769,7 +768,7 @@ public class SSDBContext : DbContext
     {
         mb.Entity<Rol>()
             .HasMany(p => p.RolesAsignados)
-            .WithOne()
+            .WithOne(p => p.Rol)
             .HasForeignKey(p => p.IdRol)
             .OnDelete(DeleteBehavior.NoAction);
 
@@ -790,7 +789,7 @@ public class SSDBContext : DbContext
     {
         mb.Entity<TipoPublicacion>()
             .HasMany(p => p.Publicaciones)
-            .WithOne()
+            .WithOne(p => p.Tipo)
             .HasForeignKey(p => p.IdTipoPublicacion)
             .OnDelete(DeleteBehavior.NoAction);
 
@@ -811,7 +810,7 @@ public class SSDBContext : DbContext
     {
         mb.Entity<Usuario>()
             .HasMany(p => p.Comentarios)
-            .WithOne()
+            .WithOne(p => p.Usuario)
             .HasForeignKey(p => p.IdUsuario)
             .OnDelete(DeleteBehavior.NoAction);
 

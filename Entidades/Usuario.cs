@@ -86,18 +86,17 @@ public class Usuario
     public bool? Activo { get; set; } = true;
 
     [JsonIgnore]
-    public virtual Usuario? Creador { get; set; }
-
-    [JsonIgnore]
-    public virtual Usuario? Modificador { get; set; }
-
+    public virtual Ciudad? Ciudad { get; set; }
     [JsonIgnore]
     public virtual Grupo? Grupo { get; set; }
-
+    [JsonIgnore]
+    public virtual Profesion? Profesion { get; set; }
+    [JsonIgnore]
+    public virtual Usuario? Creador { get; set; }
+    [JsonIgnore]
+    public virtual Usuario? Modificador { get; set; }
     [JsonIgnore]
     public virtual ICollection<Comentario>? Comentarios { get; set; }
-
     [JsonIgnore]
     public virtual ICollection<Personal>? PublicacionesLink { get; set; }
-
 }

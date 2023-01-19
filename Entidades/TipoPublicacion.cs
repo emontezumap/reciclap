@@ -29,6 +29,6 @@ public class TipoPublicacion
     [JsonIgnore]
     public virtual Usuario? Modificador { get; set; }
     [JsonIgnore]
-    public virtual ICollection<Publicacion> Publicaciones { get; set; } = new List<Publicacion>();
+    public virtual ICollection<Publicacion>? Publicaciones { get; set; }
 
 }

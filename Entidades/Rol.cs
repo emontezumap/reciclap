@@ -31,5 +31,5 @@ public class Rol
     [JsonIgnore]
     public virtual Usuario? Modificador { get; set; }
     [JsonIgnore]
-    public virtual ICollection<Personal> RolesAsignados { get; set; } = new List<Personal>();
+    public virtual ICollection<Personal>? RolesAsignados { get; set; }
 }

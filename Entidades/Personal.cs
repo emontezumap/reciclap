@@ -27,11 +27,13 @@ public class Personal
     public bool? Activo { get; set; } = true;
 
     [JsonIgnore]
+    public virtual Publicacion? Publicacion { get; }
+    [JsonIgnore]
+    public virtual Usuario? Usuario { get; }
+    [JsonIgnore]
+    public virtual Rol? Rol { get; set; }
+    [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]
     public virtual Usuario? Modificador { get; set; }
-    [JsonIgnore]
-    public virtual Publicacion Publicacion { get; set; } = new Publicacion();
-    [JsonIgnore]
-    public virtual Usuario Usuario { get; set; } = new Usuario();
 }
