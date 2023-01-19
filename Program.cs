@@ -18,10 +18,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// builder.Services.AddDbContext<SSDBContext>(options =>
-//     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-// );
-
 builder.Services.AddPooledDbContextFactory<SSDBContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")) //.LogTo(Console.WriteLine)
 );
@@ -49,26 +45,25 @@ builder.Services.AddHttpContextAccessor();
 // builder.Services.AddScoped<TipoPublicacionService>();
 // builder.Services.AddScoped<UsuarioService>();
 
-// builder.Services.AddScoped<LoginService>();
-// builder.Services.AddScoped<Consulta>();
+builder.Services.AddScoped<LoginService>();
 
-// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//     .AddJwtBearer(options =>
-//     {
-//         options.TokenValidationParameters = new TokenValidationParameters
-//         {
-//             ValidateIssuerSigningKey = true,
-//             IssuerSigningKey = new SymmetricSecurityKey(
-//                 Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])
-//             ),
-//             ValidateIssuer = false,
-//             ValidateAudience = false
-//         };
-//     });
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])
+            ),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
 
-// builder.Services.AddAuthorization(options =>
-//     options.AddPolicy("Admin", policy => policy.RequireClaim("Grupo", "Administradores"))
-// );
+builder.Services.AddAuthorization(options =>
+    options.AddPolicy("Admin", policy => policy.RequireClaim("Grupo", "Administradores"))
+);
 
 builder.Services.AddGraphQLServer()
     .AddQueryType<Consulta>()

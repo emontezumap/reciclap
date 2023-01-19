@@ -747,7 +747,7 @@ public class SSDBContext : DbContext
     {
         mb.Entity<Publicacion>()
             .HasMany(p => p.Chats)
-            .WithOne()
+            .WithOne(p => p.Publicacion)
             .HasForeignKey(p => p.IdPublicacion)
             .OnDelete(DeleteBehavior.NoAction);
 
