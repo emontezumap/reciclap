@@ -108,5 +108,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapGraphQL("/gql");
+// app.UseEndpoints(ep =>
+// {
+//     ep.MapControllers();
+//     ep.MapGraphQL("/gql").RequireAuthorization();
+// });
 
 app.Run();

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
+using System.Security.Claims;
 
 namespace Services;
 
@@ -30,13 +31,19 @@ public class EstatusPublicacionService
         }
     }
 
-    public async Task<EstatusPublicacion> CrearEstatusPublicacion(EstatusPublicacionDTO nuevo)
+    public async Task<EstatusPublicacion> CrearEstatusPublicacion(EstatusPublicacionDTO nuevo, ClaimsPrincipal claims)
     {
+        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
         EstatusPublicacion ep = new EstatusPublicacion()
         {
             Activo = nuevo.Activo,
             Descripcion = nuevo.Descripcion,
-            Id = (Guid)nuevo.Id
+            FechaCreacion = DateTime.UtcNow,
+            FechaModificacion = DateTime.UtcNow,
+            Id = Guid.NewGuid(),
+            IdCreador = id,
+            IdModificador = id
         };
 
         using (var ctx = ctxFactory.CreateDbContext())
@@ -48,7 +55,7 @@ public class EstatusPublicacionService
         return ep;
     }
 
-    public async Task<bool> ModificarEstatusPublicacion(EstatusPublicacionDTO modif)
+    public async Task<bool> ModificarEstatusPublicacion(EstatusPublicacionDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -56,8 +63,12 @@ public class EstatusPublicacionService
 
             if (buscado != null)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
                 buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
                 buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
+                buscado.FechaCreacion = DateTime.UtcNow;
+                buscado.IdModificador = id;
 
                 await ctx.SaveChangesAsync();
                 return true;
@@ -67,7 +78,7 @@ public class EstatusPublicacionService
         return false;
     }
 
-    public async Task<bool> EliminarEstatusPublicacion(Guid id)
+    public async Task<bool> EliminarEstatusPublicacion(Guid id, ClaimsPrincipal claims)
     {
         EstatusPublicacionDTO ep = new EstatusPublicacionDTO()
         {
@@ -75,6 +86,6 @@ public class EstatusPublicacionService
             Activo = false
         };
 
-        return await ModificarEstatusPublicacion(ep);
+        return await ModificarEstatusPublicacion(ep, claims);
     }
 }

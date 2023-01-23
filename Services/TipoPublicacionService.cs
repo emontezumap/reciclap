@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
+using System.Security.Claims;
 
 namespace Services;
 
@@ -30,8 +31,10 @@ public class TipoPublicacionService
         }
     }
 
-    public async Task<TipoPublicacion> CrearTipoPublicacion(TipoPublicacionDTO nuevo)
+    public async Task<TipoPublicacion> CrearTipoPublicacion(TipoPublicacionDTO nuevo, ClaimsPrincipal claims)
     {
+        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
         TipoPublicacion tp = new TipoPublicacion()
         {
             Activo = nuevo.Activo,
@@ -39,8 +42,8 @@ public class TipoPublicacionService
             FechaCreacion = DateTime.UtcNow,
             FechaModificacion = DateTime.UtcNow,
             Id = Guid.NewGuid(),
-            // IdCreador = 
-            // IdModificador = 
+            IdCreador = id,
+            IdModificador = id
         };
 
         using (var ctx = ctxFactory.CreateDbContext())
@@ -52,7 +55,7 @@ public class TipoPublicacionService
         return tp;
     }
 
-    public async Task<bool> ModificarTipoPublicacion(TipoPublicacionDTO modif)
+    public async Task<bool> ModificarTipoPublicacion(TipoPublicacionDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -60,13 +63,12 @@ public class TipoPublicacionService
 
             if (buscado != null)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
                 buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
                 buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
-                buscado.FechaCreacion = DateTime.UtcNow;
                 buscado.FechaModificacion = DateTime.UtcNow;
-                buscado.Id = Guid.NewGuid();
-                // IdCreador = 
-                // IdModificador = 
+                buscado.IdModificador = id;
 
                 await ctx.SaveChangesAsync();
                 return true;
@@ -76,7 +78,7 @@ public class TipoPublicacionService
         }
     }
 
-    public async Task<bool> EliminarTipoPublicacion(Guid id)
+    public async Task<bool> EliminarTipoPublicacion(Guid id, ClaimsPrincipal claims)
     {
         TipoPublicacionDTO tp = new TipoPublicacionDTO()
         {
@@ -84,6 +86,6 @@ public class TipoPublicacionService
             Activo = false
         };
 
-        return await ModificarTipoPublicacion(tp);
+        return await ModificarTipoPublicacion(tp, claims);
     }
 }

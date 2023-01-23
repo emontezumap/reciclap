@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
+using System.Security.Claims;
 
 namespace Services;
 
@@ -30,16 +31,18 @@ public class EstadoService
         }
     }
 
-    public async Task<Estado> CrearEstado(EstadoDTO nuevo)
+    public async Task<Estado> CrearEstado(EstadoDTO nuevo, ClaimsPrincipal claims)
     {
+        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
         Estado est = new Estado()
         {
             Activo = nuevo.Activo,
             FechaCreacion = DateTime.UtcNow,
             FechaModificacion = DateTime.UtcNow,
             Id = Guid.NewGuid(),
-            // IdCreador =
-            // IdModificador = 
+            IdCreador = id,
+            IdModificador = id,
             IdPais = (Guid)nuevo.IdPais,
             Nombre = nuevo.Nombre
         };
@@ -53,7 +56,7 @@ public class EstadoService
         return est;
     }
 
-    public async Task<bool> ModificarEstado(EstadoDTO modif)
+    public async Task<bool> ModificarEstado(EstadoDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -61,12 +64,11 @@ public class EstadoService
 
             if (buscado != null)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
                 buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                buscado.FechaCreacion = DateTime.UtcNow;
                 buscado.FechaModificacion = DateTime.UtcNow;
-                buscado.Id = Guid.NewGuid();
-                // buscado.IdCreador =;
-                // buscado.IdModificador = ;
+                buscado.IdModificador = id;
                 buscado.IdPais = modif.IdPais == null ? buscado.IdPais : (Guid)modif.IdPais;
                 buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
 
@@ -78,7 +80,7 @@ public class EstadoService
         return false;
     }
 
-    public async Task<bool> EliminarEstado(Guid id)
+    public async Task<bool> EliminarEstado(Guid id, ClaimsPrincipal claims)
     {
         EstadoDTO est = new EstadoDTO()
         {
@@ -86,6 +88,6 @@ public class EstadoService
             Activo = false
         };
 
-        return await ModificarEstado(est);
+        return await ModificarEstado(est, claims);
     }
 }

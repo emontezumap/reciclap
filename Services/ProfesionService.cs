@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
+using System.Security.Claims;
 
 namespace Services;
 
@@ -30,17 +31,19 @@ public class ProfesionService
         }
     }
 
-    public async Task<Profesion> CrearProfesion(ProfesionDTO nuevo)
+    public async Task<Profesion> CrearProfesion(ProfesionDTO nuevo, ClaimsPrincipal claims)
     {
+        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
         Profesion prof = new Profesion()
         {
             Activo = nuevo.Activo,
             Descripcion = nuevo.Descripcion,
             FechaCreacion = DateTime.UtcNow,
             FechaModificacion = DateTime.UtcNow,
-            Id = Guid.NewGuid()
-            // IdCreador = 
-            // IdModificador = 
+            Id = Guid.NewGuid(),
+            IdCreador = id,
+            IdModificador = id
         };
 
         using (var ctx = ctxFactory.CreateDbContext())
@@ -52,7 +55,7 @@ public class ProfesionService
         return prof;
     }
 
-    public async Task<bool> ModificarProfesion(ProfesionDTO modif)
+    public async Task<bool> ModificarProfesion(ProfesionDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -60,10 +63,12 @@ public class ProfesionService
 
             if (buscado != null)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
                 buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
                 buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
                 buscado.FechaModificacion = DateTime.UtcNow;
-                // buscado.IdModificador = 
+                buscado.IdModificador = id;
 
                 await ctx.SaveChangesAsync();
                 return true;
@@ -73,7 +78,7 @@ public class ProfesionService
         }
     }
 
-    public async Task<bool> EliminarProfesion(Guid id)
+    public async Task<bool> EliminarProfesion(Guid id, ClaimsPrincipal claims)
     {
         ProfesionDTO prof = new ProfesionDTO()
         {
@@ -81,6 +86,6 @@ public class ProfesionService
             Activo = false
         };
 
-        return await ModificarProfesion(prof);
+        return await ModificarProfesion(prof, claims);
     }
 }

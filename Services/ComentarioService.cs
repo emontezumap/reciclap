@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using DTOs;
 using Entidades;
+using System.Security.Claims;
+using Herramientas;
+using Validadores;
 
 namespace Services;
 
@@ -29,60 +33,77 @@ public class ComentarioService
         }
     }
 
-    public async Task<Comentario> CrearComentario(ComentarioDTO nuevo)
+    public async Task<Comentario> CrearComentario(ComentarioDTO nuevo, ClaimsPrincipal claims)
     {
-        Comentario com = new Comentario()
-        {
-            Activo = nuevo.Activo,
-            Fecha = (DateTime)nuevo.Fecha,
-            FechaCreacion = DateTime.UtcNow,
-            FechaModificacion = DateTime.UtcNow,
-            Id = Guid.NewGuid(),
-            IdChat = (Guid)nuevo.IdChat,
-            IdComentario = (Guid)nuevo.IdComentario,
-            // IdCreador = 
-            // IdModificador = 
-            IdUsuario = (Guid)nuevo.IdUsuario,
-            Texto = nuevo.Texto,
-        };
-
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Comentarios.Add(com);
-            await ctx.SaveChangesAsync();
-        }
+            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+            ValidadorComentario vc = new ValidadorComentario(nuevo, Operacion.Creacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-        return com;
+            if (rv.ValidacionOk)
+            {
+                Comentario com = new Comentario()
+                {
+                    Activo = nuevo.Activo,
+                    Fecha = (DateTime)nuevo.Fecha!,
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaModificacion = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    IdChat = (Guid)nuevo.IdChat!,
+                    IdComentario = (Guid)nuevo.IdComentario!,
+                    IdCreador = id,
+                    IdModificador = id,
+                    IdUsuario = (Guid)nuevo.IdUsuario!,
+                    Texto = nuevo.Texto!,
+                };
+
+                ctx.Comentarios.Add(com);
+                await ctx.SaveChangesAsync();
+
+                return com;
+            }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+        }
     }
 
-    public async Task<bool> ModificarComentario(ComentarioDTO modif)
+    public async Task<bool> ModificarComentario(ComentarioDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await ctx.Comentarios.FindAsync(modif.Id);
+            ValidadorComentario vc = new ValidadorComentario(modif, Operacion.Creacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-            if (buscado != null)
+            if (rv.ValidacionOk)
             {
-                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
-                buscado.FechaCreacion = DateTime.UtcNow == null ? buscado.FechaCreacion : DateTime.UtcNow;
-                buscado.FechaModificacion = buscado.FechaCreacion;
-                buscado.IdChat = modif.IdChat == null ? buscado.IdChat : (Guid)modif.IdChat;
-                buscado.IdComentario = modif.IdComentario == null ? buscado.IdComentario : (Guid)modif.IdComentario;
-                // buscado.IdCreador = 
-                buscado.IdModificador = buscado.IdCreador;
-                buscado.IdUsuario = modif.IdUsuario == null ? buscado.IdUsuario : (Guid)modif.IdUsuario;
-                buscado.Texto = modif.Texto == null ? buscado.Texto : modif.Texto;
+                var buscado = await ctx.Comentarios.FindAsync(modif.Id);
 
-                await ctx.SaveChangesAsync();
-                return true;
+                if (buscado != null)
+                {
+                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
+                    buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                    buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
+                    buscado.FechaModificacion = buscado.FechaCreacion;
+                    buscado.IdChat = modif.IdChat == null ? buscado.IdChat : (Guid)modif.IdChat;
+                    buscado.IdComentario = modif.IdComentario == null ? buscado.IdComentario : (Guid)modif.IdComentario;
+                    buscado.IdModificador = id;
+                    buscado.IdUsuario = modif.IdUsuario == null ? buscado.IdUsuario : (Guid)modif.IdUsuario;
+                    buscado.Texto = modif.Texto == null ? buscado.Texto : modif.Texto;
+
+                    await ctx.SaveChangesAsync();
+                    return true;
+                }
             }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
 
         return false;
     }
 
-    public async Task<bool> EliminarComentario(Guid id)
+    public async Task<bool> EliminarComentario(Guid id, ClaimsPrincipal claims)
     {
         ComentarioDTO com = new ComentarioDTO()
         {
@@ -90,6 +111,6 @@ public class ComentarioService
             Activo = false
         };
 
-        return await ModificarComentario(com);
+        return await ModificarComentario(com, claims);
     }
 }

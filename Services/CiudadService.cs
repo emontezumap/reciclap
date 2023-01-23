@@ -1,6 +1,12 @@
+using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
+using HotChocolate.AspNetCore.Authorization;
+// using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Validadores;
+using Herramientas;
 
 namespace Services;
 
@@ -30,52 +36,70 @@ public class CiudadService
         }
     }
 
-    public async Task<Ciudad> CrearCiudad(CiudadDTO nuevo)
+    public async Task<Ciudad> CrearCiudad(CiudadDTO nuevo, ClaimsPrincipal claims)
     {
-        Ciudad ciudad = new Ciudad()
-        {
-            Activo = nuevo.Activo,
-            FechaCreacion = DateTime.UtcNow,
-            FechaModificacion = DateTime.UtcNow,
-            Id = Guid.NewGuid(),
-            // ciudad.IdCreador = 
-            IdEstado = (Guid)nuevo.IdEstado,
-            // ciudad.IdModificador
-            Nombre = (string)nuevo.Nombre
-        };
-
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Ciudades.Add(ciudad);
-            await ctx.SaveChangesAsync();
-        }
+            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+            ValidadorCiudad vc = new ValidadorCiudad(nuevo, Operacion.Creacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-        return ciudad;
+            if (rv.ValidacionOk)
+            {
+                Ciudad ciudad = new Ciudad()
+                {
+                    Activo = nuevo.Activo,
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaModificacion = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    IdCreador = id,
+                    IdEstado = (Guid)nuevo.IdEstado!,
+                    IdModificador = id,
+                    Nombre = nuevo.Nombre!
+                };
+
+                ctx.Ciudades.Add(ciudad);
+                await ctx.SaveChangesAsync();
+
+                return ciudad;
+            }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+        }
     }
 
-    public async Task<bool> ModificarCiudad(CiudadDTO modif)
+    public async Task<bool> ModificarCiudad(CiudadDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await ctx.Ciudades.FindAsync(modif.Id);
+            ValidadorCiudad vc = new ValidadorCiudad(modif, Operacion.Modificacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-            if (buscado != null)
+            if (rv.ValidacionOk)
             {
-                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                buscado.FechaModificacion = DateTime.UtcNow;
-                buscado.IdEstado = modif.IdEstado == null ? buscado.IdEstado : (Guid)modif.IdEstado;
-                // buscado.IdModificador = 
-                buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                var buscado = await ctx.Ciudades.FindAsync(modif.Id);
 
-                await ctx.SaveChangesAsync();
-                return true;
+                if (buscado != null)
+                {
+                    buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+                    buscado.IdEstado = modif.IdEstado == null ? buscado.IdEstado : (Guid)modif.IdEstado;
+                    buscado.IdModificador = id;
+                    buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
+
+                    await ctx.SaveChangesAsync();
+                    return true;
+                }
             }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
 
         return false;
     }
 
-    public async Task<bool> EliminarCiudad(Guid id)
+    public async Task<bool> EliminarCiudad(Guid id, ClaimsPrincipal claims)
     {
         CiudadDTO ciudad = new CiudadDTO()
         {
@@ -83,6 +107,6 @@ public class CiudadService
             Activo = false
         };
 
-        return await ModificarCiudad(ciudad);
+        return await ModificarCiudad(ciudad, claims);
     }
 }

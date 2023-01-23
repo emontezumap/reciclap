@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
+using System.Security.Claims;
 
 namespace Services;
 
@@ -30,8 +31,10 @@ public class GrupoService
         }
     }
 
-    public async Task<Grupo> CrearGrupo(GrupoDTO nuevo)
+    public async Task<Grupo> CrearGrupo(GrupoDTO nuevo, ClaimsPrincipal claims)
     {
+        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
         Grupo grp = new Grupo()
         {
             Activo = nuevo.Activo,
@@ -39,9 +42,9 @@ public class GrupoService
             EsAdministrador = nuevo.EsAdministrador,
             FechaCreacion = DateTime.UtcNow,
             FechaModificacion = DateTime.UtcNow,
-            Id = Guid.NewGuid()
-            // IdCreador =
-            // IdModificador = 
+            Id = Guid.NewGuid(),
+            IdCreador = id,
+            IdModificador = id
         };
 
         using (var ctx = ctxFactory.CreateDbContext())
@@ -53,7 +56,7 @@ public class GrupoService
         return grp;
     }
 
-    public async Task<bool> ModificarGrupo(GrupoDTO modif)
+    public async Task<bool> ModificarGrupo(GrupoDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -61,11 +64,13 @@ public class GrupoService
 
             if (buscado != null)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
                 buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
                 buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
                 buscado.EsAdministrador = modif.EsAdministrador == null ? buscado.EsAdministrador : modif.EsAdministrador;
                 buscado.FechaModificacion = DateTime.UtcNow;
-                // buscado.IdModificador = 
+                buscado.IdModificador = id;
 
                 await ctx.SaveChangesAsync();
                 return true;
@@ -75,7 +80,7 @@ public class GrupoService
         return false;
     }
 
-    public async Task<bool> EliminarGrupo(Guid id)
+    public async Task<bool> EliminarGrupo(Guid id, ClaimsPrincipal claims)
     {
         GrupoDTO grp = new GrupoDTO()
         {
@@ -83,6 +88,6 @@ public class GrupoService
             Activo = false
         };
 
-        return await ModificarGrupo(grp);
+        return await ModificarGrupo(grp, claims);
     }
 }

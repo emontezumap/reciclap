@@ -1,4 +1,4 @@
-namespace Entidades;
+namespace DTOs;
 
 public class ComentarioDTO
 {

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
+using System.Security.Claims;
 
 namespace Services;
 
@@ -30,16 +31,18 @@ public class PersonalService
         }
     }
 
-    public async Task<Personal> CrearPersonal(PersonalDTO nuevo)
+    public async Task<Personal> CrearPersonal(PersonalDTO nuevo, ClaimsPrincipal claims)
     {
+        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
         Personal per = new Personal()
         {
             Activo = nuevo.Activo,
             Fecha = (DateTime)nuevo.Fecha,
             FechaCreacion = DateTime.UtcNow,
             FechaModificacion = DateTime.UtcNow,
-            // IdCreador = 
-            // IdModificador = 
+            IdCreador = id,
+            IdModificador = id,
             IdPublicacion = (Guid)nuevo.IdPublicacion,
             IdRol = (Guid)nuevo.IdRol,
             IdUsuario = (Guid)nuevo.IdUsuario,
@@ -54,7 +57,7 @@ public class PersonalService
         return per;
     }
 
-    public async Task<bool> ModificarPersonal(PersonalDTO modif)
+    public async Task<bool> ModificarPersonal(PersonalDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -62,10 +65,12 @@ public class PersonalService
 
             if (buscado != null)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
                 buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
                 buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
                 buscado.FechaModificacion = DateTime.UtcNow;
-                // buscado.IdModificador = 
+                buscado.IdModificador = id;
                 buscado.IdRol = modif.IdRol == null ? buscado.IdRol : (Guid)modif.IdRol;
 
                 await ctx.SaveChangesAsync();
@@ -76,7 +81,7 @@ public class PersonalService
         }
     }
 
-    public async Task<bool> EliminarPersonal(Guid idPub, Guid idUsr)
+    public async Task<bool> EliminarPersonal(Guid idPub, Guid idUsr, ClaimsPrincipal claims)
     {
         PersonalDTO per = new PersonalDTO()
         {
@@ -85,6 +90,6 @@ public class PersonalService
             Activo = false
         };
 
-        return await ModificarPersonal(per);
+        return await ModificarPersonal(per, claims);
     }
 }

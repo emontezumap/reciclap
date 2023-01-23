@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
+using System.Security.Claims;
 
 namespace Services;
 
@@ -30,18 +31,20 @@ public class RolService
         }
     }
 
-    public async Task<Rol> CrearRol(RolDTO nuevo)
+    public async Task<Rol> CrearRol(RolDTO nuevo, ClaimsPrincipal claims)
     {
+        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
         Rol rol = new Rol()
         {
             Activo = nuevo.Activo,
-            Descripcion = nuevo.Descripcion,
-            EsCreador = (bool)nuevo.EsCreador,
+            Descripcion = nuevo.Descripcion!,
+            EsCreador = nuevo.EsCreador == null ? false : (bool)nuevo.EsCreador,
             FechaCreacion = DateTime.UtcNow,
             FechaModificacion = DateTime.UtcNow,
             Id = Guid.NewGuid(),
-            // IdCreador = 
-            // IdModificador = 
+            IdCreador = id,
+            IdModificador = id
         };
 
         using (var ctx = ctxFactory.CreateDbContext())
@@ -53,7 +56,7 @@ public class RolService
         return rol;
     }
 
-    public async Task<bool> ModificarRol(RolDTO modif)
+    public async Task<bool> ModificarRol(RolDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -61,12 +64,13 @@ public class RolService
 
             if (buscado != null)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
                 buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
                 buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
                 buscado.EsCreador = modif.EsCreador == null ? buscado.EsCreador : (bool)modif.EsCreador;
                 buscado.FechaModificacion = DateTime.UtcNow;
-                // buscado.IdCreador = 
-                // buscado.IdModificador = 
+                buscado.IdModificador = id;
 
                 await ctx.SaveChangesAsync();
                 return true;
@@ -76,7 +80,7 @@ public class RolService
         }
     }
 
-    public async Task<bool> EliminarRol(Guid id)
+    public async Task<bool> EliminarRol(Guid id, ClaimsPrincipal claims)
     {
         RolDTO rol = new RolDTO()
         {
@@ -84,6 +88,6 @@ public class RolService
             Activo = false
         };
 
-        return await ModificarRol(rol);
+        return await ModificarRol(rol, claims);
     }
 }

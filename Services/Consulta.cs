@@ -6,6 +6,7 @@ namespace Services;
 public class Consulta
 {
     [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
     public IQueryable<Chat> Chats([ScopedService] SSDBContext ctx)
     {
@@ -13,25 +14,23 @@ public class Consulta
     }
 
     [UseDbContext(typeof(SSDBContext))]
-    [UseProjection]
-    [UseFiltering]
-    [UseSorting]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
+    [UseProjection, UseFiltering, UseSorting]
     public IQueryable<Ciudad> Ciudades([ScopedService] SSDBContext ctx)
     {
         return ctx.Ciudades;
     }
 
     [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
     public IQueryable<Comentario> Comentarios([ScopedService] SSDBContext ctx)
     {
-
-        {
-            return ctx.Comentarios;
-        }
+        return ctx.Comentarios;
     }
 
     [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
     public IQueryable<Estado> Estados([ScopedService] SSDBContext ctx)
     {
@@ -39,6 +38,7 @@ public class Consulta
     }
 
     [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
     public IQueryable<EstatusPublicacion> EstatusPublicaciones([ScopedService] SSDBContext ctx)
     {
@@ -46,6 +46,7 @@ public class Consulta
     }
 
     [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
     public IQueryable<Grupo> Grupos([ScopedService] SSDBContext ctx)
     {
@@ -53,6 +54,7 @@ public class Consulta
     }
 
     [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
     public IQueryable<Pais> Paises([ScopedService] SSDBContext ctx)
     {
@@ -60,6 +62,7 @@ public class Consulta
     }
 
     [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
     public IQueryable<Personal> Personal([ScopedService] SSDBContext ctx)
     {
@@ -67,6 +70,7 @@ public class Consulta
     }
 
     [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
     public IQueryable<Profesion> Profesiones([ScopedService] SSDBContext ctx)
     {
@@ -74,6 +78,7 @@ public class Consulta
     }
 
     [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
     public IQueryable<Publicacion> Publicaciones([ScopedService] SSDBContext ctx)
     {
@@ -81,6 +86,7 @@ public class Consulta
     }
 
     [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
     public IQueryable<Rol> Roles([ScopedService] SSDBContext ctx)
     {
@@ -88,6 +94,7 @@ public class Consulta
     }
 
     [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
     public IQueryable<TipoPublicacion> TiposPublicacion([ScopedService] SSDBContext ctx)
     {
@@ -96,9 +103,7 @@ public class Consulta
 
     [UseDbContext(typeof(SSDBContext))]
     [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
-    [UseProjection]
-    [UseFiltering]
-    [UseSorting]
+    [UseProjection, UseFiltering, UseSorting]
     public IQueryable<Usuario> Usuarios([ScopedService] SSDBContext ctx)
     {
         return ctx.Usuarios;

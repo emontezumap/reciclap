@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
+using System.Security.Claims;
 
 namespace Services;
 
@@ -33,25 +34,27 @@ public class PublicacionService
         }
     }
 
-    public async Task<Publicacion> CrearPublicacion(PublicacionDTO nuevo)
+    public async Task<Publicacion> CrearPublicacion(PublicacionDTO nuevo, ClaimsPrincipal claims)
     {
+        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
         using (var ctx = ctxFactory.CreateDbContext())
         {
             Publicacion pub = new Publicacion()
             {
                 Activo = nuevo.Activo,
-                Descripcion = nuevo.Descripcion,
-                Fecha = (DateTime)nuevo.Fecha,
+                Descripcion = nuevo.Descripcion!,
+                Fecha = (DateTime)nuevo.Fecha!,
                 FechaCreacion = DateTime.UtcNow,
                 FechaModificacion = DateTime.UtcNow,
-                Gustan = (int)nuevo.Gustan,
+                Gustan = nuevo.Gustan == null ? 0 : (int)nuevo.Gustan,
                 Id = Guid.NewGuid(),
-                // IdCreador = 
-                IdEstatus = (Guid)nuevo.IdEstatus,
-                // IdModificador =
-                IdTipoPublicacion = (Guid)nuevo.IdTipoPublicacion,
-                NoGustan = (int)nuevo.NoGustan,
-                Titulo = nuevo.Titulo,
+                IdCreador = id,
+                IdEstatus = (Guid)nuevo.IdEstatus!,
+                IdModificador = id,
+                IdTipoPublicacion = (Guid)nuevo.IdTipoPublicacion!,
+                NoGustan = nuevo.NoGustan == null ? 0 : (int)nuevo.NoGustan,
+                Titulo = nuevo.Titulo!,
             };
 
             ctx.Publicaciones.Add(pub);
@@ -61,7 +64,7 @@ public class PublicacionService
         }
     }
 
-    public async Task<bool> ModificarPublicacion(PublicacionDTO modif)
+    public async Task<bool> ModificarPublicacion(PublicacionDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -69,13 +72,15 @@ public class PublicacionService
 
             if (buscado != null)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
                 buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
                 buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
                 buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
                 buscado.FechaModificacion = DateTime.UtcNow;
                 buscado.Gustan = modif.Gustan == null ? buscado.Gustan : (int)modif.Gustan;
                 buscado.IdEstatus = modif.IdEstatus == null ? buscado.IdEstatus : (Guid)modif.IdEstatus;
-                // buscado.IdModificador = 
+                buscado.IdModificador = id;
                 buscado.IdTipoPublicacion = modif.IdTipoPublicacion == null ? buscado.IdTipoPublicacion : (Guid)modif.IdTipoPublicacion;
                 buscado.NoGustan = modif.NoGustan == null ? buscado.NoGustan : (int)modif.NoGustan;
                 buscado.Titulo = modif.Titulo == null ? buscado.Titulo : modif.Titulo;
@@ -88,7 +93,7 @@ public class PublicacionService
         }
     }
 
-    public async Task<bool> EliminarPublicacion(Guid id)
+    public async Task<bool> EliminarPublicacion(Guid id, ClaimsPrincipal claims)
     {
         PublicacionDTO pub = new PublicacionDTO()
         {
@@ -96,6 +101,6 @@ public class PublicacionService
             Activo = false
         };
 
-        return await ModificarPublicacion(pub);
+        return await ModificarPublicacion(pub, claims);
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
+using System.Security.Claims;
 
 namespace Services;
 
@@ -30,16 +31,18 @@ public class PaisService
         }
     }
 
-    public async Task<Pais> CrearPais(PaisDTO nuevo)
+    public async Task<Pais> CrearPais(PaisDTO nuevo, ClaimsPrincipal claims)
     {
+        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
         Pais pais = new Pais()
         {
             Activo = nuevo.Activo,
             FechaCreacion = DateTime.UtcNow,
             FechaModificacion = DateTime.UtcNow,
             Id = Guid.NewGuid(),
-            // IdCreador = 
-            // IdModificador = 
+            IdCreador = id,
+            IdModificador = id,
             Nombre = nuevo.Nombre
         };
 
@@ -52,7 +55,7 @@ public class PaisService
         return pais;
     }
 
-    public async Task<bool> ModificarPais(PaisDTO modif)
+    public async Task<bool> ModificarPais(PaisDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -60,9 +63,11 @@ public class PaisService
 
             if (buscado != null)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
                 buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
                 buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
-                // buscado.IdModificador = 
+                buscado.IdModificador = id;
                 buscado.FechaModificacion = DateTime.UtcNow;
 
                 await ctx.SaveChangesAsync();
@@ -73,7 +78,7 @@ public class PaisService
         }
     }
 
-    public async Task<bool> EliminarPais(Guid id)
+    public async Task<bool> EliminarPais(Guid id, ClaimsPrincipal claims)
     {
         PaisDTO pais = new PaisDTO()
         {
@@ -81,6 +86,6 @@ public class PaisService
             Activo = false
         };
 
-        return await ModificarPais(pais);
+        return await ModificarPais(pais, claims);
     }
 }
