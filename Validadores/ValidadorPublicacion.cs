@@ -49,7 +49,7 @@ public class ValidadorPublicacion : IValidadorEntidad
             }
             else if (dto.Titulo != null)
             {
-                mensajes["Descripcion"].Add("Se requiere el título de la publicación");
+                mensajes["Titulo"].Add("Se requiere el título de la publicación");
                 hayError = true;
             }
 

@@ -54,6 +54,7 @@ public class Usuario
 
     [JsonIgnore]
     [Column("clave")]
+    [MinLength(8)]
     [MaxLength(256)]
     public string Clave { get; set; } = "";
 

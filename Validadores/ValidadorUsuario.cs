@@ -67,43 +67,133 @@ public class ValidadorUsuario : IValidadorEntidad
             hayError = true;
         }
 
-        if (string.IsNullOrEmpty(dto.Descripcion))
+        if (!string.IsNullOrEmpty(dto.Nombre2) && dto.Nombre2.Length > 50)
+        {
+            mensajes["Nombre2"].Add("El segundo nombre del usuario no debe exceder los 50 caracteres");
+            hayError = true;
+        }
+
+        if (string.IsNullOrEmpty(dto.Apellido))
             if (op == Operacion.Creacion)
             {
-                mensajes["Descripcion"].Add("Se requiere una descripción");
+                mensajes["Apellido"].Add("Se requiere el apellido del usuario");
                 hayError = true;
             }
-            else if (dto.Descripcion != null)
+            else if (dto.Nombre != null)
             {
-                mensajes["Descripcion"].Add("Se requiere una descripción");
+                mensajes["Apellido"].Add("Se requiere el apellido del usuario");
                 hayError = true;
             }
 
-        if (op == Operacion.Creacion && dto.Fecha == null)
+        if (!string.IsNullOrEmpty(dto.Apellido) && dto.Apellido.Length > 50)
         {
-            mensajes["Fecha"].Add("Se requiere la fecha de asignación del personal");
+            mensajes["Apellido"].Add("El apellido del usuario no debe exceder los 50 caracteres");
             hayError = true;
         }
 
-        if (dto.IdEstatus == null)
+        if (!string.IsNullOrEmpty(dto.Apellido2) && dto.Apellido2.Length > 50)
         {
-            mensajes["IdEstatus"].Add("Se requiere el estatus de la publicación");
-            hayError = true;
-        }
-        else if (op == Operacion.Modificacion && await ctx.EstatusPublicaciones.FindAsync(dto.IdEstatus) == null)
-        {
-            mensajes["IdEstatus"].Add("El estatus especificado no existe");
+            mensajes["Apellido2"].Add("El segundo apellido del usuario no debe exceder los 50 caracteres");
             hayError = true;
         }
 
-        if (dto.IdTipoPublicacion == null)
+        if (string.IsNullOrEmpty(dto.Direccion))
+            if (op == Operacion.Creacion)
+            {
+                mensajes["Direccion"].Add("Se requiere una dirección");
+                hayError = true;
+            }
+            else if (dto.Direccion != null)
+            {
+                mensajes["Direccion"].Add("Se requiere una dirección");
+                hayError = true;
+            }
+
+        if (!string.IsNullOrEmpty(dto.Direccion) && dto.Direccion.Length > 300)
         {
-            mensajes["IdTipoPublicacion"].Add("Se requiere el tipo de publicación");
+            mensajes["Direccion"].Add("La dirección del usuario no debe exceder los 300 caracteres");
             hayError = true;
         }
-        else if (op == Operacion.Modificacion && await ctx.TiposPublicacion.FindAsync(dto.IdTipoPublicacion) == null)
+
+        if (dto.IdCiudad == null)
         {
-            mensajes["IdTipoPublicacion"].Add("El tipo de publicación especificado no existe");
+            mensajes["IdCiudad"].Add("Se requiere una ciudad");
+            hayError = true;
+        }
+        else if (op == Operacion.Modificacion && await ctx.Ciudades.FindAsync(dto.IdCiudad) == null)
+        {
+            mensajes["IdCiudad"].Add("La Ciudad especificada no existe");
+            hayError = true;
+        }
+
+        if (string.IsNullOrEmpty(dto.Telefono))
+            if (op == Operacion.Creacion)
+            {
+                mensajes["Telefono"].Add("Se requiere un número telefónico");
+                hayError = true;
+            }
+            else if (dto.Telefono != null)
+            {
+                mensajes["Telefono"].Add("Se requiere un número telefónico");
+                hayError = true;
+            }
+
+        if (!string.IsNullOrEmpty(dto.Telefono) && dto.Telefono.Length > 20)
+        {
+            mensajes["Telefono"].Add("El número telefónico no debe exceder los 20 caracteres");
+            hayError = true;
+        }
+
+        if (string.IsNullOrEmpty(dto.Email))
+            if (op == Operacion.Creacion)
+            {
+                mensajes["Email"].Add("Se requiere una dirección de correo electrónico");
+                hayError = true;
+            }
+            else if (dto.Email != null)
+            {
+                mensajes["Email"].Add("Se requiere una dirección de correo electrónico");
+                hayError = true;
+            }
+
+        if (!string.IsNullOrEmpty(dto.Email) && dto.Email.Length > 250)
+        {
+            mensajes["Email"].Add("El número telefónico no debe exceder los 250 caracteres");
+            hayError = true;
+        }
+
+        if (string.IsNullOrEmpty(dto.Clave))
+            if (op == Operacion.Creacion)
+            {
+                mensajes["Clave"].Add("Se requiere una clave");
+                hayError = true;
+            }
+            else if (dto.Clave != null)
+            {
+                mensajes["Clave"].Add("Se requiere una clave");
+                hayError = true;
+            }
+
+        if (!string.IsNullOrEmpty(dto.Clave) && (dto.Clave.Length < 8 || dto.Clave.Length > 256))
+        {
+            mensajes["Clave"].Add("La clave debe tener entre 8 y 256 caracteres");
+            hayError = true;
+        }
+
+        if (op == Operacion.Modificacion && await ctx.Profesiones.FindAsync(dto.Id) == null)
+        {
+            mensajes["IdProfesion"].Add("La profesión especificada no existe");
+            hayError = true;
+        }
+
+        if (op == Operacion.Creacion && dto.IdGrupo == null)
+        {
+            mensajes["IdGrupo"].Add("Se requiere un grupo de usuarios");
+            hayError = true;
+        }
+        else if (op == Operacion.Modificacion && await ctx.Grupos.FindAsync(dto.IdGrupo) == null)
+        {
+            mensajes["IdGrupo"].Add("Se requiere un grupo de usuarios");
             hayError = true;
         }
 
@@ -112,6 +202,8 @@ public class ValidadorUsuario : IValidadorEntidad
             mensajes["Activo"].Add("Se requiere un valor para el campo Activo");
             hayError = true;
         }
+
+        // FALTA: Verificar que el nombre completo del usuario sea unico
 
         ResultadoValidacion v = new ResultadoValidacion();
         v.ValidacionOk = !hayError;

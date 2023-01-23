@@ -63,7 +63,7 @@ public class UsuarioService
                     IdGrupo = (Guid)nuevo.IdGrupo!,
                     IdModificador = id,
                     IdProfesion = nuevo.IdProfesion,
-                    MaximoPublicaciones = (int)nuevo.MaximoPublicaciones!,
+                    MaximoPublicaciones = nuevo.MaximoPublicaciones == null ? 0 : (int)nuevo.MaximoPublicaciones!,
                     Nombre = nuevo.Nombre!,
                     Nombre2 = nuevo.Nombre2 == null ? "" : nuevo.Nombre2!,
                     Perfil = nuevo.Perfil == null ? "" : nuevo.Perfil!,
