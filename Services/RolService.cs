@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
 using System.Security.Claims;
+using Herramientas;
+using Validadores;
 
 namespace Services;
 
@@ -33,50 +35,65 @@ public class RolService
 
     public async Task<Rol> CrearRol(RolDTO nuevo, ClaimsPrincipal claims)
     {
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
-        Rol rol = new Rol()
-        {
-            Activo = nuevo.Activo,
-            Descripcion = nuevo.Descripcion!,
-            EsCreador = nuevo.EsCreador == null ? false : (bool)nuevo.EsCreador,
-            FechaCreacion = DateTime.UtcNow,
-            FechaModificacion = DateTime.UtcNow,
-            Id = Guid.NewGuid(),
-            IdCreador = id,
-            IdModificador = id
-        };
-
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Roles.Add(rol);
-            await ctx.SaveChangesAsync();
-        }
+            ValidadorRol vc = new ValidadorRol(nuevo, Operacion.Creacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-        return rol;
+            if (rv.ValidacionOk)
+            {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                Rol rol = new Rol()
+                {
+                    Activo = nuevo.Activo,
+                    Descripcion = nuevo.Descripcion!,
+                    EsCreador = nuevo.EsCreador == null ? false : (bool)nuevo.EsCreador,
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaModificacion = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    IdCreador = id,
+                    IdModificador = id
+                };
+
+                ctx.Roles.Add(rol);
+                await ctx.SaveChangesAsync();
+
+                return rol;
+            }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+        }
     }
 
     public async Task<bool> ModificarRol(RolDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await ctx.Roles.FindAsync(modif.Id);
+            ValidadorRol vc = new ValidadorRol(modif, Operacion.Modificacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-            if (buscado != null)
+            if (rv.ValidacionOk)
             {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                var buscado = await ctx.Roles.FindAsync(modif.Id);
 
-                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
-                buscado.EsCreador = modif.EsCreador == null ? buscado.EsCreador : (bool)modif.EsCreador;
-                buscado.FechaModificacion = DateTime.UtcNow;
-                buscado.IdModificador = id;
+                if (buscado != null)
+                {
+                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
 
-                await ctx.SaveChangesAsync();
-                return true;
+                    buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                    buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
+                    buscado.EsCreador = modif.EsCreador == null ? buscado.EsCreador : (bool)modif.EsCreador;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+                    buscado.IdModificador = id;
+
+                    await ctx.SaveChangesAsync();
+                    return true;
+                }
+                else
+                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
             }
-
-            return false;
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
     }
 

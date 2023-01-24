@@ -43,13 +43,23 @@ public class ValidadorUsuario : IValidadorEntidad
     {
         bool hayError = false;
 
-        if (op == Operacion.Modificacion && await ctx.Usuarios.FindAsync(dto.Id) == null)
+        if (op == Operacion.Modificacion)
         {
-            mensajes["Id"].Add("El usuario especificado no existe");
-            hayError = true;
+            if (dto.Id == null)
+            {
+                mensajes["Id"].Add("Se requiere el usuario a modificar");
+                hayError = true;
+
+            }
+            else if (await ctx.Usuarios.FindAsync(dto.Id) == null)
+            {
+                mensajes["Id"].Add("El usuario especificado no existe");
+                hayError = true;
+            }
         }
 
         if (string.IsNullOrEmpty(dto.Nombre))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Nombre"].Add("Se requiere el nombre del usuario");
@@ -60,8 +70,8 @@ public class ValidadorUsuario : IValidadorEntidad
                 mensajes["Nombre"].Add("Se requiere el nombre del usuario");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Nombre) && dto.Nombre.Length > 50)
+        }
+        else if (dto.Nombre.Length > 50)
         {
             mensajes["Nombre"].Add("El nombre del usuario no debe exceder los 50 caracteres");
             hayError = true;
@@ -74,6 +84,7 @@ public class ValidadorUsuario : IValidadorEntidad
         }
 
         if (string.IsNullOrEmpty(dto.Apellido))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Apellido"].Add("Se requiere el apellido del usuario");
@@ -84,8 +95,8 @@ public class ValidadorUsuario : IValidadorEntidad
                 mensajes["Apellido"].Add("Se requiere el apellido del usuario");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Apellido) && dto.Apellido.Length > 50)
+        }
+        else if (dto.Apellido.Length > 50)
         {
             mensajes["Apellido"].Add("El apellido del usuario no debe exceder los 50 caracteres");
             hayError = true;
@@ -98,6 +109,7 @@ public class ValidadorUsuario : IValidadorEntidad
         }
 
         if (string.IsNullOrEmpty(dto.Direccion))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Direccion"].Add("Se requiere una dirección");
@@ -108,25 +120,34 @@ public class ValidadorUsuario : IValidadorEntidad
                 mensajes["Direccion"].Add("Se requiere una dirección");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Direccion) && dto.Direccion.Length > 300)
+        }
+        else if (dto.Direccion.Length > 300)
         {
             mensajes["Direccion"].Add("La dirección del usuario no debe exceder los 300 caracteres");
             hayError = true;
         }
 
-        if (dto.IdCiudad == null)
+        if (op == Operacion.Creacion)
         {
-            mensajes["IdCiudad"].Add("Se requiere una ciudad");
-            hayError = true;
+            if (dto.IdCiudad == null)
+            {
+                mensajes["IdCiudad"].Add("Se requiere una ciudad");
+                hayError = true;
+            }
+            else if (await ctx.Ciudades.FindAsync(dto.IdCiudad) == null)
+            {
+                mensajes["IdCiudad"].Add("La Ciudad especificada no existe");
+                hayError = true;
+            }
         }
-        else if (op == Operacion.Modificacion && await ctx.Ciudades.FindAsync(dto.IdCiudad) == null)
+        else if (dto.IdCiudad != null && await ctx.Ciudades.FindAsync(dto.IdCiudad) == null)
         {
             mensajes["IdCiudad"].Add("La Ciudad especificada no existe");
             hayError = true;
         }
 
         if (string.IsNullOrEmpty(dto.Telefono))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Telefono"].Add("Se requiere un número telefónico");
@@ -137,14 +158,21 @@ public class ValidadorUsuario : IValidadorEntidad
                 mensajes["Telefono"].Add("Se requiere un número telefónico");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Telefono) && dto.Telefono.Length > 20)
+        }
+        else if (dto.Telefono.Length > 20)
         {
             mensajes["Telefono"].Add("El número telefónico no debe exceder los 20 caracteres");
             hayError = true;
         }
 
+        if (!string.IsNullOrEmpty(dto.Telefono2) && dto.Telefono2.Length > 20)
+        {
+            mensajes["Telefono2"].Add("El número telefónico opcional no debe exceder los 20 caracteres");
+            hayError = true;
+        }
+
         if (string.IsNullOrEmpty(dto.Email))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Email"].Add("Se requiere una dirección de correo electrónico");
@@ -155,14 +183,39 @@ public class ValidadorUsuario : IValidadorEntidad
                 mensajes["Email"].Add("Se requiere una dirección de correo electrónico");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Email) && dto.Email.Length > 250)
+        }
+        else
         {
-            mensajes["Email"].Add("El número telefónico no debe exceder los 250 caracteres");
-            hayError = true;
+            if (dto.Email.Length > 250)
+            {
+                mensajes["Email"].Add("La dirección de correo electrónico no debe exceder los 250 caracteres");
+                hayError = true;
+            }
+
+            if (!(new ValidadorEmail(dto.Email)).EsEmailValido())
+            {
+                mensajes["Email"].Add("La dirección de correo electrónico especificada no es válida");
+                hayError = true;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(dto.Email2))
+        {
+            if (dto.Email2.Length > 250)
+            {
+                mensajes["Email2"].Add("La dirección de correo electrónico opcional no debe exceder los 250 caracteres");
+                hayError = true;
+            }
+
+            if (!(new ValidadorEmail(dto.Email2)).EsEmailValido())
+            {
+                mensajes["Email2"].Add("La dirección de correo electrónico especificada no es válida");
+                hayError = true;
+            }
         }
 
         if (string.IsNullOrEmpty(dto.Clave))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Clave"].Add("Se requiere una clave");
@@ -173,31 +226,39 @@ public class ValidadorUsuario : IValidadorEntidad
                 mensajes["Clave"].Add("Se requiere una clave");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Clave) && (dto.Clave.Length < 8 || dto.Clave.Length > 256))
+        }
+        else if (dto.Clave.Length < 8 || dto.Clave.Length > 256)
         {
             mensajes["Clave"].Add("La clave debe tener entre 8 y 256 caracteres");
             hayError = true;
         }
 
-        if (op == Operacion.Modificacion && await ctx.Profesiones.FindAsync(dto.Id) == null)
+        if (dto.IdProfesion != null && await ctx.Profesiones.FindAsync(dto.IdProfesion) == null)
         {
             mensajes["IdProfesion"].Add("La profesión especificada no existe");
             hayError = true;
         }
 
-        if (op == Operacion.Creacion && dto.IdGrupo == null)
+        if (op == Operacion.Creacion)
         {
-            mensajes["IdGrupo"].Add("Se requiere un grupo de usuarios");
-            hayError = true;
+            if (dto.IdGrupo == null)
+            {
+                mensajes["IdGrupo"].Add("Se requiere un grupo de usuarios");
+                hayError = true;
+            }
+            else if (await ctx.Grupos.FindAsync(dto.IdGrupo) == null)
+            {
+                mensajes["IdGrupo"].Add("El grupo de usuarios especificado no existe");
+                hayError = true;
+            }
         }
-        else if (op == Operacion.Modificacion && await ctx.Grupos.FindAsync(dto.IdGrupo) == null)
+        else if (dto.IdGrupo != null && await ctx.Grupos.FindAsync(dto.IdGrupo) == null)
         {
-            mensajes["IdGrupo"].Add("Se requiere un grupo de usuarios");
+            mensajes["IdGrupo"].Add("El grupo de usuarios especificado no existe");
             hayError = true;
         }
 
-        if ((op == Operacion.Creacion && dto.Activo == null))
+        if (op == Operacion.Creacion && dto.Activo == null)
         {
             mensajes["Activo"].Add("Se requiere un valor para el campo Activo");
             hayError = true;

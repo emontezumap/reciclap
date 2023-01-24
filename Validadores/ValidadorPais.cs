@@ -29,13 +29,22 @@ public class ValidadorPais : IValidadorEntidad
     {
         bool hayError = false;
 
-        if (op == Operacion.Modificacion && await ctx.Paises.FindAsync(dto.Id) == null)
+        if (op == Operacion.Modificacion)
         {
-            mensajes["Id"].Add("El país especificado no existe");
-            hayError = true;
+            if (dto.Id == null)
+            {
+                mensajes["Id"].Add("Se requiere un país");
+                hayError = true;
+            }
+            else if (await ctx.Paises.FindAsync(dto.Id) == null)
+            {
+                mensajes["Id"].Add("El país especificado no existe");
+                hayError = true;
+            }
         }
 
         if (string.IsNullOrEmpty(dto.Nombre))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Nombre"].Add("Se requiere el nombre del país");
@@ -46,8 +55,9 @@ public class ValidadorPais : IValidadorEntidad
                 mensajes["Nombre"].Add("Se requiere el nombre del país");
                 hayError = true;
             }
+        }
 
-        if (!string.IsNullOrEmpty(dto.Nombre) && dto.Nombre.Length > 100)
+        if (!string.IsNullOrEmpty(dto.Nombre) && dto.Nombre.Length > 50)
         {
             mensajes["Nombre"].Add("El nombre del país no debe exceder los 50 caracteres");
             hayError = true;

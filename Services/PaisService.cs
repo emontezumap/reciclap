@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
 using System.Security.Claims;
+using Herramientas;
+using Validadores;
 
 namespace Services;
 
@@ -33,48 +35,63 @@ public class PaisService
 
     public async Task<Pais> CrearPais(PaisDTO nuevo, ClaimsPrincipal claims)
     {
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
-        Pais pais = new Pais()
-        {
-            Activo = nuevo.Activo,
-            FechaCreacion = DateTime.UtcNow,
-            FechaModificacion = DateTime.UtcNow,
-            Id = Guid.NewGuid(),
-            IdCreador = id,
-            IdModificador = id,
-            Nombre = nuevo.Nombre
-        };
-
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Paises.Add(pais);
-            await ctx.SaveChangesAsync();
-        }
+            ValidadorPais vc = new ValidadorPais(nuevo, Operacion.Creacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-        return pais;
+            if (rv.ValidacionOk)
+            {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                Pais pais = new Pais()
+                {
+                    Activo = nuevo.Activo,
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaModificacion = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    IdCreador = id,
+                    IdModificador = id,
+                    Nombre = nuevo.Nombre!
+                };
+
+                ctx.Paises.Add(pais);
+                await ctx.SaveChangesAsync();
+
+                return pais;
+            }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+        }
     }
 
     public async Task<bool> ModificarPais(PaisDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await ctx.Paises.FindAsync(modif.Id);
+            ValidadorPais vc = new ValidadorPais(modif, Operacion.Modificacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-            if (buscado != null)
+            if (rv.ValidacionOk)
             {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                var buscado = await ctx.Paises.FindAsync(modif.Id);
 
-                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
-                buscado.IdModificador = id;
-                buscado.FechaModificacion = DateTime.UtcNow;
+                if (buscado != null)
+                {
+                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
 
-                await ctx.SaveChangesAsync();
-                return true;
+                    buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                    buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
+                    buscado.IdModificador = id;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+
+                    await ctx.SaveChangesAsync();
+                    return true;
+                }
+                else
+                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
             }
-
-            return false;
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
     }
 

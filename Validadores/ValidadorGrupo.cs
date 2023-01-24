@@ -29,10 +29,18 @@ public class ValidadorGrupo : IValidadorEntidad
     {
         bool hayError = false;
 
-        if (op == Operacion.Modificacion && await ctx.Grupos.FindAsync(dto.Id) == null)
+        if (op == Operacion.Modificacion)
         {
-            mensajes["Id"].Add("El estatus de publicación especificado no existe");
-            hayError = true;
+            if (dto.Id == null)
+            {
+                mensajes["Id"].Add("Se requiere un grupo de usuarios");
+                hayError = true;
+            }
+            else if (await ctx.Grupos.FindAsync(dto.Id) == null)
+            {
+                mensajes["Id"].Add("El grupo de usuarios especificado no existe");
+                hayError = true;
+            }
         }
 
         if (string.IsNullOrEmpty(dto.Descripcion))

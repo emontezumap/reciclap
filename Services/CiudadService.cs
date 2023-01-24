@@ -40,12 +40,12 @@ public class CiudadService
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
             ValidadorCiudad vc = new ValidadorCiudad(nuevo, Operacion.Creacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
                 Ciudad ciudad = new Ciudad()
                 {
                     Activo = nuevo.Activo,
@@ -77,11 +77,11 @@ public class CiudadService
 
             if (rv.ValidacionOk)
             {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
                 var buscado = await ctx.Ciudades.FindAsync(modif.Id);
 
                 if (buscado != null)
                 {
+                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
                     buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
                     buscado.FechaModificacion = DateTime.UtcNow;
                     buscado.IdEstado = modif.IdEstado == null ? buscado.IdEstado : (Guid)modif.IdEstado;
@@ -91,12 +91,12 @@ public class CiudadService
                     await ctx.SaveChangesAsync();
                     return true;
                 }
+                else
+                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
-
-        return false;
     }
 
     public async Task<bool> EliminarCiudad(Guid id, ClaimsPrincipal claims)

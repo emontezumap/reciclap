@@ -37,12 +37,12 @@ public class ComentarioService
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
             ValidadorComentario vc = new ValidadorComentario(nuevo, Operacion.Creacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
                 Comentario com = new Comentario()
                 {
                     Activo = nuevo.Activo,
@@ -72,7 +72,7 @@ public class ComentarioService
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorComentario vc = new ValidadorComentario(modif, Operacion.Creacion, ctx);
+            ValidadorComentario vc = new ValidadorComentario(modif, Operacion.Modificacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
@@ -95,12 +95,12 @@ public class ComentarioService
                     await ctx.SaveChangesAsync();
                     return true;
                 }
+                else
+                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
-
-        return false;
     }
 
     public async Task<bool> EliminarComentario(Guid id, ClaimsPrincipal claims)

@@ -30,13 +30,22 @@ public class ValidadorCiudad : IValidadorEntidad
     {
         bool hayError = false;
 
-        if (op == Operacion.Modificacion && await ctx.Ciudades.FindAsync(dto.Id) == null)
+        if (op == Operacion.Modificacion)
         {
-            mensajes["Id"].Add("La Ciudad especificada no existe");
-            hayError = true;
+            if (dto.Id == null)
+            {
+                mensajes["Id"].Add("Se requiere una ciudad");
+                hayError = true;
+            }
+            else if (await ctx.Ciudades.FindAsync(dto.Id) == null)
+            {
+                mensajes["Id"].Add("La Ciudad especificada no existe");
+                hayError = true;
+            }
         }
 
         if (string.IsNullOrEmpty(dto.Nombre))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Nombre"].Add("Se requiere el nombre de la ciudad");
@@ -47,8 +56,8 @@ public class ValidadorCiudad : IValidadorEntidad
                 mensajes["Nombre"].Add("Se requiere el nombre de la ciudad");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Nombre) && dto.Nombre.Length > 100)
+        }
+        else if (dto.Nombre.Length > 100)
         {
             mensajes["Nombre"].Add("El nombre de la ciudad no debe exceder los 100 caracteres");
             hayError = true;
@@ -60,7 +69,7 @@ public class ValidadorCiudad : IValidadorEntidad
             hayError = true;
         }
 
-        if (dto.IdEstado != null && await ctx.Ciudades.FindAsync(dto.IdEstado) == null)
+        if (op == Operacion.Modificacion && dto.IdEstado != null && await ctx.Estados.FindAsync(dto.IdEstado) == null)
         {
             mensajes["IdEstado"].Add("El Estado especificado no existe");
             hayError = true;

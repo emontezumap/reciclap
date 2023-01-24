@@ -31,24 +31,33 @@ public class ValidadorChat : IValidadorEntidad
     {
         bool hayError = false;
 
-        if (op == Operacion.Modificacion && await ctx.Chats.FindAsync(dto.Id) == null)
+        if (op == Operacion.Modificacion)
         {
-            mensajes["Id"].Add("El chat especificado no existe");
-            hayError = true;
+            if (dto.Id == null)
+            {
+                mensajes["Id"].Add("Se requiere un chat");
+                hayError = true;
+            }
+            else if (await ctx.Chats.FindAsync(dto.Id) == null)
+            {
+                mensajes["Id"].Add("El chat especificado no existe");
+                hayError = true;
+            }
         }
 
         if (dto.IdPublicacion == null)
         {
-            mensajes["Id"].Add("Se requiere una publicación");
+            mensajes["IdPublicacion"].Add("Se requiere una publicación");
             hayError = true;
         }
-        else if (await ctx.Chats.FindAsync(dto.IdPublicacion) == null)
+        else if (await ctx.Publicaciones.FindAsync(dto.IdPublicacion) == null)
         {
-            mensajes["Id"].Add("La publicación especificada no existe");
+            mensajes["IdPublicacion"].Add("La publicación especificada no existe");
             hayError = true;
         }
 
         if (string.IsNullOrEmpty(dto.Titulo))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Titulo"].Add("Se requiere el título del chat");
@@ -56,19 +65,19 @@ public class ValidadorChat : IValidadorEntidad
             }
             else if (dto.Titulo != null)
             {
-                mensajes["Nombre"].Add("Se requiere el título del chat");
+                mensajes["Titulo"].Add("Se requiere el título del chat");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Titulo) && dto.Titulo.Length > 300)
+        }
+        else if (dto.Titulo.Length > 300)
         {
-            mensajes["Nombre"].Add("El título del chat no debe exceder los 300 caracteres");
+            mensajes["Titulo"].Add("El título del chat no debe exceder los 300 caracteres");
             hayError = true;
         }
 
         if (op == Operacion.Creacion && dto.Fecha == null)
         {
-            mensajes["IdEstado"].Add("Se requiere la fecha de creación chat");
+            mensajes["Fecha"].Add("Se requiere la fecha de creación del chat");
             hayError = true;
         }
 

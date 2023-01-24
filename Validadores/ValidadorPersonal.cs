@@ -38,7 +38,7 @@ public class ValidadorPersonal : IValidadorEntidad
         }
         else if (op == Operacion.Modificacion && await ctx.Publicaciones.FindAsync(dto.IdPublicacion) == null)
         {
-            mensajes["Id"].Add("La publicación especificada no existe");
+            mensajes["IdPublicacion"].Add("La publicación especificada no existe");
             hayError = true;
         }
 
@@ -53,13 +53,33 @@ public class ValidadorPersonal : IValidadorEntidad
             hayError = true;
         }
 
+        if (op == Operacion.Modificacion && dto.IdPublicacion != null && dto.IdUsuario != null && await ctx.Personal.FindAsync(dto.IdPublicacion, dto.IdUsuario) == null)
+        {
+            mensajes["IdPublicacion"].Add("La combinación Publicacion-Usuario especificada no existe");
+            mensajes["IdUsuario"].Add("La combinación Publicacion-Usuario especificada no existe");
+            hayError = true;
+        }
+
         if (op == Operacion.Creacion && dto.Fecha == null)
         {
             mensajes["Fecha"].Add("Se requiere la fecha de asignación del personal");
             hayError = true;
         }
 
-        if (dto.IdRol != null && await ctx.Roles.FindAsync(dto.IdRol) == null)
+        if (op == Operacion.Creacion)
+        {
+            if (dto.IdRol == null)
+            {
+                mensajes["IdRol"].Add("Se debe indicar el rol del personal");
+                hayError = true;
+            }
+            else if (await ctx.Roles.FindAsync(dto.IdRol) == null)
+            {
+                mensajes["IdRol"].Add("El rol especificado no existe");
+                hayError = true;
+            }
+        }
+        else if (dto.IdRol != null && await ctx.Roles.FindAsync(dto.IdRol) == null)
         {
             mensajes["IdRol"].Add("El rol especificado no existe");
             hayError = true;

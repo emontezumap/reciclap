@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
 using System.Security.Claims;
+using Validadores;
+using Herramientas;
 
 namespace Services;
 
@@ -33,51 +35,66 @@ public class GrupoService
 
     public async Task<Grupo> CrearGrupo(GrupoDTO nuevo, ClaimsPrincipal claims)
     {
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
-        Grupo grp = new Grupo()
-        {
-            Activo = nuevo.Activo,
-            Descripcion = nuevo.Descripcion,
-            EsAdministrador = nuevo.EsAdministrador,
-            FechaCreacion = DateTime.UtcNow,
-            FechaModificacion = DateTime.UtcNow,
-            Id = Guid.NewGuid(),
-            IdCreador = id,
-            IdModificador = id
-        };
-
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Grupos.Add(grp);
-            await ctx.SaveChangesAsync();
-        }
+            ValidadorGrupo vc = new ValidadorGrupo(nuevo, Operacion.Creacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-        return grp;
+            if (rv.ValidacionOk)
+            {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                Grupo grp = new Grupo()
+                {
+                    Activo = nuevo.Activo,
+                    Descripcion = nuevo.Descripcion!,
+                    EsAdministrador = nuevo.EsAdministrador,
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaModificacion = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    IdCreador = id,
+                    IdModificador = id
+                };
+
+                ctx.Grupos.Add(grp);
+                await ctx.SaveChangesAsync();
+
+                return grp;
+            }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+        }
     }
 
     public async Task<bool> ModificarGrupo(GrupoDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await ctx.Grupos.FindAsync(modif.Id);
+            ValidadorGrupo vc = new ValidadorGrupo(modif, Operacion.Modificacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-            if (buscado != null)
+            if (rv.ValidacionOk)
             {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                var buscado = await ctx.Grupos.FindAsync(modif.Id);
 
-                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
-                buscado.EsAdministrador = modif.EsAdministrador == null ? buscado.EsAdministrador : modif.EsAdministrador;
-                buscado.FechaModificacion = DateTime.UtcNow;
-                buscado.IdModificador = id;
+                if (buscado != null)
+                {
+                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
 
-                await ctx.SaveChangesAsync();
-                return true;
+                    buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                    buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
+                    buscado.EsAdministrador = modif.EsAdministrador == null ? buscado.EsAdministrador : modif.EsAdministrador;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+                    buscado.IdModificador = id;
+
+                    await ctx.SaveChangesAsync();
+                    return true;
+                }
+                else
+                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
             }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
-
-        return false;
     }
 
     public async Task<bool> EliminarGrupo(Guid id, ClaimsPrincipal claims)

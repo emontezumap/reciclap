@@ -33,29 +33,53 @@ public class ValidadorComentario : IValidadorEntidad
     {
         bool hayError = false;
 
-        if (op == Operacion.Modificacion && await ctx.Comentarios.FindAsync(dto.Id) == null)
+        if (op == Operacion.Modificacion)
         {
-            mensajes["Id"].Add("El comentario especificado no existe");
-            hayError = true;
+            if (dto.Id == null)
+            {
+                mensajes["Id"].Add("Se requiere un comentario");
+                hayError = true;
+            }
+            else if (await ctx.Comentarios.FindAsync(dto.Id) == null)
+            {
+                mensajes["Id"].Add("El comentario especificado no existe");
+                hayError = true;
+            }
         }
 
-        if (dto.IdChat == null)
+        if (op == Operacion.Creacion)
         {
-            mensajes["IdChat"].Add("Se requiere un chat");
-            hayError = true;
+            if (dto.IdChat == null)
+            {
+                mensajes["IdChat"].Add("Se requiere un chat");
+                hayError = true;
+            }
+            else if (await ctx.Chats.FindAsync(dto.IdChat) == null)
+            {
+                mensajes["IdChat"].Add("El chat especificado no existe");
+                hayError = true;
+            }
         }
-        else if (await ctx.Chats.FindAsync(dto.IdChat) == null)
+        else if (dto.IdChat != null && await ctx.Chats.FindAsync(dto.IdChat) == null)
         {
             mensajes["IdChat"].Add("El chat especificado no existe");
             hayError = true;
         }
 
-        if (dto.IdUsuario == null)
+        if (op == Operacion.Creacion)
         {
-            mensajes["IdUsuario"].Add("Se requiere el usuario creador del comentario");
-            hayError = true;
+            if (dto.IdUsuario == null)
+            {
+                mensajes["IdUsuario"].Add("Se requiere el usuario creador del comentario");
+                hayError = true;
+            }
+            else if (await ctx.Usuarios.FindAsync(dto.IdUsuario) == null)
+            {
+                mensajes["IdUsuario"].Add("El usuario especificado no existe");
+                hayError = true;
+            }
         }
-        else if (await ctx.Usuarios.FindAsync(dto.IdUsuario) == null)
+        else if (dto.IdUsuario != null && await ctx.Usuarios.FindAsync(dto.IdUsuario) == null)
         {
             mensajes["IdUsuario"].Add("El usuario especificado no existe");
             hayError = true;
@@ -70,16 +94,16 @@ public class ValidadorComentario : IValidadorEntidad
         if (string.IsNullOrEmpty(dto.Texto))
             if (op == Operacion.Creacion)
             {
-                mensajes["Nombre"].Add("Se requiere el texto del comentario");
+                mensajes["Texto"].Add("Se requiere el texto del comentario");
                 hayError = true;
             }
             else if (dto.Texto != null)
             {
-                mensajes["Nombre"].Add("Se requiere el texto del comentario");
+                mensajes["Texto"].Add("Se requiere el texto del comentario");
                 hayError = true;
             }
 
-        if (dto.IdComentario != null && await ctx.Chats.FindAsync(dto.IdChat) == null)
+        if (dto.IdComentario != null && await ctx.Comentarios.FindAsync(dto.IdComentario) == null)
         {
             mensajes["IdComentario"].Add("El comentario citado no existe");
             hayError = true;

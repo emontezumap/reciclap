@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
 using System.Security.Claims;
+using Herramientas;
+using Validadores;
 
 namespace Services;
 
@@ -33,51 +35,67 @@ public class PersonalService
 
     public async Task<Personal> CrearPersonal(PersonalDTO nuevo, ClaimsPrincipal claims)
     {
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
-        Personal per = new Personal()
-        {
-            Activo = nuevo.Activo,
-            Fecha = (DateTime)nuevo.Fecha,
-            FechaCreacion = DateTime.UtcNow,
-            FechaModificacion = DateTime.UtcNow,
-            IdCreador = id,
-            IdModificador = id,
-            IdPublicacion = (Guid)nuevo.IdPublicacion,
-            IdRol = (Guid)nuevo.IdRol,
-            IdUsuario = (Guid)nuevo.IdUsuario,
-        };
-
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Personal.Add(per);
-            await ctx.SaveChangesAsync();
-        }
+            ValidadorPersonal vc = new ValidadorPersonal(nuevo, Operacion.Creacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-        return per;
+            if (rv.ValidacionOk)
+            {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
+                Personal per = new Personal()
+                {
+                    Activo = nuevo.Activo,
+                    Fecha = (DateTime)nuevo.Fecha!,
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaModificacion = DateTime.UtcNow,
+                    IdCreador = id,
+                    IdModificador = id,
+                    IdPublicacion = (Guid)nuevo.IdPublicacion!,
+                    IdRol = (Guid)nuevo.IdRol!,
+                    IdUsuario = (Guid)nuevo.IdUsuario!,
+                };
+
+                ctx.Personal.Add(per);
+                await ctx.SaveChangesAsync();
+
+                return per;
+            }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+        }
     }
 
     public async Task<bool> ModificarPersonal(PersonalDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await ctx.Personal.FindAsync(modif.IdPublicacion, modif.IdUsuario);
+            ValidadorPersonal vc = new ValidadorPersonal(modif, Operacion.Modificacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-            if (buscado != null)
+            if (rv.ValidacionOk)
             {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                var buscado = await ctx.Personal.FindAsync(modif.IdPublicacion, modif.IdUsuario);
 
-                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
-                buscado.FechaModificacion = DateTime.UtcNow;
-                buscado.IdModificador = id;
-                buscado.IdRol = modif.IdRol == null ? buscado.IdRol : (Guid)modif.IdRol;
+                if (buscado != null)
+                {
+                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
 
-                await ctx.SaveChangesAsync();
-                return true;
+                    buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                    buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+                    buscado.IdModificador = id;
+                    buscado.IdRol = modif.IdRol == null ? buscado.IdRol : (Guid)modif.IdRol;
+
+                    await ctx.SaveChangesAsync();
+                    return true;
+                }
+                else
+                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
             }
-
-            return false;
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
     }
 

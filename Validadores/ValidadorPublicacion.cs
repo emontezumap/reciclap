@@ -35,13 +35,22 @@ public class ValidadorPublicacion : IValidadorEntidad
     {
         bool hayError = false;
 
-        if (op == Operacion.Modificacion && await ctx.Publicaciones.FindAsync(dto.Id) == null)
+        if (op == Operacion.Modificacion)
         {
-            mensajes["Id"].Add("La publicación especificada no existe");
-            hayError = true;
+            if (dto.Id == null)
+            {
+                mensajes["Id"].Add("Se requiere la publicación a modificar");
+                hayError = true;
+            }
+            else if (await ctx.Publicaciones.FindAsync(dto.Id) == null)
+            {
+                mensajes["Id"].Add("La publicación especificada no existe");
+                hayError = true;
+            }
         }
 
         if (string.IsNullOrEmpty(dto.Titulo))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Titulo"].Add("Se requiere el título de la publicación");
@@ -52,14 +61,15 @@ public class ValidadorPublicacion : IValidadorEntidad
                 mensajes["Titulo"].Add("Se requiere el título de la publicación");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Titulo) && dto.Titulo.Length > 200)
+        }
+        else if (dto.Titulo.Length > 200)
         {
-            mensajes["Descripcion"].Add("El título de la publicación no debe exceder los 200 caracteres");
+            mensajes["Titulo"].Add("El título de la publicación no debe exceder los 200 caracteres");
             hayError = true;
         }
 
         if (string.IsNullOrEmpty(dto.Descripcion))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Descripcion"].Add("Se requiere una descripción");
@@ -70,6 +80,7 @@ public class ValidadorPublicacion : IValidadorEntidad
                 mensajes["Descripcion"].Add("Se requiere una descripción");
                 hayError = true;
             }
+        }
 
         if (op == Operacion.Creacion && dto.Fecha == null)
         {
@@ -77,29 +88,45 @@ public class ValidadorPublicacion : IValidadorEntidad
             hayError = true;
         }
 
-        if (dto.IdEstatus == null)
+        if (op == Operacion.Creacion)
         {
-            mensajes["IdEstatus"].Add("Se requiere el estatus de la publicación");
-            hayError = true;
+            if (dto.IdEstatus == null)
+            {
+                mensajes["IdEstatus"].Add("Se requiere el estatus de la publicación");
+                hayError = true;
+            }
+            else if (ctx.EstatusPublicaciones.FindAsync(dto.IdEstatus) == null)
+            {
+                mensajes["IdEstatus"].Add("El estatus especificado no existe");
+                hayError = true;
+            }
         }
-        else if (op == Operacion.Modificacion && await ctx.EstatusPublicaciones.FindAsync(dto.IdEstatus) == null)
+        else if (dto.IdEstatus != null && await ctx.EstatusPublicaciones.FindAsync(dto.IdEstatus) == null)
         {
             mensajes["IdEstatus"].Add("El estatus especificado no existe");
             hayError = true;
         }
 
-        if (dto.IdTipoPublicacion == null)
+        if (op == Operacion.Creacion)
         {
-            mensajes["IdTipoPublicacion"].Add("Se requiere el tipo de publicación");
-            hayError = true;
+            if (dto.IdTipoPublicacion == null)
+            {
+                mensajes["IdTipoPublicacion"].Add("Se requiere el tipo de publicación");
+                hayError = true;
+            }
+            else if (await ctx.TiposPublicacion.FindAsync(dto.IdTipoPublicacion) == null)
+            {
+                mensajes["IdTipoPublicacion"].Add("El tipo de publicación especificado no existe");
+                hayError = true;
+            }
         }
-        else if (op == Operacion.Modificacion && await ctx.TiposPublicacion.FindAsync(dto.IdTipoPublicacion) == null)
+        else if (dto.IdTipoPublicacion != null && await ctx.TiposPublicacion.FindAsync(dto.IdTipoPublicacion) == null)
         {
             mensajes["IdTipoPublicacion"].Add("El tipo de publicación especificado no existe");
             hayError = true;
         }
 
-        if ((op == Operacion.Creacion && dto.Activo == null))
+        if (op == Operacion.Creacion && dto.Activo == null)
         {
             mensajes["Activo"].Add("Se requiere un valor para el campo Activo");
             hayError = true;

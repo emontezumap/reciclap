@@ -38,12 +38,12 @@ public class ChatService
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
             ValidadorChat vc = new ValidadorChat(nuevo, Operacion.Creacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
                 Chat chat = new Chat()
                 {
                     Activo = nuevo.Activo,
@@ -71,7 +71,7 @@ public class ChatService
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorChat vc = new ValidadorChat(modif, Operacion.Creacion, ctx);
+            ValidadorChat vc = new ValidadorChat(modif, Operacion.Modificacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
@@ -92,8 +92,8 @@ public class ChatService
                     await ctx.SaveChangesAsync();
                     return true;
                 }
-
-                return false;
+                else
+                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();

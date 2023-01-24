@@ -30,13 +30,22 @@ public class ValidadorEstado : IValidadorEntidad
     {
         bool hayError = false;
 
-        if (op == Operacion.Modificacion && await ctx.Estados.FindAsync(dto.Id) == null)
+        if (op == Operacion.Modificacion)
         {
-            mensajes["Id"].Add("El estado especificado no existe");
-            hayError = true;
+            if (dto.Id == null)
+            {
+                mensajes["Id"].Add("Se requiere un comentario");
+                hayError = true;
+            }
+            else if (await ctx.Estados.FindAsync(dto.Id) == null)
+            {
+                mensajes["Id"].Add("El estado especificado no existe");
+                hayError = true;
+            }
         }
 
         if (string.IsNullOrEmpty(dto.Nombre))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Nombre"].Add("Se requiere el nombre del estado");
@@ -47,22 +56,29 @@ public class ValidadorEstado : IValidadorEntidad
                 mensajes["Nombre"].Add("Se requiere el nombre del estado");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Nombre) && dto.Nombre.Length > 100)
+        }
+        else if (dto.Nombre.Length > 100)
         {
             mensajes["Nombre"].Add("El nombre del estado no debe exceder los 100 caracteres");
             hayError = true;
         }
 
-        if (op == Operacion.Creacion && dto.IdPais == null)
+        if (op == Operacion.Creacion)
         {
-            mensajes["IdEstado"].Add("Se requiere el país");
-            hayError = true;
+            if (dto.IdPais == null)
+            {
+                mensajes["IdPais"].Add("Se requiere el país");
+                hayError = true;
+            }
+            else if (await ctx.Paises.FindAsync(dto.IdPais) == null)
+            {
+                mensajes["IdPais"].Add("El país especificado no existe");
+                hayError = true;
+            }
         }
-
-        if (dto.IdPais != null && await ctx.Paises.FindAsync(dto.IdPais) == null)
+        else if (dto.IdPais != null && await ctx.Paises.FindAsync(dto.IdPais) == null)
         {
-            mensajes["IdEstado"].Add("El país especificado no existe");
+            mensajes["IdPais"].Add("El país especificado no existe");
             hayError = true;
         }
 

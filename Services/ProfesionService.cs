@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
 using System.Security.Claims;
+using Herramientas;
+using Validadores;
 
 namespace Services;
 
@@ -33,48 +35,63 @@ public class ProfesionService
 
     public async Task<Profesion> CrearProfesion(ProfesionDTO nuevo, ClaimsPrincipal claims)
     {
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
-        Profesion prof = new Profesion()
-        {
-            Activo = nuevo.Activo,
-            Descripcion = nuevo.Descripcion,
-            FechaCreacion = DateTime.UtcNow,
-            FechaModificacion = DateTime.UtcNow,
-            Id = Guid.NewGuid(),
-            IdCreador = id,
-            IdModificador = id
-        };
-
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.Profesiones.Add(prof);
-            await ctx.SaveChangesAsync();
-        }
+            ValidadorProfesion vc = new ValidadorProfesion(nuevo, Operacion.Creacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-        return prof;
+            if (rv.ValidacionOk)
+            {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
+                Profesion prof = new Profesion()
+                {
+                    Activo = nuevo.Activo,
+                    Descripcion = nuevo.Descripcion!,
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaModificacion = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    IdCreador = id,
+                    IdModificador = id
+                };
+
+                ctx.Profesiones.Add(prof);
+                await ctx.SaveChangesAsync();
+                return prof;
+            }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+        }
     }
 
     public async Task<bool> ModificarProfesion(ProfesionDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await ctx.Profesiones.FindAsync(modif.Id);
+            ValidadorProfesion vc = new ValidadorProfesion(modif, Operacion.Modificacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-            if (buscado != null)
+            if (rv.ValidacionOk)
             {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                var buscado = await ctx.Profesiones.FindAsync(modif.Id);
 
-                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
-                buscado.FechaModificacion = DateTime.UtcNow;
-                buscado.IdModificador = id;
+                if (buscado != null)
+                {
+                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
 
-                await ctx.SaveChangesAsync();
-                return true;
+                    buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                    buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+                    buscado.IdModificador = id;
+
+                    await ctx.SaveChangesAsync();
+                    return true;
+                }
+                else
+                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
             }
-
-            return false;
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
     }
 

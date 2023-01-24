@@ -40,12 +40,12 @@ public class UsuarioService
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
             ValidadorUsuario vc = new ValidadorUsuario(nuevo, Operacion.Creacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
                 Usuario usr = new Usuario()
                 {
                     Activo = nuevo.Activo,
@@ -118,12 +118,12 @@ public class UsuarioService
                     await ctx.SaveChangesAsync();
                     return true;
                 }
+                else
+                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
             }
             else
                 throw (new Excepcionador(rv).ExcepcionDatosNoValidos());
         }
-
-        return false;
     }
 
     public async Task<bool> EliminarUsuario(Guid id, ClaimsPrincipal claims)

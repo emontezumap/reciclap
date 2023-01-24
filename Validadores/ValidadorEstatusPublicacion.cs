@@ -29,27 +29,35 @@ public class ValidadorEstatusPublicacion : IValidadorEntidad
     {
         bool hayError = false;
 
-        if (op == Operacion.Modificacion && await ctx.Estados.FindAsync(dto.Id) == null)
+        if (op == Operacion.Modificacion)
         {
-            mensajes["Id"].Add("El estatus de publicación especificado no existe");
-            hayError = true;
+            if (dto.Id == null)
+            {
+                mensajes["Id"].Add("Se requiere un estatus de publicacion");
+                hayError = true;
+            }
+            else if (await ctx.Estados.FindAsync(dto.Id) == null)
+            {
+                mensajes["Id"].Add("El estatus de publicación especificado no existe");
+                hayError = true;
+            }
         }
 
         if (string.IsNullOrEmpty(dto.Descripcion))
             if (op == Operacion.Creacion)
             {
-                mensajes["Nombre"].Add("Se requiere una descripción");
+                mensajes["Descripcion"].Add("Se requiere una descripción");
                 hayError = true;
             }
             else if (dto.Descripcion != null)
             {
-                mensajes["Nombre"].Add("Se requiere una descripción");
+                mensajes["Descripcion"].Add("Se requiere una descripción");
                 hayError = true;
             }
 
         if (!string.IsNullOrEmpty(dto.Descripcion) && dto.Descripcion.Length > 200)
         {
-            mensajes["Nombre"].Add("La descripción del estatus no debe exceder los 200 caracteres");
+            mensajes["Descripcion"].Add("La descripción del estatus no debe exceder los 200 caracteres");
             hayError = true;
         }
 

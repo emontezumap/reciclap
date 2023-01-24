@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
 using System.Security.Claims;
+using Herramientas;
+using Validadores;
 
 namespace Services;
 
@@ -36,31 +38,38 @@ public class PublicacionService
 
     public async Task<Publicacion> CrearPublicacion(PublicacionDTO nuevo, ClaimsPrincipal claims)
     {
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Publicacion pub = new Publicacion()
+            ValidadorPublicacion vc = new ValidadorPublicacion(nuevo, Operacion.Creacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
+
+            if (rv.ValidacionOk)
             {
-                Activo = nuevo.Activo,
-                Descripcion = nuevo.Descripcion!,
-                Fecha = (DateTime)nuevo.Fecha!,
-                FechaCreacion = DateTime.UtcNow,
-                FechaModificacion = DateTime.UtcNow,
-                Gustan = nuevo.Gustan == null ? 0 : (int)nuevo.Gustan,
-                Id = Guid.NewGuid(),
-                IdCreador = id,
-                IdEstatus = (Guid)nuevo.IdEstatus!,
-                IdModificador = id,
-                IdTipoPublicacion = (Guid)nuevo.IdTipoPublicacion!,
-                NoGustan = nuevo.NoGustan == null ? 0 : (int)nuevo.NoGustan,
-                Titulo = nuevo.Titulo!,
-            };
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                Publicacion pub = new Publicacion()
+                {
+                    Activo = nuevo.Activo,
+                    Descripcion = nuevo.Descripcion!,
+                    Fecha = (DateTime)nuevo.Fecha!,
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaModificacion = DateTime.UtcNow,
+                    Gustan = nuevo.Gustan == null ? 0 : (int)nuevo.Gustan,
+                    Id = Guid.NewGuid(),
+                    IdCreador = id,
+                    IdEstatus = (Guid)nuevo.IdEstatus!,
+                    IdModificador = id,
+                    IdTipoPublicacion = (Guid)nuevo.IdTipoPublicacion!,
+                    NoGustan = nuevo.NoGustan == null ? 0 : (int)nuevo.NoGustan,
+                    Titulo = nuevo.Titulo!,
+                };
 
-            ctx.Publicaciones.Add(pub);
-            await ctx.SaveChangesAsync();
+                ctx.Publicaciones.Add(pub);
+                await ctx.SaveChangesAsync();
 
-            return pub;
+                return pub;
+            }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
     }
 
@@ -68,28 +77,36 @@ public class PublicacionService
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await ctx.Publicaciones.FindAsync(modif.Id);
+            ValidadorPublicacion vc = new ValidadorPublicacion(modif, Operacion.Modificacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-            if (buscado != null)
+            if (rv.ValidacionOk)
             {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                var buscado = await ctx.Publicaciones.FindAsync(modif.Id);
 
-                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
-                buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
-                buscado.FechaModificacion = DateTime.UtcNow;
-                buscado.Gustan = modif.Gustan == null ? buscado.Gustan : (int)modif.Gustan;
-                buscado.IdEstatus = modif.IdEstatus == null ? buscado.IdEstatus : (Guid)modif.IdEstatus;
-                buscado.IdModificador = id;
-                buscado.IdTipoPublicacion = modif.IdTipoPublicacion == null ? buscado.IdTipoPublicacion : (Guid)modif.IdTipoPublicacion;
-                buscado.NoGustan = modif.NoGustan == null ? buscado.NoGustan : (int)modif.NoGustan;
-                buscado.Titulo = modif.Titulo == null ? buscado.Titulo : modif.Titulo;
+                if (buscado != null)
+                {
+                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
 
-                await ctx.SaveChangesAsync();
-                return true;
+                    buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                    buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
+                    buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+                    buscado.Gustan = modif.Gustan == null ? buscado.Gustan : (int)modif.Gustan;
+                    buscado.IdEstatus = modif.IdEstatus == null ? buscado.IdEstatus : (Guid)modif.IdEstatus;
+                    buscado.IdModificador = id;
+                    buscado.IdTipoPublicacion = modif.IdTipoPublicacion == null ? buscado.IdTipoPublicacion : (Guid)modif.IdTipoPublicacion;
+                    buscado.NoGustan = modif.NoGustan == null ? buscado.NoGustan : (int)modif.NoGustan;
+                    buscado.Titulo = modif.Titulo == null ? buscado.Titulo : modif.Titulo;
+
+                    await ctx.SaveChangesAsync();
+                    return true;
+                }
+                else
+                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
             }
-
-            return false;
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
     }
 

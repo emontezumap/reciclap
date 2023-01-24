@@ -29,13 +29,22 @@ public class ValidadorProfesion : IValidadorEntidad
     {
         bool hayError = false;
 
-        if (op == Operacion.Modificacion && await ctx.Profesiones.FindAsync(dto.Id) == null)
+        if (op == Operacion.Modificacion)
         {
-            mensajes["Id"].Add("La profesión especificada no existe");
-            hayError = true;
+            if (dto.Id == null)
+            {
+                mensajes["Id"].Add("Se debe especificar la profesión a modificar");
+                hayError = true;
+            }
+            else if (await ctx.Profesiones.FindAsync(dto.Id) == null)
+            {
+                mensajes["Id"].Add("La profesión especificada no existe");
+                hayError = true;
+            }
         }
 
         if (string.IsNullOrEmpty(dto.Descripcion))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Descripcion"].Add("Se requiere una descripción");
@@ -46,14 +55,14 @@ public class ValidadorProfesion : IValidadorEntidad
                 mensajes["Descripcion"].Add("Se requiere una descripción");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Descripcion) && dto.Descripcion.Length > 200)
+        }
+        else if (dto.Descripcion.Length > 200)
         {
             mensajes["Descripcion"].Add("La descripción del estatus no debe exceder los 200 caracteres");
             hayError = true;
         }
 
-        if ((op == Operacion.Creacion && dto.Activo == null))
+        if (op == Operacion.Creacion && dto.Activo == null)
         {
             mensajes["Activo"].Add("Se requiere un valor para el campo Activo");
             hayError = true;

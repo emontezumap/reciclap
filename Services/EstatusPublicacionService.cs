@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
 using System.Security.Claims;
+using Herramientas;
+using Validadores;
 
 namespace Services;
 
@@ -33,49 +35,64 @@ public class EstatusPublicacionService
 
     public async Task<EstatusPublicacion> CrearEstatusPublicacion(EstatusPublicacionDTO nuevo, ClaimsPrincipal claims)
     {
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
-        EstatusPublicacion ep = new EstatusPublicacion()
-        {
-            Activo = nuevo.Activo,
-            Descripcion = nuevo.Descripcion,
-            FechaCreacion = DateTime.UtcNow,
-            FechaModificacion = DateTime.UtcNow,
-            Id = Guid.NewGuid(),
-            IdCreador = id,
-            IdModificador = id
-        };
-
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ctx.EstatusPublicaciones.Add(ep);
-            await ctx.SaveChangesAsync();
-        }
+            ValidadorEstatusPublicacion vc = new ValidadorEstatusPublicacion(nuevo, Operacion.Creacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-        return ep;
+            if (rv.ValidacionOk)
+            {
+                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                EstatusPublicacion ep = new EstatusPublicacion()
+                {
+                    Activo = nuevo.Activo,
+                    Descripcion = nuevo.Descripcion!,
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaModificacion = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    IdCreador = id,
+                    IdModificador = id
+                };
+
+                ctx.EstatusPublicaciones.Add(ep);
+                await ctx.SaveChangesAsync();
+
+                return ep;
+            }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+        }
     }
 
     public async Task<bool> ModificarEstatusPublicacion(EstatusPublicacionDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            var buscado = await ctx.EstatusPublicaciones.FindAsync(modif.Id);
+            ValidadorEstatusPublicacion vc = new ValidadorEstatusPublicacion(modif, Operacion.Modificacion, ctx);
+            ResultadoValidacion rv = await vc.Validar();
 
-            if (buscado != null)
+            if (rv.ValidacionOk)
             {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+                var buscado = await ctx.EstatusPublicaciones.FindAsync(modif.Id);
 
-                buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
-                buscado.FechaCreacion = DateTime.UtcNow;
-                buscado.IdModificador = id;
+                if (buscado != null)
+                {
+                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
 
-                await ctx.SaveChangesAsync();
-                return true;
+                    buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
+                    buscado.Descripcion = modif.Descripcion == null ? buscado.Descripcion : modif.Descripcion;
+                    buscado.FechaCreacion = DateTime.UtcNow;
+                    buscado.IdModificador = id;
+
+                    await ctx.SaveChangesAsync();
+                    return true;
+                }
+                else
+                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
             }
+            else
+                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
         }
-
-        return false;
     }
 
     public async Task<bool> EliminarEstatusPublicacion(Guid id, ClaimsPrincipal claims)
