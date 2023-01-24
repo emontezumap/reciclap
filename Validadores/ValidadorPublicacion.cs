@@ -95,7 +95,7 @@ public class ValidadorPublicacion : IValidadorEntidad
                 mensajes["IdEstatus"].Add("Se requiere el estatus de la publicación");
                 hayError = true;
             }
-            else if (ctx.EstatusPublicaciones.FindAsync(dto.IdEstatus) == null)
+            else if (await ctx.EstatusPublicaciones.FindAsync(dto.IdEstatus) == null)
             {
                 mensajes["IdEstatus"].Add("El estatus especificado no existe");
                 hayError = true;

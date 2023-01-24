@@ -1,4 +1,5 @@
 using DTOs;
+using Entidades;
 using Herramientas;
 using Services;
 
@@ -108,6 +109,24 @@ public class ValidadorUsuario : IValidadorEntidad
             hayError = true;
         }
 
+        // Verificar que el nombre completo del usuario sea unico
+        string n1 = dto.Nombre == null ? "" : dto.Nombre;
+        string n2 = dto.Nombre2 == null ? "" : dto.Nombre2;
+        string a1 = dto.Apellido == null ? "" : dto.Apellido;
+        string a2 = dto.Apellido2 == null ? "" : dto.Apellido2;
+
+        if (n1 != "" && a1 != "")
+        {
+            var usr = ctx.Usuarios.Where(u => u.Nombre == n1 && u.Nombre2 == n2
+                && u.Apellido == a1 && u.Apellido2 == a2);
+
+            if (usr != null)
+            {
+                mensajes["Nombre"].Add("El nombre completo (nombres y apellidos) del usuario no es único");
+                hayError = true;
+            }
+        }
+
         if (string.IsNullOrEmpty(dto.Direccion))
         {
             if (op == Operacion.Creacion)
@@ -197,6 +216,20 @@ public class ValidadorUsuario : IValidadorEntidad
                 mensajes["Email"].Add("La dirección de correo electrónico especificada no es válida");
                 hayError = true;
             }
+
+            // Verificar que el email sea unico
+            Usuario? usr = null;
+
+            if (op == Operacion.Creacion)
+                usr = (Usuario)ctx.Usuarios.Where(u => u.Email == dto.Email);
+            else if (dto.Id != null)
+                usr = (Usuario)ctx.Usuarios.Where(u => u.Email == dto.Email && u.Id != dto.Id);
+
+            if (usr != null)
+            {
+                mensajes["Email"].Add("La dirección de correo electrónico principal ya está siendo utilizada por otro usuario");
+                hayError = true;
+            }
         }
 
         if (!string.IsNullOrEmpty(dto.Email2))
@@ -263,8 +296,6 @@ public class ValidadorUsuario : IValidadorEntidad
             mensajes["Activo"].Add("Se requiere un valor para el campo Activo");
             hayError = true;
         }
-
-        // FALTA: Verificar que el nombre completo del usuario sea unico
 
         ResultadoValidacion v = new ResultadoValidacion();
         v.ValidacionOk = !hayError;

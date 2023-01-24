@@ -28,13 +28,14 @@ public class Excepcionador
 
     public GraphQLException ExcepcionDatosNoValidos()
     {
-        var error = ErrorBuilder.New()
-            .SetMessage(MENSAJE_ERROR_DATOS_NO_VALIDOS)
-            .SetCode("DATOS_NO_VALIDOS")
-            .SetExtension("validacion",
-                JsonConvert.SerializeObject(rv, Formatting.Indented))
-            .Build();
+        var error = ErrorBuilder.New();
+        error.SetMessage(MENSAJE_ERROR_DATOS_NO_VALIDOS);
+        error.SetCode("DATOS_NO_VALIDOS");
 
-        return new GraphQLException(error);
+        foreach (var men in rv!.Mensajes!)
+            if (men.Value.Count > 0)
+                error.SetExtension(men.Key, JsonConvert.SerializeObject(men.Value));
+
+        return new GraphQLException(error.Build());
     }
 }
