@@ -62,11 +62,11 @@ public class PaisService
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El país");
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El país");
                 }
                 catch (Exception ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
             else
@@ -101,11 +101,11 @@ public class PaisService
                     }
                     catch (DbUpdateException ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El país");
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El país");
                     }
                     catch (Exception ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                     }
                 }
                 else
@@ -129,11 +129,11 @@ public class PaisService
             }
             catch (DbUpdateException ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El país");
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El país");
             }
             catch (Exception ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
             }
         }
         // PaisDTO pais = new PaisDTO()

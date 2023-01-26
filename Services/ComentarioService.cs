@@ -66,11 +66,11 @@ public class ComentarioService
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El comentario");
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El comentario");
                 }
                 catch (Exception ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
             else
@@ -109,11 +109,11 @@ public class ComentarioService
                     }
                     catch (DbUpdateException ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El comentario");
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El comentario");
                     }
                     catch (Exception ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                     }
                 }
                 else
@@ -137,11 +137,11 @@ public class ComentarioService
             }
             catch (DbUpdateException ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El comentario");
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El comentario");
             }
             catch (Exception ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
             }
         }
 

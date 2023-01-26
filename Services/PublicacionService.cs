@@ -71,11 +71,11 @@ public class PublicacionService
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La publicación");
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "La publicación");
                 }
                 catch (Exception ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
             else
@@ -116,11 +116,11 @@ public class PublicacionService
                     }
                     catch (DbUpdateException ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La publicación");
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "La publicación");
                     }
                     catch (Exception ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                     }
                 }
                 else
@@ -144,11 +144,11 @@ public class PublicacionService
             }
             catch (DbUpdateException ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La publicación");
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "La publicación");
             }
             catch (Exception ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
             }
         }
         // PublicacionDTO pub = new PublicacionDTO()

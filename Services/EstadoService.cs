@@ -63,11 +63,11 @@ public class EstadoService
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El estado");
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El estado");
                 }
                 catch (Exception ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
             else
@@ -103,11 +103,11 @@ public class EstadoService
                     }
                     catch (DbUpdateException ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El estado");
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El estado");
                     }
                     catch (Exception ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                     }
                 }
                 else
@@ -132,11 +132,11 @@ public class EstadoService
             }
             catch (DbUpdateException ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El estado");
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El estado");
             }
             catch (Exception ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
             }
         }
 

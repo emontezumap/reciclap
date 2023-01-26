@@ -62,11 +62,11 @@ public class TipoPublicacionService
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El tipo de publicación");
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El tipo de publicación");
                 }
                 catch (Exception ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
             else
@@ -101,11 +101,11 @@ public class TipoPublicacionService
                     }
                     catch (DbUpdateException ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El tipo de publicación");
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El tipo de publicación");
                     }
                     catch (Exception ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                     }
                 }
                 else
@@ -129,11 +129,11 @@ public class TipoPublicacionService
             }
             catch (DbUpdateException ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El tipo de publicación");
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El tipo de publicación");
             }
             catch (Exception ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
             }
         }
 

@@ -66,11 +66,11 @@ public class CiudadService
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La ciudad");
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "La ciudad");
                 }
                 catch (Exception ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
             else
@@ -105,11 +105,11 @@ public class CiudadService
                     }
                     catch (DbUpdateException ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La ciudad");
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "La ciudad");
                     }
                     catch (Exception ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                     }
                 }
                 else
@@ -126,18 +126,18 @@ public class CiudadService
         {
             try
             {
-                Ciudad ciu = new Ciudad() { Id = id };
-                ctx.Ciudades.Remove(ciu);
+                Ciudad o = new Ciudad() { Id = id };
+                ctx.Ciudades.Remove(o);
                 await ctx.SaveChangesAsync();
                 return true;
             }
             catch (DbUpdateException ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La ciudad");
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "La ciudad");
             }
             catch (Exception ex)
             {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
             }
         }
 

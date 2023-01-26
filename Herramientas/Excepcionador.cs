@@ -9,7 +9,7 @@ public class Excepcionador
     private const string MENSAJE_ERROR_POR_DEFECTO = "Error no especificado";
     private const string MENSAJE_ERROR_REGISTRO_ELIMINADO = "El registro fue eliminado";
     private const string MENSAJE_ERROR_DATOS_NO_VALIDOS = "Datos no válidos";
-    private const string MENSAJE_ERROR_REGISTRO_DUPLICADO = "";
+    private const string MENSAJE_ERROR_REGISTRO_NO_EXISTE = "El registro especificado no existe";
     public Excepcionador() { }
 
     public Excepcionador(ResultadoValidacion rv)
@@ -24,37 +24,45 @@ public class Excepcionador
 
     public GraphQLException ProcesarExcepcionActualizacionDB(Exception? ex, string objeto)
     {
+        string mensaje, esp, est;
+
+        if (ex == null)
+        {
+            mensaje = "";
+            esp = "";
+            est = "";
+        }
+        else if (ex.GetType() == typeof(DbUpdateConcurrencyException))
+        {
+            return ExcepcionRegistroNoExiste();
+        }
+        else
+        {
+            ex = ex.InnerException != null ? ex.InnerException : ex;
+            mensaje = ex.Message != null ? ex.Message : "";
+            esp = objeto.StartsWith("la", StringComparison.CurrentCultureIgnoreCase) ? "especificada" : "especificado";
+            est = objeto.StartsWith("la", StringComparison.CurrentCultureIgnoreCase) ? "ésta" : "éste";
+        }
+
+        ErrorBuilder error;
         List<string> listaDuplicados = new List<string>() { "insert", "duplicate key" };
         List<string> listaReferencia = new List<string>() { "delete", "reference" };
 
-        string mensaje = ex!.Message == null ? "" : ex.Message;
+        if (listaDuplicados.All(p => mensaje.Contains(p, StringComparison.CurrentCultureIgnoreCase)))
+            error = (ErrorBuilder)ErrorBuilder.New()
+               .SetMessage($"{objeto} {esp} ya existe en la base de datos")
+               .SetCode("REGISTRO_DUPLICADO");
+        else if (listaReferencia.All(p => mensaje.Contains(p, StringComparison.CurrentCultureIgnoreCase)))
+            error = (ErrorBuilder)ErrorBuilder.New()
+               .SetMessage($"No se puede eliminar {objeto} {esp}; existen registros que dependen de {est}")
+               .SetCode("ELIMINACION_NO_PERMITIDA");
+        else
+            error = (ErrorBuilder)ErrorBuilder.New()
+               .SetMessage(MENSAJE_ERROR_POR_DEFECTO)
+               .SetMessage("Mensaje original:" + mensaje)
+               .SetCode("ERROR_ACTUALIZACION_NO_ESPECIFICADO");
 
-        if (listaDuplicados.All(mensaje.Contains))
-        {
-            var error = ErrorBuilder.New()
-               .SetMessage($"{objeto} especificado(a) ya existe en la base de datos")
-               .SetCode("REGISTRO_DUPLICADO")
-               .Build();
-
-            return new GraphQLException(error);
-        }
-        else if (listaReferencia.All(mensaje.Contains))
-        {
-            var error = ErrorBuilder.New()
-               .SetMessage($"No se puede eliminar {objeto} especificado(a); existen registros que dependen de éste(a)")
-               .SetCode("ELIMINACION_NO_PERMITIDA")
-               .Build();
-
-            return new GraphQLException(error);
-        }
-
-        var errorIndefinido = ErrorBuilder.New()
-           .SetMessage(MENSAJE_ERROR_POR_DEFECTO)
-           .SetMessage("Mensaje original:" + ex.Message)
-           .SetCode("ERROR_ACTUALIZACION_NO_ESPECIFICADO")
-           .Build();
-
-        return new GraphQLException(errorIndefinido);
+        return new GraphQLException(error.Build());
     }
 
     public GraphQLException ExcepcionRegistroEliminado()
@@ -62,6 +70,16 @@ public class Excepcionador
         var error = ErrorBuilder.New()
             .SetMessage(MENSAJE_ERROR_REGISTRO_ELIMINADO)
             .SetCode("REGISTRO_ELIMINADO")
+            .Build();
+
+        return new GraphQLException(error);
+    }
+
+    public GraphQLException ExcepcionRegistroNoExiste()
+    {
+        var error = ErrorBuilder.New()
+            .SetMessage(MENSAJE_ERROR_REGISTRO_NO_EXISTE)
+            .SetCode("REGISTRO_INEXISTENTE")
             .Build();
 
         return new GraphQLException(error);
