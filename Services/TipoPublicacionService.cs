@@ -54,10 +54,20 @@ public class TipoPublicacionService
                     IdModificador = id
                 };
 
-                ctx.TiposPublicacion.Add(tp);
-                await ctx.SaveChangesAsync();
-
-                return tp;
+                try
+                {
+                    ctx.TiposPublicacion.Add(tp);
+                    await ctx.SaveChangesAsync();
+                    return tp;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El tipo de publicación");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -84,8 +94,19 @@ public class TipoPublicacionService
                     buscado.FechaModificacion = DateTime.UtcNow;
                     buscado.IdModificador = id;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El tipo de publicación");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -97,12 +118,31 @@ public class TipoPublicacionService
 
     public async Task<bool> EliminarTipoPublicacion(Guid id, ClaimsPrincipal claims)
     {
-        TipoPublicacionDTO tp = new TipoPublicacionDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                TipoPublicacion o = new TipoPublicacion();
+                ctx.TiposPublicacion.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El tipo de publicación");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
 
-        return await ModificarTipoPublicacion(tp, claims);
+        // TipoPublicacionDTO tp = new TipoPublicacionDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
+
+        // return await ModificarTipoPublicacion(tp, claims);
     }
 }

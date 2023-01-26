@@ -1,0 +1,37 @@
+1. Captura de error de clave única para: 
+    - ciudad
+    - estado
+    - estatus_publicaciones
+    - grupos
+    - paises
+    - profesiones
+    - roles
+    - tipos_publicacion
+    - usuarios
+--  LISTO
+
+2. Captura de error de referencia para:
+    - chats
+    - ciudades
+    - comentarios
+    - estados
+    - estatus_publicaciones
+    - grupos
+    - paises
+    - profesiones
+    - publicaciones
+    - roles
+    - tipos_publicacion
+    - usuarios
+--  LISTO
+
+
+3. Tabla detalle de publicación
+
+4. Paginación: Nro. de página actual
+
+5. Implementar seguridad
+
+6. Dataloaders
+
+7. Tabla de administradores

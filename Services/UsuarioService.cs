@@ -71,10 +71,20 @@ public class UsuarioService
                     Telefono2 = nuevo.Telefono2 == null ? "" : nuevo.Telefono2
                 };
 
-                ctx.Usuarios.Add(usr);
-                await ctx.SaveChangesAsync();
-
-                return usr;
+                try
+                {
+                    ctx.Usuarios.Add(usr);
+                    await ctx.SaveChangesAsync();
+                    return usr;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El usuario");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv).ExcepcionDatosNoValidos());
@@ -115,8 +125,19 @@ public class UsuarioService
                     buscado.Telefono = modif.Telefono == null ? buscado.Telefono : modif.Telefono;
                     buscado.Telefono2 = modif.Telefono2 == null ? buscado.Telefono2 : modif.Telefono2;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El usuario");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -128,13 +149,31 @@ public class UsuarioService
 
     public async Task<bool> EliminarUsuario(Guid id, ClaimsPrincipal claims)
     {
-        UsuarioDTO usr = new UsuarioDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                Usuario o = new Usuario() { Id = id };
+                ctx.Usuarios.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El usuario");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
 
-        return await ModificarUsuario(usr, claims);
+        // UsuarioDTO usr = new UsuarioDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
 
+        // return await ModificarUsuario(usr, claims);
     }
 }

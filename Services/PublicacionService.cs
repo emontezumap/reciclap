@@ -63,10 +63,20 @@ public class PublicacionService
                     Titulo = nuevo.Titulo!,
                 };
 
-                ctx.Publicaciones.Add(pub);
-                await ctx.SaveChangesAsync();
-
-                return pub;
+                try
+                {
+                    ctx.Publicaciones.Add(pub);
+                    await ctx.SaveChangesAsync();
+                    return pub;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La publicación");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -99,8 +109,19 @@ public class PublicacionService
                     buscado.NoGustan = modif.NoGustan == null ? buscado.NoGustan : (int)modif.NoGustan;
                     buscado.Titulo = modif.Titulo == null ? buscado.Titulo : modif.Titulo;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La publicación");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -112,12 +133,30 @@ public class PublicacionService
 
     public async Task<bool> EliminarPublicacion(Guid id, ClaimsPrincipal claims)
     {
-        PublicacionDTO pub = new PublicacionDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                Publicacion o = new Publicacion() { Id = id };
+                ctx.Publicaciones.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La publicación");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
+        // PublicacionDTO pub = new PublicacionDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
 
-        return await ModificarPublicacion(pub, claims);
+        // return await ModificarPublicacion(pub, claims);
     }
 }

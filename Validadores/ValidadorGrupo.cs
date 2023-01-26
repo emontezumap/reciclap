@@ -33,7 +33,7 @@ public class ValidadorGrupo : IValidadorEntidad
         {
             if (dto.Id == null)
             {
-                mensajes["Id"].Add("Se requiere un grupo de usuarios");
+                mensajes["Id"].Add("Se requiere el grupo de usuarios a modificar");
                 hayError = true;
             }
             else if (await ctx.Grupos.FindAsync(dto.Id) == null)
@@ -44,6 +44,7 @@ public class ValidadorGrupo : IValidadorEntidad
         }
 
         if (string.IsNullOrEmpty(dto.Descripcion))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Descripcion"].Add("Se requiere una descripción");
@@ -54,10 +55,10 @@ public class ValidadorGrupo : IValidadorEntidad
                 mensajes["Descripcion"].Add("Se requiere una descripción");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Descripcion) && dto.Descripcion.Length > 200)
+        }
+        else if (dto.Descripcion.Length > 100)
         {
-            mensajes["Descripcion"].Add("La descripción del estatus no debe exceder los 200 caracteres");
+            mensajes["Descripcion"].Add("La descripción del grupo de usuarios no debe exceder los 100 caracteres");
             hayError = true;
         }
 

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Entidades;
 
-[Table("tipo_publicacion")]
+[Table("tipos_publicacion")]
 public class TipoPublicacion
 {
     [Column("id")]

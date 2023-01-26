@@ -1,26 +1,22 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Entidades;
 using Services;
-
+// using EntityFramework.Exceptions.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
-// Add services to the container.
 
+// Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddPooledDbContextFactory<SSDBContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")) //.LogTo(Console.WriteLine)
-);
+{
+    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    // o.UseExceptionProcessor();
+});
 
 builder.Services.AddHttpContextAccessor();
 // builder.Services.AddSingleton<IUriService>(o =>
@@ -30,20 +26,6 @@ builder.Services.AddHttpContextAccessor();
 //         var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
 //         return new UriService(uri);
 //     });
-
-// builder.Services.AddScoped<ChatService>();
-// builder.Services.AddScoped<CiudadService>();
-// builder.Services.AddScoped<ComentarioService>();
-// builder.Services.AddScoped<EstadoService>();
-// builder.Services.AddScoped<EstatusPublicacionService>();
-// builder.Services.AddScoped<GrupoService>();
-// builder.Services.AddScoped<PaisService>();
-// builder.Services.AddScoped<PersonalService>();
-// builder.Services.AddScoped<ProfesionService>();
-// builder.Services.AddScoped<PublicacionService>();
-// builder.Services.AddScoped<RolService>();
-// builder.Services.AddScoped<TipoPublicacionService>();
-// builder.Services.AddScoped<UsuarioService>();
 
 builder.Services.AddScoped<LoginService>();
 
@@ -108,10 +90,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapGraphQL("/gql");
-// app.UseEndpoints(ep =>
-// {
-//     ep.MapControllers();
-//     ep.MapGraphQL("/gql").RequireAuthorization();
-// });
 
 app.Run();

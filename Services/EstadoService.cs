@@ -55,10 +55,20 @@ public class EstadoService
                     Nombre = nuevo.Nombre!
                 };
 
-                ctx.Estados.Add(est);
-                await ctx.SaveChangesAsync();
-
-                return est;
+                try
+                {
+                    ctx.Estados.Add(est);
+                    await ctx.SaveChangesAsync();
+                    return est;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El estado");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -86,8 +96,19 @@ public class EstadoService
                     buscado.IdPais = modif.IdPais == null ? buscado.IdPais : (Guid)modif.IdPais;
                     buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El estado");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -100,12 +121,31 @@ public class EstadoService
 
     public async Task<bool> EliminarEstado(Guid id, ClaimsPrincipal claims)
     {
-        EstadoDTO est = new EstadoDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                Estado o = new Estado() { Id = id };
+                ctx.Estados.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El estado");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
 
-        return await ModificarEstado(est, claims);
+        // EstadoDTO est = new EstadoDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
+
+        // return await ModificarEstado(est, claims);
     }
 }

@@ -1,4 +1,5 @@
 using DTOs;
+using Entidades;
 using Herramientas;
 using Services;
 
@@ -34,7 +35,7 @@ public class ValidadorCiudad : IValidadorEntidad
         {
             if (dto.Id == null)
             {
-                mensajes["Id"].Add("Se requiere una ciudad");
+                mensajes["Id"].Add("Se requiere la ciudad a modificar");
                 hayError = true;
             }
             else if (await ctx.Ciudades.FindAsync(dto.Id) == null)
@@ -63,10 +64,18 @@ public class ValidadorCiudad : IValidadorEntidad
             hayError = true;
         }
 
-        if (op == Operacion.Creacion && dto.IdEstado == null)
+        if (op == Operacion.Creacion)
         {
-            mensajes["IdEstado"].Add("Se requiere el Estado");
-            hayError = true;
+            if (dto.IdEstado == null)
+            {
+                mensajes["IdEstado"].Add("Se requiere el Estado");
+                hayError = true;
+            }
+            else if (await ctx.Estados.FindAsync(dto.IdEstado) == null)
+            {
+                mensajes["IdEstado"].Add("El Estado especificado no existe");
+                hayError = true;
+            }
         }
 
         if (op == Operacion.Modificacion && dto.IdEstado != null && await ctx.Estados.FindAsync(dto.IdEstado) == null)

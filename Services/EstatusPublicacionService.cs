@@ -54,10 +54,20 @@ public class EstatusPublicacionService
                     IdModificador = id
                 };
 
-                ctx.EstatusPublicaciones.Add(ep);
-                await ctx.SaveChangesAsync();
-
-                return ep;
+                try
+                {
+                    ctx.EstatusPublicaciones.Add(ep);
+                    await ctx.SaveChangesAsync();
+                    return ep;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El estatus");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -84,8 +94,19 @@ public class EstatusPublicacionService
                     buscado.FechaCreacion = DateTime.UtcNow;
                     buscado.IdModificador = id;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El estatus");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -97,12 +118,31 @@ public class EstatusPublicacionService
 
     public async Task<bool> EliminarEstatusPublicacion(Guid id, ClaimsPrincipal claims)
     {
-        EstatusPublicacionDTO ep = new EstatusPublicacionDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                EstatusPublicacion o = new EstatusPublicacion() { Id = id };
+                ctx.EstatusPublicaciones.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El estatus");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
 
-        return await ModificarEstatusPublicacion(ep, claims);
+        // EstatusPublicacionDTO ep = new EstatusPublicacionDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
+
+        // return await ModificarEstatusPublicacion(ep, claims);
     }
 }

@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
@@ -36,7 +35,7 @@ public class CiudadService
         }
     }
 
-    public async Task<Ciudad> CrearCiudad(CiudadDTO nuevo, ClaimsPrincipal claims)
+    public async Task<Ciudad?> CrearCiudad(CiudadDTO nuevo, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -58,10 +57,21 @@ public class CiudadService
                     Nombre = nuevo.Nombre!
                 };
 
-                ctx.Ciudades.Add(ciudad);
-                await ctx.SaveChangesAsync();
+                try
+                {
+                    ctx.Ciudades.Add(ciudad);
+                    await ctx.SaveChangesAsync();
 
-                return ciudad;
+                    return ciudad;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La ciudad");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -88,8 +98,19 @@ public class CiudadService
                     buscado.IdModificador = id;
                     buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La ciudad");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -101,12 +122,31 @@ public class CiudadService
 
     public async Task<bool> EliminarCiudad(Guid id, ClaimsPrincipal claims)
     {
-        CiudadDTO ciudad = new CiudadDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                Ciudad ciu = new Ciudad() { Id = id };
+                ctx.Ciudades.Remove(ciu);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La ciudad");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
 
-        return await ModificarCiudad(ciudad, claims);
+        // CiudadDTO ciudad = new CiudadDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
+
+        // return await ModificarCiudad(ciudad, claims);
     }
 }

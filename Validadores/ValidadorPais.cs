@@ -33,7 +33,7 @@ public class ValidadorPais : IValidadorEntidad
         {
             if (dto.Id == null)
             {
-                mensajes["Id"].Add("Se requiere un país");
+                mensajes["Id"].Add("Se requiere el país a modificar");
                 hayError = true;
             }
             else if (await ctx.Paises.FindAsync(dto.Id) == null)
@@ -56,8 +56,7 @@ public class ValidadorPais : IValidadorEntidad
                 hayError = true;
             }
         }
-
-        if (!string.IsNullOrEmpty(dto.Nombre) && dto.Nombre.Length > 50)
+        else if (dto.Nombre.Length > 50)
         {
             mensajes["Nombre"].Add("El nombre del país no debe exceder los 50 caracteres");
             hayError = true;

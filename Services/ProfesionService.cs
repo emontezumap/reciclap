@@ -55,9 +55,20 @@ public class ProfesionService
                     IdModificador = id
                 };
 
-                ctx.Profesiones.Add(prof);
-                await ctx.SaveChangesAsync();
-                return prof;
+                try
+                {
+                    ctx.Profesiones.Add(prof);
+                    await ctx.SaveChangesAsync();
+                    return prof;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La profesión");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -84,8 +95,19 @@ public class ProfesionService
                     buscado.FechaModificacion = DateTime.UtcNow;
                     buscado.IdModificador = id;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La profesión");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -97,12 +119,30 @@ public class ProfesionService
 
     public async Task<bool> EliminarProfesion(Guid id, ClaimsPrincipal claims)
     {
-        ProfesionDTO prof = new ProfesionDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                Profesion o = new Profesion() { Id = id };
+                ctx.Profesiones.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "La profesión");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
+        // ProfesionDTO prof = new ProfesionDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
 
-        return await ModificarProfesion(prof, claims);
+        // return await ModificarProfesion(prof, claims);
     }
 }

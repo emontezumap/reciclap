@@ -5,6 +5,7 @@ namespace Services;
 
 public class SSDBContext : DbContext
 {
+    public DbSet<Administrador> Administradores { get; set; } = null!;
     public DbSet<Chat> Chats { get; set; } = null!;
     public DbSet<Ciudad> Ciudades { get; set; } = null!;
     public DbSet<Comentario> Comentarios { get; set; } = null!;
@@ -58,6 +59,29 @@ public class SSDBContext : DbContext
     }
 
     // Valores por defecto
+    private void AdministradorValoresPorDefecto(ModelBuilder mb)
+    {
+        mb.Entity<Administrador>()
+           .Property(c => c.Id)
+           .HasDefaultValueSql("newid()");
+
+        mb.Entity<Administrador>()
+            .Property(c => c.Nombre)
+            .HasDefaultValueSql("''");
+
+        mb.Entity<Administrador>()
+            .Property(c => c.Telefono)
+            .HasDefaultValueSql("''");
+
+        mb.Entity<Administrador>()
+             .Property(c => c.Email)
+             .HasDefaultValueSql("''");
+
+        mb.Entity<Administrador>()
+            .Property(c => c.FechaRegistro)
+            .HasDefaultValueSql("getutcdate()");
+    }
+
     private void ChatValoresPorDefecto(ModelBuilder mb)
     {
         mb.Entity<Chat>()
@@ -504,14 +528,20 @@ public class SSDBContext : DbContext
     // Indices
     private void CrearIndices(ModelBuilder mb)
     {
+        mb.Entity<Administrador>()
+            .HasIndex(p => p.Nombre).IsUnique();
+
+        mb.Entity<Administrador>()
+            .HasIndex(p => p.Email).IsUnique();
+
         mb.Entity<Chat>()
             .HasIndex(p => p.Titulo).IsUnique();
 
         mb.Entity<Ciudad>()
-            .HasIndex(p => p.Nombre).IsUnique();
+            .HasIndex(p => new { p.Nombre, p.IdEstado }).IsUnique();
 
         mb.Entity<Estado>()
-            .HasIndex(p => p.Nombre).IsUnique();
+            .HasIndex(p => new { p.Nombre, p.IdPais }).IsUnique();
 
         mb.Entity<EstatusPublicacion>()
             .HasIndex(p => p.Descripcion).IsUnique();
@@ -525,8 +555,8 @@ public class SSDBContext : DbContext
         mb.Entity<Personal>()
            .HasKey(c => new { c.IdPublicacion, c.IdUsuario });
 
-        mb.Entity<Personal>()
-            .HasIndex(p => new { p.IdPublicacion, p.IdRol }).IsUnique();
+        // mb.Entity<Personal>()
+        //     .HasIndex(p => new { p.IdPublicacion, p.IdRol }).IsUnique();
 
         mb.Entity<Profesion>()
             .HasIndex(p => p.Descripcion).IsUnique();

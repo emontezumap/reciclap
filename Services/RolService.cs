@@ -55,10 +55,20 @@ public class RolService
                     IdModificador = id
                 };
 
-                ctx.Roles.Add(rol);
-                await ctx.SaveChangesAsync();
-
-                return rol;
+                try
+                {
+                    ctx.Roles.Add(rol);
+                    await ctx.SaveChangesAsync();
+                    return rol;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El rol");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -86,8 +96,19 @@ public class RolService
                     buscado.FechaModificacion = DateTime.UtcNow;
                     buscado.IdModificador = id;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El rol");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -99,12 +120,30 @@ public class RolService
 
     public async Task<bool> EliminarRol(Guid id, ClaimsPrincipal claims)
     {
-        RolDTO rol = new RolDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                Rol o = new Rol() { Id = id };
+                ctx.Roles.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El rol");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
+        // RolDTO rol = new RolDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
 
-        return await ModificarRol(rol, claims);
+        // return await ModificarRol(rol, claims);
     }
 }

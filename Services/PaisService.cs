@@ -54,10 +54,20 @@ public class PaisService
                     Nombre = nuevo.Nombre!
                 };
 
-                ctx.Paises.Add(pais);
-                await ctx.SaveChangesAsync();
-
-                return pais;
+                try
+                {
+                    ctx.Paises.Add(pais);
+                    await ctx.SaveChangesAsync();
+                    return pais;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El país");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -84,8 +94,19 @@ public class PaisService
                     buscado.IdModificador = id;
                     buscado.FechaModificacion = DateTime.UtcNow;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El país");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -97,12 +118,30 @@ public class PaisService
 
     public async Task<bool> EliminarPais(Guid id, ClaimsPrincipal claims)
     {
-        PaisDTO pais = new PaisDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                Pais o = new Pais() { Id = id };
+                ctx.Paises.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El país");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
+        // PaisDTO pais = new PaisDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
 
-        return await ModificarPais(pais, claims);
+        // return await ModificarPais(pais, claims);
     }
 }

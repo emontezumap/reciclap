@@ -58,10 +58,20 @@ public class ComentarioService
                     Texto = nuevo.Texto!,
                 };
 
-                ctx.Comentarios.Add(com);
-                await ctx.SaveChangesAsync();
-
-                return com;
+                try
+                {
+                    ctx.Comentarios.Add(com);
+                    await ctx.SaveChangesAsync();
+                    return com;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El comentario");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -92,8 +102,19 @@ public class ComentarioService
                     buscado.IdUsuario = modif.IdUsuario == null ? buscado.IdUsuario : (Guid)modif.IdUsuario;
                     buscado.Texto = modif.Texto == null ? buscado.Texto : modif.Texto;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El comentario");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -105,12 +126,31 @@ public class ComentarioService
 
     public async Task<bool> EliminarComentario(Guid id, ClaimsPrincipal claims)
     {
-        ComentarioDTO com = new ComentarioDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                Comentario o = new Comentario() { Id = id };
+                ctx.Comentarios.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El comentario");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
 
-        return await ModificarComentario(com, claims);
+        // ComentarioDTO com = new ComentarioDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
+
+        // return await ModificarComentario(com, claims);
     }
 }

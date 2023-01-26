@@ -57,10 +57,20 @@ public class PersonalService
                     IdUsuario = (Guid)nuevo.IdUsuario!,
                 };
 
-                ctx.Personal.Add(per);
-                await ctx.SaveChangesAsync();
-
-                return per;
+                try
+                {
+                    ctx.Personal.Add(per);
+                    await ctx.SaveChangesAsync();
+                    return per;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El personal");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -88,8 +98,19 @@ public class PersonalService
                     buscado.IdModificador = id;
                     buscado.IdRol = modif.IdRol == null ? buscado.IdRol : (Guid)modif.IdRol;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El personal");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -101,13 +122,31 @@ public class PersonalService
 
     public async Task<bool> EliminarPersonal(Guid idPub, Guid idUsr, ClaimsPrincipal claims)
     {
-        PersonalDTO per = new PersonalDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            IdPublicacion = idPub,
-            IdUsuario = idUsr,
-            Activo = false
-        };
+            try
+            {
+                Personal o = new Personal() { IdPublicacion = idPub, IdUsuario = idUsr };
+                ctx.Personal.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El personal");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
+        // PersonalDTO per = new PersonalDTO()
+        // {
+        //     IdPublicacion = idPub,
+        //     IdUsuario = idUsr,
+        //     Activo = false
+        // };
 
-        return await ModificarPersonal(per, claims);
+        // return await ModificarPersonal(per, claims);
     }
 }

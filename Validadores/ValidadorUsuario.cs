@@ -117,8 +117,12 @@ public class ValidadorUsuario : IValidadorEntidad
 
         if (n1 != "" && a1 != "")
         {
-            var usr = ctx.Usuarios.Where(u => u.Nombre == n1 && u.Nombre2 == n2
-                && u.Apellido == a1 && u.Apellido2 == a2);
+            var usr = ctx.Usuarios.Where(u =>
+                u.Nombre == n1
+                && u.Nombre2 == n2
+                && u.Apellido == a1
+                && u.Apellido2 == a2
+            ).FirstOrDefault();
 
             if (usr != null)
             {
@@ -214,20 +218,6 @@ public class ValidadorUsuario : IValidadorEntidad
             if (!(new ValidadorEmail(dto.Email)).EsEmailValido())
             {
                 mensajes["Email"].Add("La dirección de correo electrónico especificada no es válida");
-                hayError = true;
-            }
-
-            // Verificar que el email sea unico
-            Usuario? usr = null;
-
-            if (op == Operacion.Creacion)
-                usr = (Usuario)ctx.Usuarios.Where(u => u.Email == dto.Email);
-            else if (dto.Id != null)
-                usr = (Usuario)ctx.Usuarios.Where(u => u.Email == dto.Email && u.Id != dto.Id);
-
-            if (usr != null)
-            {
-                mensajes["Email"].Add("La dirección de correo electrónico principal ya está siendo utilizada por otro usuario");
                 hayError = true;
             }
         }

@@ -57,10 +57,21 @@ public class ChatService
                     Titulo = nuevo.Titulo!
                 };
 
-                ctx.Chats.Add(chat);
-                await ctx.SaveChangesAsync();
+                try
+                {
+                    ctx.Chats.Add(chat);
+                    await ctx.SaveChangesAsync();
 
-                return chat;
+                    return chat;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El chat");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -89,8 +100,19 @@ public class ChatService
                     buscado.IdModificador = id;
                     buscado.Titulo = modif.Titulo == null ? buscado.Titulo : modif.Titulo;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El chat");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -102,12 +124,31 @@ public class ChatService
 
     public async Task<bool> EliminarChat(Guid id, ClaimsPrincipal claims)
     {
-        ChatDTO chat = new ChatDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                Chat o = new Chat() { Id = id };
+                ctx.Chats.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El chat");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
 
-        return await ModificarChat(chat, claims);
+        // ChatDTO chat = new ChatDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
+
+        // return await ModificarChat(chat, claims);
     }
 }

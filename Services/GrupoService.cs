@@ -55,10 +55,20 @@ public class GrupoService
                     IdModificador = id
                 };
 
-                ctx.Grupos.Add(grp);
-                await ctx.SaveChangesAsync();
-
-                return grp;
+                try
+                {
+                    ctx.Grupos.Add(grp);
+                    await ctx.SaveChangesAsync();
+                    return grp;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El grupo de usuarios");
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                }
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
@@ -86,8 +96,19 @@ public class GrupoService
                     buscado.FechaModificacion = DateTime.UtcNow;
                     buscado.IdModificador = id;
 
-                    await ctx.SaveChangesAsync();
-                    return true;
+                    try
+                    {
+                        await ctx.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El grupo de usuarios");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+                    }
                 }
                 else
                     throw (new Excepcionador()).ExcepcionRegistroEliminado();
@@ -99,12 +120,30 @@ public class GrupoService
 
     public async Task<bool> EliminarGrupo(Guid id, ClaimsPrincipal claims)
     {
-        GrupoDTO grp = new GrupoDTO()
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-            Id = id,
-            Activo = false
-        };
+            try
+            {
+                Grupo o = new Grupo() { Id = id };
+                ctx.Grupos.Remove(o);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException, "El grupo de usuarios");
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex.InnerException);
+            }
+        }
+        // GrupoDTO grp = new GrupoDTO()
+        // {
+        //     Id = id,
+        //     Activo = false
+        // };
 
-        return await ModificarGrupo(grp, claims);
+        // return await ModificarGrupo(grp, claims);
     }
 }

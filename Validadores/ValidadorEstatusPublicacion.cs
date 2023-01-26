@@ -44,6 +44,7 @@ public class ValidadorEstatusPublicacion : IValidadorEntidad
         }
 
         if (string.IsNullOrEmpty(dto.Descripcion))
+        {
             if (op == Operacion.Creacion)
             {
                 mensajes["Descripcion"].Add("Se requiere una descripción");
@@ -54,8 +55,8 @@ public class ValidadorEstatusPublicacion : IValidadorEntidad
                 mensajes["Descripcion"].Add("Se requiere una descripción");
                 hayError = true;
             }
-
-        if (!string.IsNullOrEmpty(dto.Descripcion) && dto.Descripcion.Length > 200)
+        }
+        else if (dto.Descripcion.Length > 200)
         {
             mensajes["Descripcion"].Add("La descripción del estatus no debe exceder los 200 caracteres");
             hayError = true;
