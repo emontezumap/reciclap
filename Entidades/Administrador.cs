@@ -26,5 +26,5 @@ public class Administrador
     [Column("fecha_registro")]
     public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
     [Column("activo")]
-    public bool Activo { get; set; } = true;
+    public bool? Activo { get; set; } = true;
 }

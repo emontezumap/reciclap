@@ -1,4 +1,4 @@
-1. Captura de error de clave única para: 
+1. Captura de error de clave única para:
     - ciudad
     - estado
     - estatus_publicaciones
@@ -25,13 +25,9 @@
     - usuarios
 --  LISTO
 
-
-3. Tabla detalle de publicación
-
+3. Tabla detalle de publicación -- LISTO
 4. Paginación: Nro. de página actual
-
 5. Implementar seguridad
-
 6. Dataloaders
-
-7. Tabla de administradores
+7. Tabla de administradores -- LISTO
+8. Operaciones CUD sobre múltiples entidades

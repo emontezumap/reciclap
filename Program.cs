@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Services;
-// using EntityFramework.Exceptions.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +14,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddPooledDbContextFactory<SSDBContext>(o =>
 {
     o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    // o.UseExceptionProcessor();
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -44,10 +42,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization(options =>
-    options.AddPolicy("Admin", policy => policy.RequireClaim("Grupo", "Administradores"))
-);
+{
+    options.AddPolicy("Admin", policy => policy.RequireClaim("Grupo", "Administradores"));
+    options.AddPolicy("Usuarios", policy => policy.RequireClaim("Grupo", "Usuarios"));
+});
 
 builder.Services.AddGraphQLServer()
+    .AddAuthorization()
     .AddQueryType<Consulta>()
     .AddMutationType(m => m.Name("Mutacion"))
         .AddType<ChatService>()

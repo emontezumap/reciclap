@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
 using HotChocolate.AspNetCore.Authorization;
-// using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Validadores;
 using Herramientas;
@@ -35,6 +34,7 @@ public class CiudadService
         }
     }
 
+    [Authorize]
     public async Task<Ciudad?> CrearCiudad(CiudadDTO nuevo, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
@@ -45,17 +45,10 @@ public class CiudadService
             if (rv.ValidacionOk)
             {
                 Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Ciudad ciudad = new Ciudad()
-                {
-                    Activo = nuevo.Activo,
-                    FechaCreacion = DateTime.UtcNow,
-                    FechaModificacion = DateTime.UtcNow,
-                    Id = Guid.NewGuid(),
-                    IdCreador = id,
-                    IdEstado = (Guid)nuevo.IdEstado!,
-                    IdModificador = id,
-                    Nombre = nuevo.Nombre!
-                };
+                Ciudad ciudad = new Ciudad();
+                ciudad = Mapear(ciudad, nuevo, Operacion.Creacion);
+                ciudad.IdCreador = id;
+                ciudad.IdModificador = id;
 
                 try
                 {
@@ -78,6 +71,7 @@ public class CiudadService
         }
     }
 
+    [Authorize]
     public async Task<bool> ModificarCiudad(CiudadDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
@@ -92,11 +86,8 @@ public class CiudadService
                 if (buscado != null)
                 {
                     Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                    buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                    buscado.FechaModificacion = DateTime.UtcNow;
-                    buscado.IdEstado = modif.IdEstado == null ? buscado.IdEstado : (Guid)modif.IdEstado;
+                    buscado = Mapear(buscado, modif, Operacion.Modificacion);
                     buscado.IdModificador = id;
-                    buscado.Nombre = modif.Nombre == null ? buscado.Nombre : modif.Nombre;
 
                     try
                     {
@@ -120,6 +111,7 @@ public class CiudadService
         }
     }
 
+    [Authorize(Policy = "Admin")]
     public async Task<bool> EliminarCiudad(Guid id, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
@@ -140,13 +132,55 @@ public class CiudadService
                 throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
             }
         }
+    }
 
-        // CiudadDTO ciudad = new CiudadDTO()
-        // {
-        //     Id = id,
-        //     Activo = false
-        // };
+    // public async Task<bool> EliminarCiudades(ClaimsPrincipal claims, params Guid[] ids)
+    // {
+    //     using (var ctx = ctxFactory.CreateDbContext())
+    //     {
+    //         foreach (Guid id in ids)
+    //         {
+    //             Ciudad o = new Ciudad() { Id = id };
+    //             ctx.Ciudades.Remove(o);
+    //         }
 
-        // return await ModificarCiudad(ciudad, claims);
+    //         try
+    //         {
+    //             await ctx.SaveChangesAsync();
+    //             return true;
+    //         }
+    //         catch (DbUpdateException ex)
+    //         {
+    //             // FALTA: Implementar tratamiento de error
+    //             return false;
+    //         }
+    //         catch (Exception ex)
+    //         {
+    //             // FALTA: Implementar tratamiento de error
+    //             return false;
+    //         }
+    //     }
+    // }
+
+    public Ciudad Mapear(Ciudad c, CiudadDTO dto, Operacion op)
+    {
+        if (op == Operacion.Creacion)
+        {
+            c.Activo = dto.Activo;
+            c.FechaCreacion = DateTime.UtcNow;
+            c.FechaModificacion = DateTime.UtcNow;
+            c.Id = Guid.NewGuid();
+            c.IdEstado = (Guid)dto.IdEstado!;
+            c.Nombre = dto.Nombre!;
+        }
+        else
+        {
+            c.Activo = dto.Activo == null ? c.Activo : dto.Activo;
+            c.FechaModificacion = DateTime.UtcNow;
+            c.IdEstado = dto.IdEstado == null ? c.IdEstado : (Guid)dto.IdEstado;
+            c.Nombre = dto.Nombre == null ? c.Nombre : dto.Nombre;
+        }
+
+        return c;
     }
 }

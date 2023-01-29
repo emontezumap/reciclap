@@ -4,17 +4,22 @@ using System.Text.Json.Serialization;
 
 namespace Entidades;
 
-[Table("personal")]
-public class Personal
+[Table("detalle_publicaciones")]
+public class DetallePublicacion
 {
+    [Column("id")]
+    [Key]
+    public Guid Id { get; set; } = Guid.NewGuid();
     [Column("id_publicacion")]
     public Guid IdPublicacion { get; set; }
-    [Column("id_usuario")]
-    public Guid IdUsuario { get; set; }
+    [Column("id_articulo")]
+    public Guid IdArticulo { get; set; }
+    [Column("descripcion")]
+    public string Descripcion { get; set; } = "";
     [Column("fecha")]
     public DateTime Fecha { get; set; } = DateTime.UtcNow;
-    [Column("id_rol")]
-    public Guid IdRol { get; set; }
+    [Column("cantidad")]
+    public int Cantidad { get; set; } = 1;
     [Column("id_creador")]
     public Guid IdCreador { get; set; }
     [Column("fecha_creacion")]
@@ -29,9 +34,7 @@ public class Personal
     [JsonIgnore]
     public virtual Publicacion? Publicacion { get; set; }
     [JsonIgnore]
-    public virtual Usuario? Usuario { get; set; }
-    [JsonIgnore]
-    public virtual Rol? Rol { get; set; }
+    public virtual Articulo? Articulo { get; set; }
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]

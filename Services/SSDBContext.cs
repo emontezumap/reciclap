@@ -6,9 +6,11 @@ namespace Services;
 public class SSDBContext : DbContext
 {
     public DbSet<Administrador> Administradores { get; set; } = null!;
+    public DbSet<Articulo> Articulos { get; set; } = null!;
     public DbSet<Chat> Chats { get; set; } = null!;
     public DbSet<Ciudad> Ciudades { get; set; } = null!;
     public DbSet<Comentario> Comentarios { get; set; } = null!;
+    public DbSet<DetallePublicacion> DetallePublicaciones { get; set; } = null!;
     public DbSet<Estado> Estados { get; set; } = null!;
     public DbSet<EstatusPublicacion> EstatusPublicaciones { get; set; } = null!;
     public DbSet<Grupo> Grupos { get; set; } = null!;
@@ -25,9 +27,12 @@ public class SSDBContext : DbContext
     protected override void OnModelCreating(ModelBuilder mb)
     {
         // Valores por defecto
+        AdministradorValoresPorDefecto(mb);
+        ArticuloValoresPorDefecto(mb);
         ChatValoresPorDefecto(mb);
         CiudadValoresPorDefecto(mb);
         ComentarioValoresPorDefecto(mb);
+        DetallePublicacionValoresPorDefecto(mb);
         EstadoValoresPorDefecto(mb);
         EstatusPublicacionValoresPorDefecto(mb);
         GrupoValoresPorDefecto(mb);
@@ -43,9 +48,11 @@ public class SSDBContext : DbContext
         CrearIndices(mb);
 
         // Relaciones
+        AdministradorRelaciones(mb);
         ChatRelaciones(mb);
         CiudadRelaciones(mb);
         ComentarioRelaciones(mb);
+        DetallePublicacionRelaciones(mb);
         EstadoRelaciones(mb);
         EstatusPublicacionRelaciones(mb);
         GrupoRelaciones(mb);
@@ -80,6 +87,37 @@ public class SSDBContext : DbContext
         mb.Entity<Administrador>()
             .Property(c => c.FechaRegistro)
             .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<Administrador>()
+            .Property(c => c.Activo)
+            .HasDefaultValueSql("1");
+    }
+
+    private void ArticuloValoresPorDefecto(ModelBuilder mb)
+    {
+        mb.Entity<Articulo>()
+            .Property(c => c.Id)
+            .HasDefaultValueSql("newid()");
+
+        mb.Entity<Articulo>()
+            .Property(c => c.Descripcion)
+            .HasDefaultValueSql("''");
+
+        mb.Entity<Articulo>()
+            .Property(c => c.RutaFoto)
+            .HasDefaultValueSql("''");
+
+        mb.Entity<Articulo>()
+            .Property(c => c.FechaCreacion)
+            .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<Articulo>()
+            .Property(c => c.FechaModificacion)
+            .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<Articulo>()
+            .Property(c => c.Activo)
+            .HasDefaultValueSql("1");
     }
 
     private void ChatValoresPorDefecto(ModelBuilder mb)
@@ -166,6 +204,38 @@ public class SSDBContext : DbContext
             .Property(c => c.Activo)
             .HasDefaultValueSql("1");
     }
+
+    private void DetallePublicacionValoresPorDefecto(ModelBuilder mb)
+    {
+        mb.Entity<DetallePublicacion>()
+            .Property(c => c.Id)
+            .HasDefaultValueSql("newid()");
+
+        mb.Entity<DetallePublicacion>()
+            .Property(c => c.Descripcion)
+            .HasDefaultValueSql("''");
+
+        mb.Entity<DetallePublicacion>()
+            .Property(c => c.Fecha)
+            .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<DetallePublicacion>()
+            .Property(c => c.Cantidad)
+            .HasDefaultValue(0);
+
+        mb.Entity<DetallePublicacion>()
+            .Property(c => c.FechaCreacion)
+            .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<DetallePublicacion>()
+            .Property(c => c.FechaModificacion)
+            .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<DetallePublicacion>()
+            .Property(c => c.Activo)
+            .HasDefaultValueSql("1");
+    }
+
     private void EstadoValoresPorDefecto(ModelBuilder mb)
     {
         mb.Entity<Estado>()
@@ -534,11 +604,17 @@ public class SSDBContext : DbContext
         mb.Entity<Administrador>()
             .HasIndex(p => p.Email).IsUnique();
 
+        mb.Entity<Articulo>()
+            .HasIndex(p => p.Descripcion).IsUnique();
+
         mb.Entity<Chat>()
             .HasIndex(p => p.Titulo).IsUnique();
 
         mb.Entity<Ciudad>()
             .HasIndex(p => new { p.Nombre, p.IdEstado }).IsUnique();
+
+        mb.Entity<DetallePublicacion>()
+            .HasIndex(p => new { p.IdArticulo, p.IdPublicacion }).IsUnique();
 
         mb.Entity<Estado>()
             .HasIndex(p => new { p.Nombre, p.IdPais }).IsUnique();
@@ -555,8 +631,8 @@ public class SSDBContext : DbContext
         mb.Entity<Personal>()
            .HasKey(c => new { c.IdPublicacion, c.IdUsuario });
 
-        // mb.Entity<Personal>()
-        //     .HasIndex(p => new { p.IdPublicacion, p.IdRol }).IsUnique();
+        mb.Entity<Personal>()
+            .HasIndex(p => new { p.IdPublicacion, p.IdRol }).IsUnique();
 
         mb.Entity<Profesion>()
             .HasIndex(p => p.Descripcion).IsUnique();
@@ -578,6 +654,11 @@ public class SSDBContext : DbContext
     }
 
     // Relaciones
+    private void AdministradorRelaciones(ModelBuilder mb)
+    {
+
+    }
+
     private void ChatRelaciones(ModelBuilder mb)
     {
         mb.Entity<Chat>()
@@ -635,6 +716,33 @@ public class SSDBContext : DbContext
             .OnDelete(DeleteBehavior.NoAction);
 
         mb.Entity<Comentario>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private void DetallePublicacionRelaciones(ModelBuilder mb)
+    {
+        mb.Entity<DetallePublicacion>()
+            .HasOne(p => p.Publicacion)
+            .WithMany()
+            .HasForeignKey(p => p.IdPublicacion)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<DetallePublicacion>()
+            .HasOne(p => p.Articulo)
+            .WithMany()
+            .HasForeignKey(p => p.IdArticulo)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<DetallePublicacion>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<DetallePublicacion>()
             .HasOne(p => p.Modificador)
             .WithMany()
             .HasForeignKey(p => p.IdModificador)
@@ -775,6 +883,12 @@ public class SSDBContext : DbContext
 
     private void PublicacionRelaciones(ModelBuilder mb)
     {
+        mb.Entity<Publicacion>()
+            .HasMany(p => p.Detalle)
+            .WithOne(p => p.Publicacion)
+            .HasForeignKey(p => p.IdPublicacion)
+            .OnDelete(DeleteBehavior.NoAction);
+
         mb.Entity<Publicacion>()
             .HasMany(p => p.Chats)
             .WithOne(p => p.Publicacion)

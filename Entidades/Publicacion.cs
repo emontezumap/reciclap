@@ -37,6 +37,8 @@ public class Publicacion
     public bool? Activo { get; set; } = true;
 
     [JsonIgnore]
+    public virtual ICollection<DetallePublicacion>? Detalle { get; set; }
+    [JsonIgnore]
     public virtual EstatusPublicacion? Estatus { get; set; }
     [JsonIgnore]
     public virtual TipoPublicacion? Tipo { get; set; }
