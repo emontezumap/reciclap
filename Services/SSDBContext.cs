@@ -41,6 +41,7 @@ public class SSDBContext : DbContext
         ComentarioValoresPorDefecto(mb);
         DetallePublicacionValoresPorDefecto(mb);
         EstadoValoresPorDefecto(mb);
+        EstatusProyectoValoresPorDefecto(mb);
         EstatusPublicacionValoresPorDefecto(mb);
         GrupoValoresPorDefecto(mb);
         PaisValoresPorDefecto(mb);
@@ -64,6 +65,7 @@ public class SSDBContext : DbContext
         ComentarioRelaciones(mb);
         DetallePublicacionRelaciones(mb);
         EstadoRelaciones(mb);
+        EstatusProyectoRelaciones(mb);
         EstatusPublicacionRelaciones(mb);
         GrupoRelaciones(mb);
         PaisRelaciones(mb);
@@ -429,6 +431,38 @@ public class SSDBContext : DbContext
             .Property(c => c.Activo)
             .HasDefaultValueSql("1");
     }
+
+    private void EstatusProyectoValoresPorDefecto(ModelBuilder mb)
+    {
+        mb.Entity<EstatusProyecto>()
+            .Property(c => c.Id)
+            .HasDefaultValueSql("newid()");
+
+        mb.Entity<EstatusProyecto>()
+            .Property(c => c.Descripcion)
+            .HasDefaultValueSql("''");
+
+        mb.Entity<EstatusProyecto>()
+            .Property(c => c.IdCreador)
+            .HasDefaultValueSql("null");
+
+        mb.Entity<EstatusProyecto>()
+            .Property(c => c.IdModificador)
+            .HasDefaultValueSql("null");
+
+        mb.Entity<EstatusProyecto>()
+             .Property(c => c.FechaCreacion)
+             .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<EstatusProyecto>()
+            .Property(c => c.FechaModificacion)
+            .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<EstatusProyecto>()
+            .Property(c => c.Activo)
+            .HasDefaultValueSql("1");
+    }
+
     private void EstatusPublicacionValoresPorDefecto(ModelBuilder mb)
     {
         mb.Entity<EstatusPublicacion>()
@@ -1061,6 +1095,11 @@ public class SSDBContext : DbContext
             .WithMany()
             .HasForeignKey(p => p.IdModificador)
             .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private void EstatusProyectoRelaciones(ModelBuilder mb)
+    {
+
     }
 
     private void EstatusPublicacionRelaciones(ModelBuilder mb)

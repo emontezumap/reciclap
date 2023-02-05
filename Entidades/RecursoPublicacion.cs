@@ -9,14 +9,14 @@ public class RecursoPublicacion
     [Column("id")]
     [Key]
     public Guid Id { get; set; }
-    [Column("tipo_catalogo")]
-    public int TipoCatalogo { get; set; }   // Publicacion o Proyecto
+    [Column("id_tipo_catalogo")]
+    public Guid IdTipoCatalogo { get; set; }   // Publicacion o Proyecto
     [Column("id_padre")]
     public Guid IdPadre { get; set; }
     [Column("secuencia")]
     public int IdSecuencia { get; set; }
-    [Column("tipo_recurso")]
-    public int TipoRecurso { get; set; }
+    [Column("id_tipo_recurso")]
+    public Guid IdTipoRecurso { get; set; }
     [Column("fecha")]
     public DateTime Fecha { get; set; } = DateTime.UtcNow;
     [Column("ruta")]
@@ -25,12 +25,24 @@ public class RecursoPublicacion
     public int Orden { get; set; }    // Orden del recurso en la vista del usuario
     [Column("nombre")]
     public string Nombre { get; set; } = "";
-    [Column("estatus")]
-    public int Estatus { get; set; }  // 0 = En proceso de aprobacion, 10 = Aprobado, 20 = No mostrar, etc.
+    [Column("id_estatus_recurso")]
+    public Guid IdEstatusRecurso { get; set; }  // 0 = En proceso de aprobacion, 10 = Aprobado, 20 = No mostrar, etc.
     [Column("fecha_expiracion")]
     public DateTime FechaExpiracion { get; set; }
     [Column("tamano")]
     public int Tamaño { get; set; } = 0;
+
+    [JsonIgnore]
+    public virtual TipoCatalogo? TipoCatalogo { get; set; }
+
+    [JsonIgnore]
+    public virtual Secuencia? Secuencia { get; set; }
+
+    [JsonIgnore]
+    public virtual TipoRecurso? TipoRecurso { get; set; }
+
+    [JsonIgnore]
+    public virtual EstatusRecurso? EstatusRecurso { get; set; }
 
     [JsonIgnore]
     public virtual Usuario? Padre { get; set; }
