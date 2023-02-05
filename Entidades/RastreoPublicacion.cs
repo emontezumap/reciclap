@@ -1,19 +1,29 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Entidades;
-
-[Table("personal")]
-public class Personal
+public class RastreoPublicacion
 {
+    [Column("Id")]
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public long Id { get; set; }
     [Column("id_publicacion")]
     public Guid IdPublicacion { get; set; }
+    [Column("estado")]
+    public int Estado { get; set; }
+    [Column("fecha")]
+    public DateTime Fecha { get; set; }
     [Column("id_usuario")]
     public Guid IdUsuario { get; set; }
-    [Column("fecha")]
-    public DateTime Fecha { get; set; } = DateTime.UtcNow;
-    [Column("id_rol")]
-    public Guid IdRol { get; set; }
+    [Column("tiempo_estimado")]
+    public int TiempoEstimado { get; set; }
+    [Column("estado_previo")]
+    public int EstadoPrevio { get; set; }
+    [Column("siguiente_estado")]
+    public int SiguienteEstado { get; set; }
+    [Column("comentarios")]
+    public string Comentarios { get; set; } = "";
     [Column("id_creador")]
     public Guid IdCreador { get; set; }
     [Column("fecha_creacion")]
@@ -27,12 +37,5 @@ public class Personal
 
     [JsonIgnore]
     public virtual Publicacion? Publicacion { get; set; }
-    [JsonIgnore]
     public virtual Usuario? Usuario { get; set; }
-    [JsonIgnore]
-    public virtual Rol? Rol { get; set; }
-    [JsonIgnore]
-    public virtual Usuario? Creador { get; set; }
-    [JsonIgnore]
-    public virtual Usuario? Modificador { get; set; }
 }

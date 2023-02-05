@@ -1,10 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
-using Contenedores;
-using Filtros;
 using Herramientas;
-using HotChocolate.AspNetCore.Authorization;
+// using HotChocolate.AspNetCore.Authorization;
 using System.Security.Claims;
 using Validadores;
 

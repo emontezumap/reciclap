@@ -1,19 +1,25 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Entidades;
 
-[Table("personal")]
-public class Personal
+public class BitacoraProyecto
 {
-    [Column("id_publicacion")]
-    public Guid IdPublicacion { get; set; }
+    [Column("id")]
+    public int Id { get; set; }
+    [Column("id_proyecto")]
+    public Guid IdProyecto { get; set; }
+    [Column("id_actividad_proyecto")]
+    public Guid IdActividadProyecto { get; set; }
+    [Column("fecha")]
+    public DateTime Fecha { get; set; }
     [Column("id_usuario")]
     public Guid IdUsuario { get; set; }
-    [Column("fecha")]
-    public DateTime Fecha { get; set; } = DateTime.UtcNow;
-    [Column("id_rol")]
-    public Guid IdRol { get; set; }
+    [Column("id_tipo_bitacora")]
+    public Guid IdTipoBitacora { get; set; }
+    [Column("comentarios")]
+    public string Comentarios { get; set; } = "";
     [Column("id_creador")]
     public Guid IdCreador { get; set; }
     [Column("fecha_creacion")]
@@ -26,11 +32,13 @@ public class Personal
     public bool? Activo { get; set; } = true;
 
     [JsonIgnore]
-    public virtual Publicacion? Publicacion { get; set; }
+    public Proyecto? Proyecto { get; set; }
     [JsonIgnore]
-    public virtual Usuario? Usuario { get; set; }
+    public ActividadProyecto? ActividadProyecto { get; set; }
     [JsonIgnore]
-    public virtual Rol? Rol { get; set; }
+    public Usuario? Usuario { get; set; }
+    [JsonIgnore]
+    public TipoBitacora? TipoBitacora { get; set; }
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]

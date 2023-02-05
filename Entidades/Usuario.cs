@@ -71,6 +71,17 @@ public class Usuario
     [Column("id_grupo")]
     public Guid IdGrupo { get; set; }
 
+    [Column("estatus")]
+    [MaxLength(2)]
+    public string Estatus { get; set; } = "";
+
+    [Column("verificado")]
+    public int Verificado { get; set; } = 0;      // 0 = Normal, 1 = Verificado
+
+    [Column("ultima_ip")]
+    [MaxLength(20)]
+    public string UltimaIP { get; set; } = "";
+
     [Column("id_creador")]
     public Guid? IdCreador { get; set; }
 

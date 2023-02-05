@@ -1,19 +1,19 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Entidades;
 
-[Table("personal")]
-public class Personal
+[Table("actividades_rutas_proyectos")]
+public class ActividadRutaProyecto
 {
-    [Column("id_publicacion")]
-    public Guid IdPublicacion { get; set; }
-    [Column("id_usuario")]
-    public Guid IdUsuario { get; set; }
-    [Column("fecha")]
-    public DateTime Fecha { get; set; } = DateTime.UtcNow;
-    [Column("id_rol")]
-    public Guid IdRol { get; set; }
+    [Column("id")]
+    [Key]
+    public Guid Id { get; set; } = Guid.NewGuid();
+    [Column("descripcion")]
+    public string Descripcion { get; set; } = "";
+    [Column("secuencia")]
+    public int Secuencia { get; set; } = 1;
     [Column("id_creador")]
     public Guid IdCreador { get; set; }
     [Column("fecha_creacion")]
@@ -25,12 +25,6 @@ public class Personal
     [Column("activo")]
     public bool? Activo { get; set; } = true;
 
-    [JsonIgnore]
-    public virtual Publicacion? Publicacion { get; set; }
-    [JsonIgnore]
-    public virtual Usuario? Usuario { get; set; }
-    [JsonIgnore]
-    public virtual Rol? Rol { get; set; }
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]

@@ -5,6 +5,7 @@ namespace Services;
 
 public class SSDBContext : DbContext
 {
+    public DbSet<ActividadProyecto> ActividadesProyectos { get; set; } = null!;
     public DbSet<Administrador> Administradores { get; set; } = null!;
     public DbSet<Articulo> Articulos { get; set; } = null!;
     public DbSet<Chat> Chats { get; set; } = null!;
@@ -26,9 +27,15 @@ public class SSDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder mb)
     {
+        // Tipos de datos
+        ActividadProyectoTipos(mb);
+
         // Valores por defecto
+        ActividadProyectoValoresPorDefecto(mb);
+        ActividadRutaProyectoValoresPorDefecto(mb);
         AdministradorValoresPorDefecto(mb);
         ArticuloValoresPorDefecto(mb);
+        BitacoraProyectoValoresPorDefecto(mb);
         ChatValoresPorDefecto(mb);
         CiudadValoresPorDefecto(mb);
         ComentarioValoresPorDefecto(mb);
@@ -48,7 +55,10 @@ public class SSDBContext : DbContext
         CrearIndices(mb);
 
         // Relaciones
+        ActividadProyectoRelaciones(mb);
+        ActividadRutaProyectoRelaciones(mb);
         AdministradorRelaciones(mb);
+        BitacoraProyectoRelaciones(mb);
         ChatRelaciones(mb);
         CiudadRelaciones(mb);
         ComentarioRelaciones(mb);
@@ -65,7 +75,137 @@ public class SSDBContext : DbContext
         UsuarioRelaciones(mb);
     }
 
+    // Tipos de datos
+    private void ActividadProyectoTipos(ModelBuilder mb)
+    {
+        mb.Entity<ActividadProyecto>()
+            .Property(p => p.Evaluacion).HasPrecision(2, 1);
+
+        mb.Entity<ActividadProyecto>()
+            .Property(p => p.TotalArticulos).HasPrecision(10, 2);
+
+        mb.Entity<ActividadProyecto>()
+            .Property(p => p.CostoEstimado).HasPrecision(20, 3);
+
+        mb.Entity<ActividadProyecto>()
+            .Property(p => p.TipoCambioCostoEstimado).HasPrecision(20, 3);
+
+        mb.Entity<ActividadProyecto>()
+            .Property(p => p.CostoReal).HasPrecision(20, 3);
+
+        mb.Entity<ActividadProyecto>()
+            .Property(p => p.TipoCambioCostoReal).HasPrecision(20, 3);
+    }
+
+
+
     // Valores por defecto
+    private void ActividadProyectoValoresPorDefecto(ModelBuilder mb)
+    {
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.Id)
+           .HasDefaultValueSql("newid()");
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.Descripcion)
+           .HasDefaultValueSql("''");
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.FechaInicio)
+           .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.FechaFinalizacion)
+           .HasDefaultValueSql("null");
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.TiempoEstimado)
+           .HasDefaultValue(0);
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.ProgresoEstimado)
+           .HasDefaultValue(0);
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.Evaluacion)
+           .HasDefaultValue(0);
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.FechaDisponible)
+           .HasDefaultValueSql("null");
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.TotalArticulos)
+           .HasDefaultValue(0.0);
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.CostoEstimado)
+           .HasDefaultValue(0.0);
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.MonedaCostoEstimado)
+           .HasDefaultValueSql("''");
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.TipoCambioCostoEstimado)
+           .HasDefaultValue(0.0);
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.CostoReal)
+           .HasDefaultValue(0.0);
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.MonedaCostoReal)
+           .HasDefaultValueSql("''");
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.TipoCambioCostoReal)
+           .HasDefaultValue(0.0);
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.FechaCreacion)
+           .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<ActividadProyecto>()
+           .Property(c => c.FechaModificacion)
+           .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<ActividadProyecto>()
+            .Property(c => c.Activo)
+            .HasDefaultValueSql("1");
+    }
+
+    private void ActividadRutaProyectoValoresPorDefecto(ModelBuilder mb)
+    {
+        mb.Entity<ActividadRutaProyecto>()
+           .Property(c => c.Id)
+           .HasDefaultValueSql("newid()");
+
+        mb.Entity<ActividadRutaProyecto>()
+           .Property(c => c.Descripcion)
+           .HasDefaultValueSql("''");
+
+        mb.Entity<ActividadRutaProyecto>()
+           .Property(c => c.Secuencia)
+           .HasDefaultValue(1);
+
+        mb.Entity<ActividadRutaProyecto>()
+           .Property(c => c.Descripcion)
+           .HasDefaultValueSql("''");
+
+        mb.Entity<ActividadRutaProyecto>()
+           .Property(c => c.FechaCreacion)
+           .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<ActividadRutaProyecto>()
+           .Property(c => c.FechaModificacion)
+           .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<ActividadRutaProyecto>()
+            .Property(c => c.Activo)
+            .HasDefaultValueSql("1");
+    }
+
     private void AdministradorValoresPorDefecto(ModelBuilder mb)
     {
         mb.Entity<Administrador>()
@@ -116,6 +256,29 @@ public class SSDBContext : DbContext
             .HasDefaultValueSql("getutcdate()");
 
         mb.Entity<Articulo>()
+            .Property(c => c.Activo)
+            .HasDefaultValueSql("1");
+    }
+
+    private void BitacoraProyectoValoresPorDefecto(ModelBuilder mb)
+    {
+        mb.Entity<BitacoraProyecto>()
+            .Property(c => c.Id)
+            .HasDefaultValueSql("newid()");
+
+        mb.Entity<BitacoraProyecto>()
+            .Property(c => c.Fecha)
+            .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<BitacoraProyecto>()
+            .Property(c => c.FechaCreacion)
+            .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<BitacoraProyecto>()
+            .Property(c => c.FechaModificacion)
+            .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<BitacoraProyecto>()
             .Property(c => c.Activo)
             .HasDefaultValueSql("1");
     }
@@ -598,6 +761,9 @@ public class SSDBContext : DbContext
     // Indices
     private void CrearIndices(ModelBuilder mb)
     {
+        mb.Entity<ActividadRutaProyecto>()
+            .HasIndex(p => p.Descripcion).IsUnique();
+
         mb.Entity<Administrador>()
             .HasIndex(p => p.Nombre).IsUnique();
 
@@ -654,9 +820,136 @@ public class SSDBContext : DbContext
     }
 
     // Relaciones
+    private void ActividadProyectoRelaciones(ModelBuilder mb)
+    {
+        mb.Entity<ActividadProyecto>()
+            .HasOne(p => p.ActividadRuta)
+            .WithMany()
+            .HasForeignKey(p => p.IdActividadRuta)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<ActividadProyecto>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<ActividadProyecto>()
+            .HasOne(p => p.Ejecutor)
+            .WithMany()
+            .HasForeignKey(p => p.IdEjecutor)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<ActividadProyecto>()
+            .HasOne(p => p.EstatusProyecto)
+            .WithMany()
+            .HasForeignKey(p => p.IdEstatusProyecto)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<ActividadProyecto>()
+            .HasOne(p => p.EstatusPublicacion)
+            .WithMany()
+            .HasForeignKey(p => p.IdEstatusPublicacion)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<ActividadProyecto>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<ActividadProyecto>()
+            .HasOne(p => p.Proyecto)
+            .WithMany()
+            .HasForeignKey(p => p.IdProyecto)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<ActividadProyecto>()
+            .HasOne(p => p.RevisadaPor)
+            .WithMany()
+            .HasForeignKey(p => p.IdRevisadaPor)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<ActividadProyecto>()
+            .HasOne(p => p.Revisor)
+            .WithMany()
+            .HasForeignKey(p => p.IdRevisor)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<ActividadProyecto>()
+            .HasOne(p => p.RutaProyecto)
+            .WithMany()
+            .HasForeignKey(p => p.IdRutaProyecto)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<ActividadProyecto>()
+            .HasOne(p => p.TipoActividad)
+            .WithMany()
+            .HasForeignKey(p => p.IdTipoActividad)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private void ActividadRutaProyectoRelaciones(ModelBuilder mb)
+    {
+        mb.Entity<ActividadRutaProyecto>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<ActividadRutaProyecto>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
     private void AdministradorRelaciones(ModelBuilder mb)
     {
+        mb.Entity<Administrador>()
+          .HasOne(p => p.Grupo)
+          .WithMany()
+          .HasForeignKey(p => p.IdGrupo)
+          .OnDelete(DeleteBehavior.NoAction);
+    }
 
+    private void BitacoraProyectoRelaciones(ModelBuilder mb)
+    {
+        mb.Entity<BitacoraProyecto>()
+            .HasOne(p => p.ActividadProyecto)
+            .WithMany()
+            .HasForeignKey(p => p.IdActividadProyecto)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<BitacoraProyecto>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<BitacoraProyecto>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<BitacoraProyecto>()
+            .HasOne(p => p.Proyecto)
+            .WithMany()
+            .HasForeignKey(p => p.IdProyecto)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<BitacoraProyecto>()
+            .HasOne(p => p.TipoBitacora)
+            .WithMany()
+            .HasForeignKey(p => p.IdTipoBitacora)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<BitacoraProyecto>()
+            .HasOne(p => p.Usuario)
+            .WithMany()
+            .HasForeignKey(p => p.IdUsuario)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 
     private void ChatRelaciones(ModelBuilder mb)

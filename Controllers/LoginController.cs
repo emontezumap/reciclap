@@ -6,7 +6,6 @@ using System.Text;
 using Entidades;
 using Services;
 using DTOs;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers;
 
@@ -30,7 +29,9 @@ public class LoginController : ControllerBase
         var usr = await loginSvc.BuscarUsuario(login);
 
         if (usr == null)
+        {
             return BadRequest(new { message = "No autorizado" });
+        }
 
         string jwt = GenerarToken(usr);
 

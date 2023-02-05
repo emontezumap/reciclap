@@ -6,6 +6,7 @@ namespace Herramientas;
 public class Excepcionador
 {
     private readonly ResultadoValidacion? rv;
+    private readonly ICollection<ResultadoValidacion>? rvs;
     private const string MENSAJE_ERROR_POR_DEFECTO = "Error no especificado";
     private const string MENSAJE_ERROR_REGISTRO_ELIMINADO = "El registro fue eliminado";
     private const string MENSAJE_ERROR_DATOS_NO_VALIDOS = "Datos no válidos";
@@ -15,6 +16,11 @@ public class Excepcionador
     public Excepcionador(ResultadoValidacion rv)
     {
         this.rv = rv;
+    }
+
+    public Excepcionador(ICollection<ResultadoValidacion> rvs)
+    {
+        this.rvs = rvs;
     }
 
     public GraphQLException ProcesarExcepcionActualizacionDB(Exception? ex)
@@ -91,10 +97,25 @@ public class Excepcionador
         error.SetMessage(MENSAJE_ERROR_DATOS_NO_VALIDOS);
         error.SetCode("DATOS_NO_VALIDOS");
 
-        foreach (var men in rv!.Mensajes!)
-            if (men.Value.Count > 0)
-                error.SetExtension(men.Key, JsonConvert.SerializeObject(men.Value));
+        if (rv != null && rv.Mensajes != null)
+        {
+            foreach (var men in rv.Mensajes)
+                if (men.Value.Count > 0)
+                    error.SetExtension(men.Key, JsonConvert.SerializeObject(men.Value));
+        }
+        else if (rvs != null)
+        {
+            foreach (var rv in rvs)
+            {
+                if (rv.Mensajes != null)
+                {
+                    foreach (var men in rv.Mensajes)
+                    {
 
+                    }
+                }
+            }
+        }
         return new GraphQLException(error.Build());
     }
 }

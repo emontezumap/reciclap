@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
 using System.Security.Claims;
-using HotChocolate.AspNetCore.Authorization;
+// using HotChocolate.AspNetCore.Authorization;
 using Herramientas;
 using Validadores;
 
