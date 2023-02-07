@@ -40,9 +40,11 @@ public class Consulta
     [UseDbContext(typeof(SSDBContext))]
     [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<EstatusPublicacion> EstatusPublicaciones([ScopedService] SSDBContext ctx)
+    public IQueryable<RegistroGeneral> EstatusPublicaciones([ScopedService] SSDBContext ctx)
     {
-        return ctx.EstatusPublicaciones;
+        // return ctx.EstatusPublicaciones;
+        return ctx.RegistrosGenerales
+            .Where(rg => rg.Descripcion == "estatus_publicaciones");
     }
 
     [UseDbContext(typeof(SSDBContext))]
@@ -72,9 +74,11 @@ public class Consulta
     [UseDbContext(typeof(SSDBContext))]
     [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Profesion> Profesiones([ScopedService] SSDBContext ctx)
+    public IQueryable<RegistroGeneral> Profesiones([ScopedService] SSDBContext ctx)
     {
-        return ctx.Profesiones;
+        // return ctx.Profesiones;
+        return ctx.RegistrosGenerales
+            .Where(rg => rg.Descripcion == "profesiones");
     }
 
     [UseDbContext(typeof(SSDBContext))]
@@ -88,17 +92,21 @@ public class Consulta
     [UseDbContext(typeof(SSDBContext))]
     [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<Rol> Roles([ScopedService] SSDBContext ctx)
+    public IQueryable<RegistroGeneral> Roles([ScopedService] SSDBContext ctx)
     {
-        return ctx.Roles;
+        // return ctx.Roles;
+        return ctx.RegistrosGenerales
+            .Where(rg => rg.Descripcion == "roles");
     }
 
     [UseDbContext(typeof(SSDBContext))]
     [UsePaging(IncludeTotalCount = true, DefaultPageSize = 10)]
     [UseProjection, UseFiltering, UseSorting]
-    public IQueryable<TipoPublicacion> TiposPublicacion([ScopedService] SSDBContext ctx)
+    public IQueryable<RegistroGeneral> TiposPublicacion([ScopedService] SSDBContext ctx)
     {
-        return ctx.TiposPublicacion;
+        // return ctx.TiposPublicacion;
+        return ctx.RegistrosGenerales
+            .Where(rg => rg.Descripcion == "tipos_publicaciones");
     }
 
     [UseDbContext(typeof(SSDBContext))]

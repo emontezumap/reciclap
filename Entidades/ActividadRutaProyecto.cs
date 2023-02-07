@@ -8,8 +8,10 @@ namespace Entidades;
 public class ActividadRutaProyecto
 {
     [Column("id")]
-    [Key]
-    public Guid Id { get; set; } = Guid.NewGuid();
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    [Column("id_ruta_proyecto")]
+    public int IdRutaProyecto { get; set; }
     [Column("descripcion")]
     public string Descripcion { get; set; } = "";
     [Column("secuencia")]

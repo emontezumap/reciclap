@@ -56,7 +56,7 @@ public class PublicacionService
                     Gustan = nuevo.Gustan == null ? 0 : (int)nuevo.Gustan,
                     Id = Guid.NewGuid(),
                     IdCreador = id,
-                    IdEstatus = (Guid)nuevo.IdEstatus!,
+                    IdEstatusPublicacion = (Guid)nuevo.IdEstatus!,
                     IdModificador = id,
                     IdTipoPublicacion = (Guid)nuevo.IdTipoPublicacion!,
                     NoGustan = nuevo.NoGustan == null ? 0 : (int)nuevo.NoGustan,
@@ -103,7 +103,7 @@ public class PublicacionService
                     buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
                     buscado.FechaModificacion = DateTime.UtcNow;
                     buscado.Gustan = modif.Gustan == null ? buscado.Gustan : (int)modif.Gustan;
-                    buscado.IdEstatus = modif.IdEstatus == null ? buscado.IdEstatus : (Guid)modif.IdEstatus;
+                    buscado.IdEstatusPublicacion = modif.IdEstatus == null ? buscado.IdEstatusPublicacion : (Guid)modif.IdEstatus;
                     buscado.IdModificador = id;
                     buscado.IdTipoPublicacion = modif.IdTipoPublicacion == null ? buscado.IdTipoPublicacion : (Guid)modif.IdTipoPublicacion;
                     buscado.NoGustan = modif.NoGustan == null ? buscado.NoGustan : (int)modif.NoGustan;

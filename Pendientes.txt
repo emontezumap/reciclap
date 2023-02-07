@@ -31,3 +31,6 @@
 6. Dataloaders
 7. Tabla de administradores -- LISTO
 8. Operaciones CUD sobre múltiples entidades
+9. Agregar campo version a las tablas (versión de API con que se creó el registro)
+10. Envio de correos / notificaciones
+

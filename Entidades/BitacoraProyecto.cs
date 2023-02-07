@@ -4,20 +4,22 @@ using System.Text.Json.Serialization;
 
 namespace Entidades;
 
+[Table("bitacoras_proyectos")]
 public class BitacoraProyecto
 {
     [Column("id")]
-    public int Id { get; set; }
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public long Id { get; set; }
     [Column("id_proyecto")]
     public Guid IdProyecto { get; set; }
     [Column("id_actividad_proyecto")]
-    public Guid IdActividadProyecto { get; set; }
+    public long IdActividadProyecto { get; set; }
     [Column("fecha")]
     public DateTime Fecha { get; set; }
     [Column("id_usuario")]
     public Guid IdUsuario { get; set; }
     [Column("id_tipo_bitacora")]
-    public Guid IdTipoBitacora { get; set; }
+    public int IdTipoBitacora { get; set; }
     [Column("comentarios")]
     public string Comentarios { get; set; } = "";
     [Column("id_creador")]
@@ -38,7 +40,7 @@ public class BitacoraProyecto
     [JsonIgnore]
     public Usuario? Usuario { get; set; }
     [JsonIgnore]
-    public TipoBitacora? TipoBitacora { get; set; }
+    public RegistroGeneral? TipoBitacora { get; set; }
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]

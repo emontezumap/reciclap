@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Entidades;
 
+[Table("proyectos")]
 public class Proyecto
 {
     [Column("id")]
@@ -15,24 +16,24 @@ public class Proyecto
     public string Descripcion { get; set; } = "";
     [Column("fecha_inicio")]
     public DateTime FechaInicio { get; set; }
-    [Column("usuario_gerente")]
+    [Column("id_gerente")]
     public Guid IdGerente { get; set; }
-    [Column("usuario_revisor")]
+    [Column("id_revisor")]
     public Guid IdRevisor { get; set; }
     [Column("gustan")]
     public int Gustan { get; set; }
     [Column("no_gustan")]
     public int NoGustan { get; set; }
-    [Column("estatus")]
+    [Column("id_estatus_publicacion")]
     public Guid IdEstatusPublicacion { get; set; }
-    [Column("estado")]
-    public int IdEstado { get; set; }     // 0 = En espera de aprobacion, 10 = Aprobado, 20 = Iniciado, 30 = Con observaciones, 100 = Cerrado, 200 = Vencido, 900 = Rechazado, etc.
-    [Column("revisada_por")]
+    [Column("id_estatus_proyecto")]
+    public int IdEstatusProyecto { get; set; }     // 0 = En espera de aprobacion, 10 = Aprobado, 20 = Iniciado, 30 = Con observaciones, 100 = Cerrado, 200 = Vencido, 900 = Rechazado, etc.
+    [Column("id_revisada_por")]
     public Guid IdRevisadaPor { get; set; }
-    [Column("imagen_principal")]
-    public Guid ImagenPrincipal { get; set; }
-    [Column("tipo")]
-    public int Tipo { get; set; }
+    [Column("id_imagen_principal")]
+    public Guid IdImagenPrincipal { get; set; }
+    [Column("id_tipo_proyecto")]
+    public Guid IdTipoProyecto { get; set; }
     [Column("tiempo_estimado")]
     public int TiempoEstimado { get; set; }
     [Column("progreso_estimado")]
@@ -41,8 +42,8 @@ public class Proyecto
     public int ProgresoReal { get; set; }
     [Column("evaluacion")]
     public decimal Evaluacion { get; set; }
-    [Column("ruta")]
-    public int Ruta { get; set; }
+    [Column("id_ruta_proyecto")]
+    public int IdRutaProyecto { get; set; }
     [Column("fase_actual")]
     public int FaseActual { get; set; }
     [Column("fase_anterior")]
@@ -55,16 +56,16 @@ public class Proyecto
     public decimal TotalArticulos { get; set; }
     [Column("costo_estimado")]
     public decimal CostoEstimado { get; set; }
-    [Column("costo_estimado_moneda")]
-    public string CostoEstimadoMoneda { get; set; } = "";
-    [Column("costo_estimado_tipo_cambio")]
-    public decimal CostoEstimadoTipoCambio { get; set; }
+    [Column("moneda_costo_estimado")]
+    public string MonedaCostoEstimado { get; set; } = "";
+    [Column("tipo_cambio_costo_estimado")]
+    public decimal TipoCambioCostoEstimado { get; set; }
     [Column("costo_real")]
     public decimal CostoReal { get; set; }
-    [Column("costo_real_moneda")]
-    public string CostoRealMoneda { get; set; } = "";
-    [Column("costo_real_tipo_cambio")]
-    public decimal CostoRealTipoCambio { get; set; }
+    [Column("moneda_costo_real")]
+    public string MonedaCostoReal { get; set; } = "";
+    [Column("tipo_cambio_costo_real")]
+    public decimal TipoCambioCostoReal { get; set; }
     [Column("id_creador")]
     public Guid IdCreador { get; set; }
     [Column("fecha_creacion")]
@@ -81,11 +82,21 @@ public class Proyecto
     [JsonIgnore]
     public virtual Usuario? Revisor { get; set; }
     [JsonIgnore]
-    public virtual EstatusPublicacion? EstatusPublicacion { get; set; }
+    public virtual RegistroGeneral? EstatusPublicacion { get; set; }
+    [JsonIgnore]
+    public virtual RegistroGeneral? EstatusProyecto { get; set; }
+    [JsonIgnore]
+    public virtual RegistroGeneral? TipoProyecto { get; set; }
+    [JsonIgnore]
+    public virtual RegistroGeneral? RutaProyecto { get; set; }
     [JsonIgnore]
     public virtual Usuario? RevisadaPor { get; set; }
+    [JsonIgnore]
+    public virtual RecursoPublicacion? ImagenPrincipal { get; set; }
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]
     public virtual Usuario? Modificador { get; set; }
+    [JsonIgnore]
+    public virtual ICollection<ActividadProyecto>? ActividadesProyecto { get; set; }
 }

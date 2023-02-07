@@ -6,21 +6,25 @@ namespace Services;
 public class SSDBContext : DbContext
 {
     public DbSet<ActividadProyecto> ActividadesProyectos { get; set; } = null!;
+    public DbSet<ActividadRutaProyecto> ActividadesRutasProyectos { get; set; } = null!;
     public DbSet<Administrador> Administradores { get; set; } = null!;
     public DbSet<Articulo> Articulos { get; set; } = null!;
+    public DbSet<BitacoraProyecto> BitacorasProyectos { get; set; } = null!;
     public DbSet<Chat> Chats { get; set; } = null!;
     public DbSet<Ciudad> Ciudades { get; set; } = null!;
     public DbSet<Comentario> Comentarios { get; set; } = null!;
     public DbSet<DetallePublicacion> DetallePublicaciones { get; set; } = null!;
     public DbSet<Estado> Estados { get; set; } = null!;
-    public DbSet<EstatusPublicacion> EstatusPublicaciones { get; set; } = null!;
     public DbSet<Grupo> Grupos { get; set; } = null!;
     public DbSet<Pais> Paises { get; set; } = null!;
     public DbSet<Personal> Personal { get; set; } = null!;
-    public DbSet<Profesion> Profesiones { get; set; } = null!;
+    public DbSet<Proyecto> Proyectos { get; set; } = null!;
     public DbSet<Publicacion> Publicaciones { get; set; } = null!;
-    public DbSet<Rol> Roles { get; set; } = null!;
-    public DbSet<TipoPublicacion> TiposPublicacion { get; set; } = null!;
+    public DbSet<RastreoPublicacion> RastreoPublicaciones { get; set; } = null!;
+    public DbSet<RecursoPublicacion> RecursosPublicaciones { get; set; } = null!;
+    public DbSet<RegistroGeneral> RegistrosGenerales { get; set; } = null!;
+    public DbSet<Secuencia> Secuencias { get; set; } = null!;
+    public DbSet<Tabla> Tablas { get; set; } = null!;
     public DbSet<Usuario> Usuarios { get; set; } = null!;
 
     public SSDBContext(DbContextOptions<SSDBContext> options) : base(options) { }
@@ -29,6 +33,7 @@ public class SSDBContext : DbContext
     {
         // Tipos de datos
         ActividadProyectoTipos(mb);
+        ProyectoTipos(mb);
 
         // Valores por defecto
         ActividadProyectoValoresPorDefecto(mb);
@@ -41,15 +46,16 @@ public class SSDBContext : DbContext
         ComentarioValoresPorDefecto(mb);
         DetallePublicacionValoresPorDefecto(mb);
         EstadoValoresPorDefecto(mb);
-        EstatusProyectoValoresPorDefecto(mb);
-        EstatusPublicacionValoresPorDefecto(mb);
         GrupoValoresPorDefecto(mb);
         PaisValoresPorDefecto(mb);
         PersonalValoresPorDefecto(mb);
-        ProfesionValoresPorDefecto(mb);
+        ProyectoValoresPorDefecto(mb);
         PublicacionValoresPorDefecto(mb);
-        RolValoresPorDefecto(mb);
-        TipoPublicacionValoresPorDefecto(mb);
+        RastreoPublicacionValoresPorDefecto(mb);
+        RecursoPublicacionValoresPorDefecto(mb);
+        RegistroGeneralValoresPorDefecto(mb);
+        SecuenciaValoresPorDefecto(mb);
+        TablaValoresPorDefecto(mb);
         UsuarioValoresPorDefecto(mb);
 
         // Indices
@@ -65,15 +71,16 @@ public class SSDBContext : DbContext
         ComentarioRelaciones(mb);
         DetallePublicacionRelaciones(mb);
         EstadoRelaciones(mb);
-        EstatusProyectoRelaciones(mb);
-        EstatusPublicacionRelaciones(mb);
         GrupoRelaciones(mb);
         PaisRelaciones(mb);
         PersonalRelaciones(mb);
-        ProfesionRelaciones(mb);
+        ProyectoRelaciones(mb);
         PublicacionRelaciones(mb);
-        RolRelaciones(mb);
-        TipoPublicacionRelaciones(mb);
+        RastreoPublicacionRelaciones(mb);
+        RecursoPublicacionRelaciones(mb);
+        RegistroGeneralRelaciones(mb);
+        SecuenciaRelaciones(mb);
+        TablaRelaciones(mb);
         UsuarioRelaciones(mb);
     }
 
@@ -99,14 +106,33 @@ public class SSDBContext : DbContext
             .Property(p => p.TipoCambioCostoReal).HasPrecision(20, 3);
     }
 
+    private void ProyectoTipos(ModelBuilder mb)
+    {
+        mb.Entity<Proyecto>()
+            .Property(p => p.Evaluacion).HasPrecision(2, 1);
 
+        mb.Entity<Proyecto>()
+            .Property(p => p.TotalArticulos).HasPrecision(10, 2);
+
+        mb.Entity<Proyecto>()
+            .Property(p => p.CostoEstimado).HasPrecision(20, 3);
+
+        mb.Entity<Proyecto>()
+            .Property(p => p.TipoCambioCostoEstimado).HasPrecision(20, 3);
+
+        mb.Entity<Proyecto>()
+            .Property(p => p.CostoReal).HasPrecision(20, 3);
+
+        mb.Entity<Proyecto>()
+            .Property(p => p.TipoCambioCostoReal).HasPrecision(20, 3);
+    }
 
     // Valores por defecto
     private void ActividadProyectoValoresPorDefecto(ModelBuilder mb)
     {
         mb.Entity<ActividadProyecto>()
            .Property(c => c.Id)
-           .HasDefaultValueSql("newid()");
+           .UseIdentityColumn();
 
         mb.Entity<ActividadProyecto>()
            .Property(c => c.Descripcion)
@@ -432,67 +458,6 @@ public class SSDBContext : DbContext
             .HasDefaultValueSql("1");
     }
 
-    private void EstatusProyectoValoresPorDefecto(ModelBuilder mb)
-    {
-        mb.Entity<EstatusProyecto>()
-            .Property(c => c.Id)
-            .HasDefaultValueSql("newid()");
-
-        mb.Entity<EstatusProyecto>()
-            .Property(c => c.Descripcion)
-            .HasDefaultValueSql("''");
-
-        mb.Entity<EstatusProyecto>()
-            .Property(c => c.IdCreador)
-            .HasDefaultValueSql("null");
-
-        mb.Entity<EstatusProyecto>()
-            .Property(c => c.IdModificador)
-            .HasDefaultValueSql("null");
-
-        mb.Entity<EstatusProyecto>()
-             .Property(c => c.FechaCreacion)
-             .HasDefaultValueSql("getutcdate()");
-
-        mb.Entity<EstatusProyecto>()
-            .Property(c => c.FechaModificacion)
-            .HasDefaultValueSql("getutcdate()");
-
-        mb.Entity<EstatusProyecto>()
-            .Property(c => c.Activo)
-            .HasDefaultValueSql("1");
-    }
-
-    private void EstatusPublicacionValoresPorDefecto(ModelBuilder mb)
-    {
-        mb.Entity<EstatusPublicacion>()
-            .Property(c => c.Id)
-            .HasDefaultValueSql("newid()");
-
-        mb.Entity<EstatusPublicacion>()
-            .Property(c => c.Descripcion)
-            .HasDefaultValueSql("''");
-
-        mb.Entity<EstatusPublicacion>()
-            .Property(c => c.IdCreador)
-            .HasDefaultValueSql("null");
-
-        mb.Entity<EstatusPublicacion>()
-            .Property(c => c.IdModificador)
-            .HasDefaultValueSql("null");
-
-        mb.Entity<EstatusPublicacion>()
-             .Property(c => c.FechaCreacion)
-             .HasDefaultValueSql("getutcdate()");
-
-        mb.Entity<EstatusPublicacion>()
-            .Property(c => c.FechaModificacion)
-            .HasDefaultValueSql("getutcdate()");
-
-        mb.Entity<EstatusPublicacion>()
-            .Property(c => c.Activo)
-            .HasDefaultValueSql("1");
-    }
     private void GrupoValoresPorDefecto(ModelBuilder mb)
     {
         mb.Entity<Grupo>()
@@ -583,33 +548,90 @@ public class SSDBContext : DbContext
             .Property(c => c.Activo)
             .HasDefaultValueSql("1");
     }
-    private void ProfesionValoresPorDefecto(ModelBuilder mb)
+
+    private void ProyectoValoresPorDefecto(ModelBuilder mb)
     {
-        mb.Entity<Profesion>()
-            .Property(c => c.Id)
-            .HasDefaultValueSql("newid()");
+        mb.Entity<Proyecto>()
+           .Property(c => c.Id)
+           .HasDefaultValueSql("newid()");
 
-        mb.Entity<Profesion>()
-            .Property(c => c.Descripcion)
-            .HasDefaultValueSql("''");
+        mb.Entity<Proyecto>()
+           .Property(c => c.Titulo)
+           .HasDefaultValueSql("''");
 
-        mb.Entity<Profesion>()
-            .Property(c => c.IdCreador)
-            .HasDefaultValueSql("null");
+        mb.Entity<Proyecto>()
+           .Property(c => c.Descripcion)
+           .HasDefaultValueSql("''");
 
-        mb.Entity<Profesion>()
-            .Property(c => c.IdModificador)
-            .HasDefaultValueSql("null");
+        mb.Entity<Proyecto>()
+           .Property(c => c.FechaInicio)
+           .HasDefaultValueSql("getutcdate()");
 
-        mb.Entity<Profesion>()
-             .Property(c => c.FechaCreacion)
-             .HasDefaultValueSql("getutcdate()");
+        mb.Entity<Proyecto>()
+           .Property(c => c.Gustan)
+           .HasDefaultValue(0);
 
-        mb.Entity<Profesion>()
-            .Property(c => c.FechaModificacion)
-            .HasDefaultValueSql("getutcdate()");
+        mb.Entity<Proyecto>()
+           .Property(c => c.NoGustan)
+           .HasDefaultValue(0);
 
-        mb.Entity<Profesion>()
+        mb.Entity<Proyecto>()
+           .Property(c => c.TiempoEstimado)
+           .HasDefaultValue(0);
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.ProgresoEstimado)
+           .HasDefaultValue(0);
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.ProgresoReal)
+           .HasDefaultValue(0);
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.Evaluacion)
+           .HasDefaultValue(0);
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.FechaDisponible)
+           .HasDefaultValueSql("null");
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.TotalArticulos)
+           .HasDefaultValue(0.0);
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.CostoEstimado)
+           .HasDefaultValue(0.0);
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.MonedaCostoEstimado)
+           .HasDefaultValueSql("''");
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.TipoCambioCostoEstimado)
+           .HasDefaultValue(0.0);
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.CostoReal)
+           .HasDefaultValue(0.0);
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.MonedaCostoReal)
+           .HasDefaultValueSql("''");
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.TipoCambioCostoReal)
+           .HasDefaultValue(0.0);
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.FechaCreacion)
+           .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<Proyecto>()
+           .Property(c => c.FechaModificacion)
+           .HasDefaultValueSql("getutcdate()");
+
+        mb.Entity<Proyecto>()
             .Property(c => c.Activo)
             .HasDefaultValueSql("1");
     }
@@ -652,68 +674,119 @@ public class SSDBContext : DbContext
             .Property(c => c.Activo)
             .HasDefaultValueSql("1");
     }
-    private void RolValoresPorDefecto(ModelBuilder mb)
+
+    private void RastreoPublicacionValoresPorDefecto(ModelBuilder mb)
     {
-        mb.Entity<Rol>()
-            .Property(c => c.Id)
-            .HasDefaultValueSql("newid()");
+        mb.Entity<RastreoPublicacion>()
+            .Property(p => p.Id)
+            .UseIdentityColumn();
 
-        mb.Entity<Rol>()
-            .Property(c => c.Descripcion)
-            .HasDefaultValueSql("''");
+        mb.Entity<RastreoPublicacion>()
+             .Property(c => c.Fecha)
+             .HasDefaultValueSql("getutcdate()");
 
-        mb.Entity<Rol>()
-            .Property(c => c.EsCreador)
-            .HasDefaultValue(0);
+        mb.Entity<RastreoPublicacion>()
+             .Property(c => c.TiempoEstimado)
+             .HasDefaultValue(0);
 
-        mb.Entity<Rol>()
-            .Property(c => c.IdCreador)
-            .HasDefaultValueSql("null");
+        mb.Entity<RastreoPublicacion>()
+             .Property(c => c.Comentarios)
+             .HasDefaultValueSql("''");
 
-        mb.Entity<Rol>()
-            .Property(c => c.IdModificador)
-            .HasDefaultValueSql("null");
-
-        mb.Entity<Rol>()
+        mb.Entity<RastreoPublicacion>()
              .Property(c => c.FechaCreacion)
              .HasDefaultValueSql("getutcdate()");
 
-        mb.Entity<Rol>()
+        mb.Entity<RastreoPublicacion>()
             .Property(c => c.FechaModificacion)
             .HasDefaultValueSql("getutcdate()");
 
-        mb.Entity<Rol>()
+        mb.Entity<RastreoPublicacion>()
             .Property(c => c.Activo)
             .HasDefaultValueSql("1");
     }
-    private void TipoPublicacionValoresPorDefecto(ModelBuilder mb)
+
+    private void RecursoPublicacionValoresPorDefecto(ModelBuilder mb)
     {
-        mb.Entity<TipoPublicacion>()
+        mb.Entity<RecursoPublicacion>()
             .Property(c => c.Id)
             .HasDefaultValueSql("newid()");
 
-        mb.Entity<TipoPublicacion>()
-            .Property(c => c.Descripcion)
-            .HasDefaultValueSql("''");
+        mb.Entity<RecursoPublicacion>()
+             .Property(c => c.Fecha)
+             .HasDefaultValueSql("getutcdate()");
 
-        mb.Entity<TipoPublicacion>()
-            .Property(c => c.IdCreador)
-            .HasDefaultValueSql("null");
+        mb.Entity<RecursoPublicacion>()
+             .Property(c => c.Orden)
+             .HasDefaultValue(1);
 
-        mb.Entity<TipoPublicacion>()
-            .Property(c => c.IdModificador)
-            .HasDefaultValueSql("null");
+        mb.Entity<RecursoPublicacion>()
+             .Property(c => c.Nombre)
+             .HasDefaultValueSql("''");
 
-        mb.Entity<TipoPublicacion>()
+        mb.Entity<RecursoPublicacion>()
+             .Property(c => c.Tamaño)
+             .HasDefaultValue(0);
+
+        mb.Entity<RecursoPublicacion>()
              .Property(c => c.FechaCreacion)
              .HasDefaultValueSql("getutcdate()");
 
-        mb.Entity<TipoPublicacion>()
+        mb.Entity<RecursoPublicacion>()
             .Property(c => c.FechaModificacion)
             .HasDefaultValueSql("getutcdate()");
 
-        mb.Entity<TipoPublicacion>()
+        mb.Entity<RecursoPublicacion>()
             .Property(c => c.Activo)
+            .HasDefaultValueSql("1");
+    }
+
+    private void RegistroGeneralValoresPorDefecto(ModelBuilder mb)
+    {
+        mb.Entity<RegistroGeneral>()
+            .Property(p => p.Tabla)
+            .HasDefaultValueSql("''");
+
+        mb.Entity<RegistroGeneral>()
+            .Property(p => p.Descripcion)
+            .HasDefaultValueSql("''");
+
+        mb.Entity<RegistroGeneral>()
+            .Property(p => p.Referencia)
+            .HasDefaultValueSql("''");
+
+        mb.Entity<RegistroGeneral>()
+            .Property(p => p.Activo)
+            .HasDefaultValueSql("1");
+    }
+
+    private void SecuenciaValoresPorDefecto(ModelBuilder mb)
+    {
+        mb.Entity<Secuencia>()
+           .Property(c => c.Prefijo)
+           .HasDefaultValueSql("''");
+
+        mb.Entity<Secuencia>()
+           .Property(c => c.Serie)
+           .HasDefaultValue(1);
+
+        mb.Entity<Secuencia>()
+           .Property(c => c.Incremento)
+           .HasDefaultValue(1);
+
+        mb.Entity<Secuencia>()
+            .Property(p => p.Activo)
+            .HasDefaultValueSql("1");
+    }
+
+    private void TablaValoresPorDefecto(ModelBuilder mb)
+    {
+        mb.Entity<Tabla>()
+           .Property(c => c.Descripcion)
+           .HasDefaultValueSql("''");
+
+        mb.Entity<Tabla>()
+            .Property(p => p.Activo)
             .HasDefaultValueSql("1");
     }
 
@@ -819,9 +892,6 @@ public class SSDBContext : DbContext
         mb.Entity<Estado>()
             .HasIndex(p => new { p.Nombre, p.IdPais }).IsUnique();
 
-        mb.Entity<EstatusPublicacion>()
-            .HasIndex(p => p.Descripcion).IsUnique();
-
         mb.Entity<Grupo>()
            .HasIndex(p => p.Descripcion).IsUnique();
 
@@ -834,17 +904,11 @@ public class SSDBContext : DbContext
         mb.Entity<Personal>()
             .HasIndex(p => new { p.IdPublicacion, p.IdRol }).IsUnique();
 
-        mb.Entity<Profesion>()
+        mb.Entity<RegistroGeneral>()
             .HasIndex(p => p.Descripcion).IsUnique();
 
         mb.Entity<Publicacion>()
             .HasIndex(p => p.Titulo).IsUnique();
-
-        mb.Entity<Rol>()
-            .HasIndex(p => p.Descripcion).IsUnique();
-
-        mb.Entity<TipoPublicacion>()
-            .HasIndex(p => p.Descripcion).IsUnique();
 
         mb.Entity<Usuario>()
             .HasIndex(p => new { p.Nombre, p.Nombre2, p.Apellido, p.Apellido2 }).IsUnique();
@@ -1097,32 +1161,6 @@ public class SSDBContext : DbContext
             .OnDelete(DeleteBehavior.NoAction);
     }
 
-    private void EstatusProyectoRelaciones(ModelBuilder mb)
-    {
-
-    }
-
-    private void EstatusPublicacionRelaciones(ModelBuilder mb)
-    {
-        mb.Entity<EstatusPublicacion>()
-            .HasMany(p => p.Publicaciones)
-            .WithOne(p => p.Estatus)
-            .HasForeignKey(p => p.IdEstatus)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        mb.Entity<EstatusPublicacion>()
-            .HasOne(p => p.Creador)
-            .WithMany()
-            .HasForeignKey(p => p.IdCreador)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        mb.Entity<EstatusPublicacion>()
-            .HasOne(p => p.Modificador)
-            .WithMany()
-            .HasForeignKey(p => p.IdModificador)
-            .OnDelete(DeleteBehavior.NoAction);
-    }
-
     private void GrupoRelaciones(ModelBuilder mb)
     {
         mb.Entity<Grupo>()
@@ -1190,26 +1228,80 @@ public class SSDBContext : DbContext
             .WithMany()
             .HasForeignKey(p => p.IdModificador)
             .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Personal>()
+            .HasOne(p => p.Rol)
+            .WithMany()
+            .HasForeignKey(p => p.IdRol)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 
-    private void ProfesionRelaciones(ModelBuilder mb)
+    private void ProyectoRelaciones(ModelBuilder mb)
     {
-        mb.Entity<Profesion>()
-            .HasMany(p => p.Usuarios)
-            .WithOne(p => p.Profesion)
-            .HasForeignKey(p => p.IdProfesion)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        mb.Entity<Profesion>()
+        mb.Entity<Proyecto>()
             .HasOne(p => p.Creador)
             .WithMany()
             .HasForeignKey(p => p.IdCreador)
             .OnDelete(DeleteBehavior.NoAction);
 
-        mb.Entity<Profesion>()
+        mb.Entity<Proyecto>()
+            .HasOne(p => p.EstatusProyecto)
+            .WithMany()
+            .HasForeignKey(p => p.IdEstatusProyecto)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Proyecto>()
+            .HasOne(p => p.EstatusPublicacion)
+            .WithMany()
+            .HasForeignKey(p => p.IdEstatusPublicacion)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Proyecto>()
+            .HasOne(p => p.Gerente)
+            .WithMany()
+            .HasForeignKey(p => p.IdGerente)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Proyecto>()
             .HasOne(p => p.Modificador)
             .WithMany()
             .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Proyecto>()
+            .HasOne(p => p.RevisadaPor)
+            .WithMany()
+            .HasForeignKey(p => p.IdRevisadaPor)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Proyecto>()
+            .HasOne(p => p.ImagenPrincipal)
+            .WithMany()
+            .HasForeignKey(p => p.IdImagenPrincipal)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Proyecto>()
+            .HasOne(p => p.Revisor)
+            .WithMany()
+            .HasForeignKey(p => p.IdRevisor)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Proyecto>()
+            .HasOne(p => p.RutaProyecto)
+            .WithMany()
+            .HasForeignKey(p => p.IdRutaProyecto)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Proyecto>()
+            .HasOne(p => p.TipoProyecto)
+            .WithMany()
+            .HasForeignKey(p => p.IdTipoProyecto)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Proyecto>()
+            .HasMany(p => p.ActividadesProyecto)
+            .WithOne()
+            .HasForeignKey(p => p.IdProyecto)
             .OnDelete(DeleteBehavior.NoAction);
     }
 
@@ -1240,42 +1332,123 @@ public class SSDBContext : DbContext
             .OnDelete(DeleteBehavior.NoAction);
     }
 
-    private void RolRelaciones(ModelBuilder mb)
+    private void RastreoPublicacionRelaciones(ModelBuilder mb)
     {
-        mb.Entity<Rol>()
-            .HasMany(p => p.RolesAsignados)
-            .WithOne(p => p.Rol)
-            .HasForeignKey(p => p.IdRol)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        mb.Entity<Rol>()
+        mb.Entity<RastreoPublicacion>()
             .HasOne(p => p.Creador)
             .WithMany()
             .HasForeignKey(p => p.IdCreador)
             .OnDelete(DeleteBehavior.NoAction);
 
-        mb.Entity<Rol>()
+        mb.Entity<RastreoPublicacion>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<RastreoPublicacion>()
+            .HasOne(p => p.Publicacion)
+            .WithMany()
+            .HasForeignKey(p => p.IdPublicacion)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<RastreoPublicacion>()
+            .HasOne(p => p.Usuario)
+            .WithMany()
+            .HasForeignKey(p => p.IdUsuario)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private void RecursoPublicacionRelaciones(ModelBuilder mb)
+    {
+        mb.Entity<RecursoPublicacion>()
+            .HasOne(p => p.TipoCatalogo)
+            .WithMany()
+            .HasForeignKey(p => p.IdTipoCatalogo)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<RecursoPublicacion>()
+            .HasOne(p => p.Secuencia)
+            .WithMany()
+            .HasForeignKey(p => p.IdSecuencia)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<RecursoPublicacion>()
+            .HasOne(p => p.TipoRecurso)
+            .WithMany()
+            .HasForeignKey(p => p.IdTipoRecurso)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<RecursoPublicacion>()
+            .HasOne(p => p.Usuario)
+            .WithMany()
+            .HasForeignKey(p => p.IdUsuario)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<RecursoPublicacion>()
+            .HasOne(p => p.EstatusRecurso)
+            .WithMany()
+            .HasForeignKey(p => p.IdEstatusRecurso)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<RecursoPublicacion>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<RecursoPublicacion>()
             .HasOne(p => p.Modificador)
             .WithMany()
             .HasForeignKey(p => p.IdModificador)
             .OnDelete(DeleteBehavior.NoAction);
     }
 
-    private void TipoPublicacionRelaciones(ModelBuilder mb)
+    private void RegistroGeneralRelaciones(ModelBuilder mb)
     {
-        mb.Entity<TipoPublicacion>()
-            .HasMany(p => p.Publicaciones)
-            .WithOne(p => p.Tipo)
-            .HasForeignKey(p => p.IdTipoPublicacion)
+        mb.Entity<RegistroGeneral>()
+            .HasOne(p => p.Tabla)
+            .WithMany()
+            .HasForeignKey(p => p.IdTabla)
             .OnDelete(DeleteBehavior.NoAction);
 
-        mb.Entity<TipoPublicacion>()
-           .HasOne(p => p.Creador)
-           .WithMany()
-           .HasForeignKey(p => p.IdCreador)
-           .OnDelete(DeleteBehavior.NoAction);
+        mb.Entity<RegistroGeneral>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
 
-        mb.Entity<TipoPublicacion>()
+        mb.Entity<RegistroGeneral>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private void SecuenciaRelaciones(ModelBuilder mb)
+    {
+        mb.Entity<Secuencia>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Secuencia>()
+            .HasOne(p => p.Modificador)
+            .WithMany()
+            .HasForeignKey(p => p.IdModificador)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private void TablaRelaciones(ModelBuilder mb)
+    {
+        mb.Entity<Tabla>()
+            .HasOne(p => p.Creador)
+            .WithMany()
+            .HasForeignKey(p => p.IdCreador)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        mb.Entity<Tabla>()
             .HasOne(p => p.Modificador)
             .WithMany()
             .HasForeignKey(p => p.IdModificador)

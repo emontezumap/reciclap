@@ -30,7 +30,7 @@ public class Personal
     [JsonIgnore]
     public virtual Usuario? Usuario { get; set; }
     [JsonIgnore]
-    public virtual Rol? Rol { get; set; }
+    public virtual RegistroGeneral? Rol { get; set; }
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]

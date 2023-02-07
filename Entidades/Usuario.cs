@@ -102,7 +102,7 @@ public class Usuario
     [JsonIgnore]
     public virtual Grupo? Grupo { get; set; }
     [JsonIgnore]
-    public virtual Profesion? Profesion { get; set; }
+    public virtual RegistroGeneral? Profesion { get; set; }
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]

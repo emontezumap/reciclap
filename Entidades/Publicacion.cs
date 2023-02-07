@@ -21,8 +21,8 @@ public class Publicacion
     public int Gustan { get; set; } = 0;
     [Column("no_gustan")]
     public int NoGustan { get; set; } = 0;
-    [Column("id_estatus")]
-    public Guid IdEstatus { get; set; }
+    [Column("id_estatus_publicacion")]
+    public Guid IdEstatusPublicacion { get; set; }
     [Column("id_tipo_publicacion")]
     public Guid IdTipoPublicacion { get; set; }
     [Column("fase")]
@@ -39,7 +39,7 @@ public class Publicacion
     public int Vistas { get; set; }
     [Column("evaluacion")]
     public decimal Evaluacion { get; set; } = 0.0M;
-    [Column("ip")]
+    [Column("ultima_direccion_ip")]
     [MaxLength(20)]
     public string UltimaDireccionIP { get; set; } = "";
     [Column("dispositivo")]
@@ -54,26 +54,26 @@ public class Publicacion
     public DateTime FechaDisponible { get; set; }
     [Column("total_articulos")]
     public int TotalArticulos { get; set; } = 0;
-    [Column("proyecto")]
+    [Column("id_proyecto")]
     public Guid IdProyecto { get; set; }
     [Column("costo_estimado")]
     public decimal CostoEstimado { get; set; } = 0.0M;
     [Column("costo_estimado_moneda")]
     [MaxLength(3)]
-    public string CostoEstimadoMoneda { get; set; } = "";
+    public string MonedaCostoEstimado { get; set; } = "";
     [Column("costo_estimado_tipo_cambio")]
-    public decimal CostoEstimadoTipoCambio { get; set; } = 0.0M;
+    public decimal TipoCambioCostoEstimado { get; set; } = 0.0M;
     [Column("costo_real")]
     public decimal CostoReal { get; set; } = 0.0M;
     [Column("monto_inversion")]
     public decimal MontoInversion { get; set; } = 0.0M;
     [Column("costo_real_traslado")]
     public decimal CostoRealTraslado { get; set; } = 0.0M;
-    [Column("costo_real_moneda")]
+    [Column("moneda_costo_real")]
     [MaxLength(3)]
-    public string costo_real_moneda { get; set; } = "";
-    [Column("costo_real_tipo_cambio")]
-    public decimal CostoRealTipoCambio { get; set; } = 0.0M;
+    public string MonedaCostoReal { get; set; } = "";
+    [Column("tipo_cambio_costo_real")]
+    public decimal TipoCambioCostoReal { get; set; } = 0.0M;
     [Column("id_creador")]
     public Guid IdCreador { get; set; }
     [Column("fecha_creacion")]
@@ -88,11 +88,13 @@ public class Publicacion
     [JsonIgnore]
     public virtual ICollection<DetallePublicacion>? Detalle { get; set; }
     [JsonIgnore]
-    public virtual EstatusPublicacion? Estatus { get; set; }
+    public virtual RegistroGeneral? EstatusPublicacion { get; set; }
     [JsonIgnore]
-    public virtual TipoPublicacion? Tipo { get; set; }
+    public virtual RegistroGeneral? TipoPublicacion { get; set; }
     [JsonIgnore]
-    public virtual Usuario? Revisor { get; set; }
+    public virtual Usuario? RevisadoPor { get; set; }
+    [JsonIgnore]
+    public virtual Proyecto? Proyecto { get; set; }
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]

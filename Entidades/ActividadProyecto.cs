@@ -4,16 +4,16 @@ using System.Text.Json.Serialization;
 
 namespace Entidades;
 
-[Table("actividad_proyecto")]
+[Table("actividades_proyectos")]
 public class ActividadProyecto
 {
     [Column("id")]
-    [Key]
-    public Guid Id { get; set; } = Guid.NewGuid();
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public long Id { get; set; }
     [Column("id_proyecto")]
     public Guid IdProyecto { get; set; }
     [Column("id_ruta_proyecto")]
-    public Guid IdRutaProyecto { get; set; }
+    public int IdRutaProyecto { get; set; }
     [Column("secuencia")]
     public int Secuencia { get; set; } = 1;
     [Column("id_actividad_ruta")]
@@ -31,11 +31,11 @@ public class ActividadProyecto
     [Column("id_estatus_publicacion")]
     public Guid IdEstatusPublicacion { get; set; }
     [Column("id_estatus_proyecto")]
-    public Guid IdEstatusProyecto { get; set; }
+    public int IdEstatusProyecto { get; set; }
     [Column("id_revisada_por")]
     public Guid IdRevisadaPor { get; set; }
     [Column("id_tipo_actividad")]
-    public Guid IdTipoActividad { get; set; }
+    public int IdTipoActividad { get; set; }
     [Column("tiempo_estimado")]
     public int TiempoEstimado { get; set; }
     [Column("progreso_estimado")]
@@ -70,13 +70,13 @@ public class ActividadProyecto
     public bool? Activo { get; set; } = true;
 
     [JsonIgnore]
-    public virtual RutaProyecto? RutaProyecto { get; set; }
+    public virtual RegistroGeneral? RutaProyecto { get; set; }
     [JsonIgnore]
     public virtual ActividadRutaProyecto? ActividadRuta { get; set; }
     [JsonIgnore]
-    public virtual EstatusPublicacion? EstatusPublicacion { get; set; }
+    public virtual RegistroGeneral? EstatusPublicacion { get; set; }
     [JsonIgnore]
-    public virtual EstatusProyecto? EstatusProyecto { get; set; }
+    public virtual RegistroGeneral? EstatusProyecto { get; set; }
     [JsonIgnore]
     public virtual Proyecto? Proyecto { get; set; }
     [JsonIgnore]
@@ -86,7 +86,7 @@ public class ActividadProyecto
     [JsonIgnore]
     public virtual Usuario? RevisadaPor { get; set; }
     [JsonIgnore]
-    public virtual TipoActividad? TipoActividad { get; set; }
+    public virtual RegistroGeneral? TipoActividad { get; set; }
     [JsonIgnore]
     public virtual Usuario? Creador { get; set; }
     [JsonIgnore]

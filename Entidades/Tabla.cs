@@ -4,11 +4,13 @@ using System.Text.Json.Serialization;
 
 namespace Entidades;
 
+[Table("tablas")]
 public class Tabla
 {
     [Column("id")]
     [Key]
-    public Guid Id { get; set; } = Guid.NewGuid();
+    [MaxLength(10)]
+    public string Id { get; set; } = "";
     [Column("descripcion")]
     public string Descripcion { get; set; } = "";
     [Column("id_creador")]
