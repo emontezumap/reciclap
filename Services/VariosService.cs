@@ -5,56 +5,43 @@ using DTOs;
 using System.Security.Claims;
 using Validadores;
 using Herramientas;
+using DB;
+using HotChocolate.Types;
 
 namespace Services;
 
 [ExtendObjectType("Mutacion")]
-public class CiudadService
+public class VariosService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public CiudadService(IDbContextFactory<SSDBContext> ctxFactory)
+    public VariosService(IDbContextFactory<SSDBContext> ctxFactory)
     {
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<IEnumerable<Ciudad>> TodasLasCiudades()
+    public async Task<Varios?> CrearVarios(VariosDTO nuevo, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            return await ctx.Ciudades.ToListAsync<Ciudad>();
-        }
-    }
-
-    public async Task<Ciudad?> UnaCiudad(Guid id)
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            return await ctx.Ciudades.FindAsync(id);
-        }
-    }
-
-    public async Task<Ciudad?> CrearCiudad(CiudadDTO nuevo, ClaimsPrincipal claims)
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorCiudad vc = new ValidadorCiudad(nuevo, Operacion.Creacion, ctx);
+            ValidadorVarios vc = new ValidadorVarios(nuevo, Operacion.Creacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
                 Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Ciudad ciudad = new Ciudad();
-                ciudad = Mapear(ciudad, nuevo, Operacion.Creacion);
-                ciudad.IdCreador = id;
-                ciudad.IdModificador = id;
+
+                Varios varios = new Varios();
+                varios = Mapear(varios, nuevo, Operacion.Creacion);
+                varios.IdCreador = id;
+                varios.IdModificador = id;
 
                 try
                 {
-                    ctx.Ciudades.Add(ciudad);
+                    ctx.Varias.Add(varios);
                     await ctx.SaveChangesAsync();
 
-                    return ciudad;
+                    return varios;
                 }
                 catch (DbUpdateException ex)
                 {
@@ -70,16 +57,16 @@ public class CiudadService
         }
     }
 
-    public async Task<bool> ModificarCiudad(CiudadDTO modif, ClaimsPrincipal claims)
+    public async Task<bool> ModificarCiudad(VariosDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorCiudad vc = new ValidadorCiudad(modif, Operacion.Modificacion, ctx);
+            ValidadorVarios vc = new ValidadorVarios(modif, Operacion.Modificacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
-                var buscado = await ctx.Ciudades.FindAsync(modif.Id);
+                var buscado = await ctx.Varias.FindAsync(modif.Id);
 
                 if (buscado != null)
                 {
@@ -109,25 +96,25 @@ public class CiudadService
         }
     }
 
-    public async Task<int> ModificarCiudades(ICollection<CiudadDTO> ciudades, ClaimsPrincipal claims)
+    public async Task<int> ModificarCiudades(ICollection<VariosDTO> listaVarios, ClaimsPrincipal claims)
     {
         Guid id = Guid.Parse(claims.FindFirstValue("Id"));
         ICollection<ResultadoValidacion> rvs = new List<ResultadoValidacion>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            foreach (CiudadDTO c in ciudades)
+            foreach (VariosDTO v in listaVarios)
             {
-                ValidadorCiudad vc = new ValidadorCiudad(c, Operacion.Modificacion, ctx);
+                ValidadorVarios vc = new ValidadorVarios(v, Operacion.Modificacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    var buscado = await ctx.Ciudades.FindAsync(c.Id);
+                    var buscado = await ctx.Varias.FindAsync(v.Id);
 
                     if (buscado != null)
                     {
-                        buscado = Mapear(buscado, c, Operacion.Modificacion);
+                        buscado = Mapear(buscado, v, Operacion.Modificacion);
                         buscado.IdModificador = id;
                     }
                     else
@@ -162,13 +149,13 @@ public class CiudadService
         }
     }
 
-    public async Task<bool> EliminarCiudad(Guid id, ClaimsPrincipal claims)
+    public async Task<bool> EliminarVarios(int id, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
             try
             {
-                var buscado = await ctx.Ciudades.FindAsync(id);
+                var buscado = await ctx.Varias.FindAsync(id);
 
                 if (buscado != null)
                 {
@@ -192,50 +179,26 @@ public class CiudadService
         }
     }
 
-    public async Task<int> EliminarCiudades(ICollection<Guid> ids, ClaimsPrincipal claims)
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
-
-            foreach (Guid id in ids)
-            {
-                var buscado = await ctx.Ciudades.FindAsync(id);
-
-                if (buscado != null)
-                {
-                    buscado.Activo = false;
-                    buscado.IdModificador = idUsr;
-                }
-                else
-                {
-                    ciudades.Append(c);
-                }
-            }
-        }
-
-        return await ModificarCiudades(ciudades, claims);
-    }
-
-    public Ciudad Mapear(Ciudad c, CiudadDTO dto, Operacion op)
+    public Varios Mapear(Varios v, VariosDTO dto, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
-            c.Activo = dto.Activo;
-            c.FechaCreacion = DateTime.UtcNow;
-            c.FechaModificacion = DateTime.UtcNow;
-            c.Id = Guid.NewGuid();
-            c.IdEstado = (Guid)dto.IdEstado!;
-            c.Nombre = dto.Nombre!;
+            v.Activo = dto.Activo;
+            v.FechaCreacion = DateTime.UtcNow;
+            v.FechaModificacion = DateTime.UtcNow;
+            v.IdPadre = dto.IdPadre!;
+            v.IdTabla = dto.IdTabla!;
+            v.Referencia = dto.Referencia == null ? "" : dto.Referencia;
         }
         else
         {
-            c.Activo = dto.Activo == null ? c.Activo : dto.Activo;
-            c.FechaModificacion = DateTime.UtcNow;
-            c.IdEstado = dto.IdEstado == null ? c.IdEstado : (Guid)dto.IdEstado;
-            c.Nombre = dto.Nombre == null ? c.Nombre : dto.Nombre;
+            v.Activo = dto.Activo == null ? v.Activo : dto.Activo;
+            v.FechaModificacion = DateTime.UtcNow;
+            v.IdPadre = dto.IdPadre == null ? v.IdPadre : dto.IdPadre;
+            v.IdTabla = dto.IdTabla == null ? v.IdTabla : dto.IdTabla;
+            v.Referencia = dto.Referencia == null ? v.Referencia : dto.Referencia;
         }
 
-        return c;
+        return v;
     }
 }

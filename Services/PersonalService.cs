@@ -4,6 +4,8 @@ using DTOs;
 using System.Security.Claims;
 using Herramientas;
 using Validadores;
+using HotChocolate.Types;
+using DB;
 
 namespace Services;
 
@@ -53,7 +55,7 @@ public class PersonalService
                     IdCreador = id,
                     IdModificador = id,
                     IdPublicacion = (Guid)nuevo.IdPublicacion!,
-                    IdRol = (Guid)nuevo.IdRol!,
+                    IdRol = (int)nuevo.IdRol!,
                     IdUsuario = (Guid)nuevo.IdUsuario!,
                 };
 
@@ -96,7 +98,7 @@ public class PersonalService
                     buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
                     buscado.FechaModificacion = DateTime.UtcNow;
                     buscado.IdModificador = id;
-                    buscado.IdRol = modif.IdRol == null ? buscado.IdRol : (Guid)modif.IdRol;
+                    buscado.IdRol = modif.IdRol == null ? buscado.IdRol : (int)modif.IdRol;
 
                     try
                     {

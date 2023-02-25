@@ -1,3 +1,4 @@
+using HotChocolate;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 

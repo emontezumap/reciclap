@@ -1,3 +1,4 @@
+using DB;
 using DTOs;
 using Herramientas;
 using Services;
@@ -73,13 +74,13 @@ public class ValidadorPersonal : IValidadorEntidad
                 mensajes["IdRol"].Add("Se debe indicar el rol del personal");
                 hayError = true;
             }
-            else if (await ctx.Roles.FindAsync(dto.IdRol) == null)
+            else if (await ctx.Varias.FindAsync(dto.IdRol) == null)
             {
                 mensajes["IdRol"].Add("El rol especificado no existe");
                 hayError = true;
             }
         }
-        else if (dto.IdRol != null && await ctx.Roles.FindAsync(dto.IdRol) == null)
+        else if (dto.IdRol != null && await ctx.Varias.FindAsync(dto.IdRol) == null)
         {
             mensajes["IdRol"].Add("El rol especificado no existe");
             hayError = true;

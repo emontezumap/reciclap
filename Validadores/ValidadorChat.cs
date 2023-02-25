@@ -1,6 +1,7 @@
 using DTOs;
 using Herramientas;
 using Services;
+using DB;
 
 namespace Validadores;
 

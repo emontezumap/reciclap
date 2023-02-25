@@ -5,6 +5,8 @@ using System.Security.Claims;
 // using HotChocolate.AspNetCore.Authorization;
 using Herramientas;
 using Validadores;
+using DB;
+using HotChocolate.Types;
 
 namespace Services;
 

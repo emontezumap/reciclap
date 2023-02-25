@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DTOs;
 using Herramientas;
+using DB;
 
 namespace Services;
 

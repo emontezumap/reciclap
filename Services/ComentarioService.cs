@@ -4,6 +4,8 @@ using Entidades;
 using System.Security.Claims;
 using Herramientas;
 using Validadores;
+using HotChocolate.Types;
+using DB;
 
 namespace Services;
 
