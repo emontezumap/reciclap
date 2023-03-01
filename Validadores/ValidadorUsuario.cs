@@ -1,3 +1,4 @@
+using DB;
 using DTOs;
 using Herramientas;
 using Services;
@@ -118,9 +119,9 @@ public class ValidadorUsuario : IValidadorEntidad
         {
             var usr = ctx.Usuarios.Where(u =>
                 u.Nombre == n1
-                && u.Nombre2 == n2
+                && u.SegundoNombre == n2
                 && u.Apellido == a1
-                && u.Apellido2 == a2
+                && u.SegundoApellido == a2
             ).FirstOrDefault();
 
             if (usr != null)
@@ -156,13 +157,13 @@ public class ValidadorUsuario : IValidadorEntidad
                 mensajes["IdCiudad"].Add("Se requiere una ciudad");
                 hayError = true;
             }
-            else if (await ctx.Ciudades.FindAsync(dto.IdCiudad) == null)
+            else if (await ctx.Varias.FindAsync(dto.IdCiudad) == null)
             {
                 mensajes["IdCiudad"].Add("La Ciudad especificada no existe");
                 hayError = true;
             }
         }
-        else if (dto.IdCiudad != null && await ctx.Ciudades.FindAsync(dto.IdCiudad) == null)
+        else if (dto.IdCiudad != null && await ctx.Varias.FindAsync(dto.IdCiudad) == null)
         {
             mensajes["IdCiudad"].Add("La Ciudad especificada no existe");
             hayError = true;
@@ -255,7 +256,7 @@ public class ValidadorUsuario : IValidadorEntidad
             hayError = true;
         }
 
-        if (dto.IdProfesion != null && await ctx.Profesiones.FindAsync(dto.IdProfesion) == null)
+        if (dto.IdProfesion != null && await ctx.Varias.FindAsync(dto.IdProfesion) == null)
         {
             mensajes["IdProfesion"].Add("La profesión especificada no existe");
             hayError = true;
@@ -268,13 +269,13 @@ public class ValidadorUsuario : IValidadorEntidad
                 mensajes["IdGrupo"].Add("Se requiere un grupo de usuarios");
                 hayError = true;
             }
-            else if (await ctx.Grupos.FindAsync(dto.IdGrupo) == null)
+            else if (await ctx.Varias.FindAsync(dto.IdGrupo) == null)
             {
                 mensajes["IdGrupo"].Add("El grupo de usuarios especificado no existe");
                 hayError = true;
             }
         }
-        else if (dto.IdGrupo != null && await ctx.Grupos.FindAsync(dto.IdGrupo) == null)
+        else if (dto.IdGrupo != null && await ctx.Varias.FindAsync(dto.IdGrupo) == null)
         {
             mensajes["IdGrupo"].Add("El grupo de usuarios especificado no existe");
             hayError = true;
