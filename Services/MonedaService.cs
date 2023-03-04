@@ -12,31 +12,31 @@ namespace Services;
 
 [ExtendObjectType("Mutacion")]
 
-public class SecuenciaService
+public class MonedaService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public SecuenciaService(IDbContextFactory<SSDBContext> ctxFactory)
+    public MonedaService(IDbContextFactory<SSDBContext> ctxFactory)
     {
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<Secuencia> CrearSecuencia(SecuenciaDTO nuevo, ClaimsPrincipal claims)
+    public async Task<Moneda> CrearMoneda(MonedaDTO nuevo, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorSecuencia vc = new ValidadorSecuencia(nuevo, Operacion.Creacion, ctx);
+            ValidadorMoneda vc = new ValidadorMoneda(nuevo, Operacion.Creacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
                 Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Secuencia obj = new Secuencia();
+                Moneda obj = new Moneda();
                 Mapear(obj, nuevo, id, Operacion.Creacion);
 
                 try
                 {
-                    ctx.Secuencias.Add(obj);
+                    ctx.Monedas.Add(obj);
                     await ctx.SaveChangesAsync();
 
                     return obj;
@@ -55,7 +55,7 @@ public class SecuenciaService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteSecuencia(List<SecuenciaDTO> nuevos, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteMoneda(List<MonedaDTO> nuevos, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
 
@@ -65,17 +65,17 @@ public class SecuenciaService
 
             foreach (var nuevo in nuevos)
             {
-                ValidadorSecuencia vc = new ValidadorSecuencia(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorMoneda vc = new ValidadorMoneda(nuevo, Operacion.Creacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Secuencia obj = new Secuencia();
+                    Moneda obj = new Moneda();
                     Mapear(obj, nuevo, id, Operacion.Creacion);
-                    ctx.Secuencias.Add(obj);
+                    ctx.Monedas.Add(obj);
                 }
                 else
-                    res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
+                    res.Add(nuevo.Id!, rv.Mensajes!);
             }
 
             if (res.Count == 0)
@@ -98,16 +98,16 @@ public class SecuenciaService
         }
     }
 
-    public async Task<bool> ModificarSecuencia(SecuenciaDTO modif, ClaimsPrincipal claims)
+    public async Task<bool> ModificarMoneda(MonedaDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorSecuencia vc = new ValidadorSecuencia(modif, Operacion.Modificacion, ctx);
+            ValidadorMoneda vc = new ValidadorMoneda(modif, Operacion.Modificacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
-                var buscado = await ctx.Secuencias.FindAsync(modif.Id);
+                var buscado = await ctx.Monedas.FindAsync(modif.Id);
 
                 if (buscado != null)
                 {
@@ -136,57 +136,58 @@ public class SecuenciaService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteSecuencia(List<SecuenciaDTO> modifs, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteMoneda(List<MonedaDTO> modifs, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
         Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-        ICollection<Secuencia> objs = new List<Secuencia>();
+        ICollection<Moneda> objs = new List<Moneda>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorSecuencia vc = new ValidadorSecuencia(modif, Operacion.Modificacion, ctx, true);
+                ValidadorMoneda vc = new ValidadorMoneda(modif, Operacion.Modificacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Secuencia obj = new Secuencia();
+                    Moneda obj = new Moneda();
                     Mapear(obj, modif, id, Operacion.Modificacion);
                     objs.Add(obj);
                 }
                 else
-                    res.Add((modif.Id.ToString())!, rv.Mensajes!);
+                    res.Add(modif.Id!, rv.Mensajes!);
             }
 
             if (res.Count == 0)
             {
-                ctx.Secuencias.UpdateRange(objs);
+                ctx.Monedas.UpdateRange(objs);
                 await ctx.SaveChangesAsync();
             }
             return res;
         }
     }
 
-    public async Task<bool> EliminarSecuencia(int id, ClaimsPrincipal claims)
+    public async Task<bool> EliminarMoneda(string id, ClaimsPrincipal claims)
     {
-        SecuenciaDTO pub = new SecuenciaDTO()
+        MonedaDTO pub = new MonedaDTO()
         {
 			Id = id,
 
             Activo = false
         };
 
-        return await ModificarSecuencia(pub, claims);
+        return await ModificarMoneda(pub, claims);
     }
 
-    public void Mapear(Secuencia obj, SecuenciaDTO dto, Guid id, Operacion op)
+    public void Mapear(Moneda obj, MonedaDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
-			obj.Prefijo = dto.Prefijo!;
-			obj.Serie = (long)dto.Serie!;
-			obj.Incremento = (int)dto.Incremento!;
+			obj.Id = dto.Id!;
+			obj.Nombre = dto.Nombre!;
+			obj.TipoCambio = (decimal)dto.TipoCambio!;
+			obj.EsLocal = (bool)dto.EsLocal!;
 			obj.IdCreador = id;
 			obj.FechaCreacion = DateTime.UtcNow;
 			obj.IdModificador = id;
@@ -195,24 +196,24 @@ public class SecuenciaService
         }
         else
         {
-			obj.Prefijo = dto.Prefijo == null ? obj.Prefijo : dto.Prefijo;
-			obj.Serie = dto.Serie == null ? obj.Serie : (long)dto.Serie;
-			obj.Incremento = dto.Incremento == null ? obj.Incremento : (int)dto.Incremento;
+			obj.Nombre = dto.Nombre == null ? obj.Nombre : dto.Nombre;
+			obj.TipoCambio = dto.TipoCambio == null ? obj.TipoCambio : (decimal)dto.TipoCambio;
+			obj.EsLocal = dto.EsLocal == null ? obj.EsLocal : (bool)dto.EsLocal;
 			obj.IdModificador = id;
 			obj.FechaModificacion = DateTime.UtcNow;
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
 
-    public async Task<bool> EliminarLoteSecuencia(List<Guid> ids, ClaimsPrincipal claims)
+    public async Task<bool> EliminarLoteMoneda(List<Guid> ids, ClaimsPrincipal claims)
     {
-        ICollection<Secuencia> objs = new List<Secuencia>();
+        ICollection<Moneda> objs = new List<Moneda>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var id in ids)
             {
-                var buscado = await ctx.Secuencias.FindAsync(id);
+                var buscado = await ctx.Monedas.FindAsync(id);
 
                 if (buscado != null)
                 {
@@ -223,7 +224,7 @@ public class SecuenciaService
 
             if (objs.Count > 0)
             {
-                ctx.Secuencias.UpdateRange(objs);
+                ctx.Monedas.UpdateRange(objs);
 
                 try
                 {

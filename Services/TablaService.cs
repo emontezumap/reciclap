@@ -12,31 +12,31 @@ namespace Services;
 
 [ExtendObjectType("Mutacion")]
 
-public class SecuenciaService
+public class TablaService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public SecuenciaService(IDbContextFactory<SSDBContext> ctxFactory)
+    public TablaService(IDbContextFactory<SSDBContext> ctxFactory)
     {
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<Secuencia> CrearSecuencia(SecuenciaDTO nuevo, ClaimsPrincipal claims)
+    public async Task<Tabla> CrearTabla(TablaDTO nuevo, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorSecuencia vc = new ValidadorSecuencia(nuevo, Operacion.Creacion, ctx);
+            ValidadorTabla vc = new ValidadorTabla(nuevo, Operacion.Creacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
                 Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Secuencia obj = new Secuencia();
+                Tabla obj = new Tabla();
                 Mapear(obj, nuevo, id, Operacion.Creacion);
 
                 try
                 {
-                    ctx.Secuencias.Add(obj);
+                    ctx.Tablas.Add(obj);
                     await ctx.SaveChangesAsync();
 
                     return obj;
@@ -55,7 +55,7 @@ public class SecuenciaService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteSecuencia(List<SecuenciaDTO> nuevos, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteTabla(List<TablaDTO> nuevos, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
 
@@ -65,17 +65,17 @@ public class SecuenciaService
 
             foreach (var nuevo in nuevos)
             {
-                ValidadorSecuencia vc = new ValidadorSecuencia(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorTabla vc = new ValidadorTabla(nuevo, Operacion.Creacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Secuencia obj = new Secuencia();
+                    Tabla obj = new Tabla();
                     Mapear(obj, nuevo, id, Operacion.Creacion);
-                    ctx.Secuencias.Add(obj);
+                    ctx.Tablas.Add(obj);
                 }
                 else
-                    res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
+                    res.Add(nuevo.Id!, rv.Mensajes!);
             }
 
             if (res.Count == 0)
@@ -98,16 +98,16 @@ public class SecuenciaService
         }
     }
 
-    public async Task<bool> ModificarSecuencia(SecuenciaDTO modif, ClaimsPrincipal claims)
+    public async Task<bool> ModificarTabla(TablaDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorSecuencia vc = new ValidadorSecuencia(modif, Operacion.Modificacion, ctx);
+            ValidadorTabla vc = new ValidadorTabla(modif, Operacion.Modificacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
-                var buscado = await ctx.Secuencias.FindAsync(modif.Id);
+                var buscado = await ctx.Tablas.FindAsync(modif.Id);
 
                 if (buscado != null)
                 {
@@ -136,57 +136,56 @@ public class SecuenciaService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteSecuencia(List<SecuenciaDTO> modifs, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteTabla(List<TablaDTO> modifs, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
         Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-        ICollection<Secuencia> objs = new List<Secuencia>();
+        ICollection<Tabla> objs = new List<Tabla>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorSecuencia vc = new ValidadorSecuencia(modif, Operacion.Modificacion, ctx, true);
+                ValidadorTabla vc = new ValidadorTabla(modif, Operacion.Modificacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Secuencia obj = new Secuencia();
+                    Tabla obj = new Tabla();
                     Mapear(obj, modif, id, Operacion.Modificacion);
                     objs.Add(obj);
                 }
                 else
-                    res.Add((modif.Id.ToString())!, rv.Mensajes!);
+                    res.Add(modif.Id!, rv.Mensajes!);
             }
 
             if (res.Count == 0)
             {
-                ctx.Secuencias.UpdateRange(objs);
+                ctx.Tablas.UpdateRange(objs);
                 await ctx.SaveChangesAsync();
             }
             return res;
         }
     }
 
-    public async Task<bool> EliminarSecuencia(int id, ClaimsPrincipal claims)
+    public async Task<bool> EliminarTabla(string id, ClaimsPrincipal claims)
     {
-        SecuenciaDTO pub = new SecuenciaDTO()
+        TablaDTO pub = new TablaDTO()
         {
 			Id = id,
 
             Activo = false
         };
 
-        return await ModificarSecuencia(pub, claims);
+        return await ModificarTabla(pub, claims);
     }
 
-    public void Mapear(Secuencia obj, SecuenciaDTO dto, Guid id, Operacion op)
+    public void Mapear(Tabla obj, TablaDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
-			obj.Prefijo = dto.Prefijo!;
-			obj.Serie = (long)dto.Serie!;
-			obj.Incremento = (int)dto.Incremento!;
+			obj.Id = dto.Id!;
+			obj.Descripcion = dto.Descripcion!;
 			obj.IdCreador = id;
 			obj.FechaCreacion = DateTime.UtcNow;
 			obj.IdModificador = id;
@@ -195,24 +194,22 @@ public class SecuenciaService
         }
         else
         {
-			obj.Prefijo = dto.Prefijo == null ? obj.Prefijo : dto.Prefijo;
-			obj.Serie = dto.Serie == null ? obj.Serie : (long)dto.Serie;
-			obj.Incremento = dto.Incremento == null ? obj.Incremento : (int)dto.Incremento;
+			obj.Descripcion = dto.Descripcion == null ? obj.Descripcion : dto.Descripcion;
 			obj.IdModificador = id;
 			obj.FechaModificacion = DateTime.UtcNow;
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
 
-    public async Task<bool> EliminarLoteSecuencia(List<Guid> ids, ClaimsPrincipal claims)
+    public async Task<bool> EliminarLoteTabla(List<Guid> ids, ClaimsPrincipal claims)
     {
-        ICollection<Secuencia> objs = new List<Secuencia>();
+        ICollection<Tabla> objs = new List<Tabla>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var id in ids)
             {
-                var buscado = await ctx.Secuencias.FindAsync(id);
+                var buscado = await ctx.Tablas.FindAsync(id);
 
                 if (buscado != null)
                 {
@@ -223,7 +220,7 @@ public class SecuenciaService
 
             if (objs.Count > 0)
             {
-                ctx.Secuencias.UpdateRange(objs);
+                ctx.Tablas.UpdateRange(objs);
 
                 try
                 {

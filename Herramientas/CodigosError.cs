@@ -1,6 +1,6 @@
 namespace Herramientas;
 
-public enum Error
+public enum CodigosError
 {
     ERR_ID_INEXISTENTE,
     ERR_CAMPO_REQUERIDO,

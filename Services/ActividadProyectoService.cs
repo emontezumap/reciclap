@@ -12,31 +12,31 @@ namespace Services;
 
 [ExtendObjectType("Mutacion")]
 
-public class VariosService
+public class ActividadProyectoService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public VariosService(IDbContextFactory<SSDBContext> ctxFactory)
+    public ActividadProyectoService(IDbContextFactory<SSDBContext> ctxFactory)
     {
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<Varios> CrearVarios(VariosDTO nuevo, ClaimsPrincipal claims)
+    public async Task<ActividadProyecto> CrearActividadProyecto(ActividadProyectoDTO nuevo, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorVarios vc = new ValidadorVarios(nuevo, Operacion.Creacion, ctx);
+            ValidadorActividadProyecto vc = new ValidadorActividadProyecto(nuevo, Operacion.Creacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
                 Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Varios obj = new Varios();
+                ActividadProyecto obj = new ActividadProyecto();
                 Mapear(obj, nuevo, id, Operacion.Creacion);
 
                 try
                 {
-                    ctx.Varias.Add(obj);
+                    ctx.ActividadesProyectos.Add(obj);
                     await ctx.SaveChangesAsync();
 
                     return obj;
@@ -55,7 +55,7 @@ public class VariosService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteVarios(List<VariosDTO> nuevos, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteActividadProyecto(List<ActividadProyectoDTO> nuevos, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
 
@@ -65,14 +65,14 @@ public class VariosService
 
             foreach (var nuevo in nuevos)
             {
-                ValidadorVarios vc = new ValidadorVarios(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorActividadProyecto vc = new ValidadorActividadProyecto(nuevo, Operacion.Creacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Varios obj = new Varios();
+                    ActividadProyecto obj = new ActividadProyecto();
                     Mapear(obj, nuevo, id, Operacion.Creacion);
-                    ctx.Varias.Add(obj);
+                    ctx.ActividadesProyectos.Add(obj);
                 }
                 else
                     res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
@@ -98,16 +98,16 @@ public class VariosService
         }
     }
 
-    public async Task<bool> ModificarVarios(VariosDTO modif, ClaimsPrincipal claims)
+    public async Task<bool> ModificarActividadProyecto(ActividadProyectoDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorVarios vc = new ValidadorVarios(modif, Operacion.Modificacion, ctx);
+            ValidadorActividadProyecto vc = new ValidadorActividadProyecto(modif, Operacion.Modificacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
-                var buscado = await ctx.Varias.FindAsync(modif.Id);
+                var buscado = await ctx.ActividadesProyectos.FindAsync(modif.Id);
 
                 if (buscado != null)
                 {
@@ -136,22 +136,22 @@ public class VariosService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteVarios(List<VariosDTO> modifs, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteActividadProyecto(List<ActividadProyectoDTO> modifs, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
         Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-        ICollection<Varios> objs = new List<Varios>();
+        ICollection<ActividadProyecto> objs = new List<ActividadProyecto>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorVarios vc = new ValidadorVarios(modif, Operacion.Modificacion, ctx, true);
+                ValidadorActividadProyecto vc = new ValidadorActividadProyecto(modif, Operacion.Modificacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Varios obj = new Varios();
+                    ActividadProyecto obj = new ActividadProyecto();
                     Mapear(obj, modif, id, Operacion.Modificacion);
                     objs.Add(obj);
                 }
@@ -161,33 +161,53 @@ public class VariosService
 
             if (res.Count == 0)
             {
-                ctx.Varias.UpdateRange(objs);
+                ctx.ActividadesProyectos.UpdateRange(objs);
                 await ctx.SaveChangesAsync();
             }
             return res;
         }
     }
 
-    public async Task<bool> EliminarVarios(int id, ClaimsPrincipal claims)
+    public async Task<bool> EliminarActividadProyecto(long id, ClaimsPrincipal claims)
     {
-        VariosDTO pub = new VariosDTO()
+        ActividadProyectoDTO pub = new ActividadProyectoDTO()
         {
 			Id = id,
 
             Activo = false
         };
 
-        return await ModificarVarios(pub, claims);
+        return await ModificarActividadProyecto(pub, claims);
     }
 
-    public void Mapear(Varios obj, VariosDTO dto, Guid id, Operacion op)
+    public void Mapear(ActividadProyecto obj, ActividadProyectoDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
-			obj.IdTabla = dto.IdTabla!;
+			obj.IdProyecto = (Guid)dto.IdProyecto!;
+			obj.IdRutaProyecto = (int)dto.IdRutaProyecto!;
+			obj.Secuencia = (int)dto.Secuencia!;
+			obj.IdActividadRuta = (int)dto.IdActividadRuta!;
 			obj.Descripcion = dto.Descripcion!;
-			obj.Referencia = dto.Referencia!;
-			obj.IdPadre = (int?)dto.IdPadre!;
+			obj.FechaInicio = (DateTime)dto.FechaInicio!;
+			obj.FechaFinalizacion = (DateTime?)dto.FechaFinalizacion!;
+			obj.IdEjecutor = (Guid?)dto.IdEjecutor!;
+			obj.IdRevisor = (Guid?)dto.IdRevisor!;
+			obj.IdEstatusPublicacion = (int)dto.IdEstatusPublicacion!;
+			obj.IdEstatusProyecto = (int)dto.IdEstatusProyecto!;
+			obj.IdRevisadaPor = (Guid?)dto.IdRevisadaPor!;
+			obj.IdTipoActividad = (int)dto.IdTipoActividad!;
+			obj.TiempoEstimado = (int)dto.TiempoEstimado!;
+			obj.ProgresoEstimado = (int)dto.ProgresoEstimado!;
+			obj.Evaluacion = (decimal)dto.Evaluacion!;
+			obj.FechaDisponible = (DateTime?)dto.FechaDisponible!;
+			obj.TotalArticulos = (decimal)dto.TotalArticulos!;
+			obj.CostoEstimado = (decimal)dto.CostoEstimado!;
+			obj.IdMonedaCostoEstimado = dto.IdMonedaCostoEstimado!;
+			obj.TipoCambioCostoEstimado = (decimal)dto.TipoCambioCostoEstimado!;
+			obj.CostoReal = (decimal)dto.CostoReal!;
+			obj.IdMonedaCostoReal = dto.IdMonedaCostoReal!;
+			obj.TipoCambioCostoReal = (decimal)dto.TipoCambioCostoReal!;
 			obj.IdCreador = id;
 			obj.FechaCreacion = DateTime.UtcNow;
 			obj.IdModificador = id;
@@ -196,25 +216,45 @@ public class VariosService
         }
         else
         {
-			obj.IdTabla = dto.IdTabla == null ? obj.IdTabla : dto.IdTabla;
+			obj.IdProyecto = dto.IdProyecto == null ? obj.IdProyecto : (Guid)dto.IdProyecto;
+			obj.IdRutaProyecto = dto.IdRutaProyecto == null ? obj.IdRutaProyecto : (int)dto.IdRutaProyecto;
+			obj.Secuencia = dto.Secuencia == null ? obj.Secuencia : (int)dto.Secuencia;
+			obj.IdActividadRuta = dto.IdActividadRuta == null ? obj.IdActividadRuta : (int)dto.IdActividadRuta;
 			obj.Descripcion = dto.Descripcion == null ? obj.Descripcion : dto.Descripcion;
-			obj.Referencia = dto.Referencia == null ? obj.Referencia : dto.Referencia;
-			obj.IdPadre = dto.IdPadre == null ? obj.IdPadre : (int?)dto.IdPadre;
+			obj.FechaInicio = dto.FechaInicio == null ? obj.FechaInicio : (DateTime)dto.FechaInicio;
+			obj.FechaFinalizacion = dto.FechaFinalizacion == null ? obj.FechaFinalizacion : (DateTime?)dto.FechaFinalizacion;
+			obj.IdEjecutor = dto.IdEjecutor == null ? obj.IdEjecutor : (Guid?)dto.IdEjecutor;
+			obj.IdRevisor = dto.IdRevisor == null ? obj.IdRevisor : (Guid?)dto.IdRevisor;
+			obj.IdEstatusPublicacion = dto.IdEstatusPublicacion == null ? obj.IdEstatusPublicacion : (int)dto.IdEstatusPublicacion;
+			obj.IdEstatusProyecto = dto.IdEstatusProyecto == null ? obj.IdEstatusProyecto : (int)dto.IdEstatusProyecto;
+			obj.IdRevisadaPor = dto.IdRevisadaPor == null ? obj.IdRevisadaPor : (Guid?)dto.IdRevisadaPor;
+			obj.IdTipoActividad = dto.IdTipoActividad == null ? obj.IdTipoActividad : (int)dto.IdTipoActividad;
+			obj.TiempoEstimado = dto.TiempoEstimado == null ? obj.TiempoEstimado : (int)dto.TiempoEstimado;
+			obj.ProgresoEstimado = dto.ProgresoEstimado == null ? obj.ProgresoEstimado : (int)dto.ProgresoEstimado;
+			obj.Evaluacion = dto.Evaluacion == null ? obj.Evaluacion : (decimal)dto.Evaluacion;
+			obj.FechaDisponible = dto.FechaDisponible == null ? obj.FechaDisponible : (DateTime?)dto.FechaDisponible;
+			obj.TotalArticulos = dto.TotalArticulos == null ? obj.TotalArticulos : (decimal)dto.TotalArticulos;
+			obj.CostoEstimado = dto.CostoEstimado == null ? obj.CostoEstimado : (decimal)dto.CostoEstimado;
+			obj.IdMonedaCostoEstimado = dto.IdMonedaCostoEstimado == null ? obj.IdMonedaCostoEstimado : dto.IdMonedaCostoEstimado;
+			obj.TipoCambioCostoEstimado = dto.TipoCambioCostoEstimado == null ? obj.TipoCambioCostoEstimado : (decimal)dto.TipoCambioCostoEstimado;
+			obj.CostoReal = dto.CostoReal == null ? obj.CostoReal : (decimal)dto.CostoReal;
+			obj.IdMonedaCostoReal = dto.IdMonedaCostoReal == null ? obj.IdMonedaCostoReal : dto.IdMonedaCostoReal;
+			obj.TipoCambioCostoReal = dto.TipoCambioCostoReal == null ? obj.TipoCambioCostoReal : (decimal)dto.TipoCambioCostoReal;
 			obj.IdModificador = id;
 			obj.FechaModificacion = DateTime.UtcNow;
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
 
-    public async Task<bool> EliminarLoteVarios(List<Guid> ids, ClaimsPrincipal claims)
+    public async Task<bool> EliminarLoteActividadProyecto(List<Guid> ids, ClaimsPrincipal claims)
     {
-        ICollection<Varios> objs = new List<Varios>();
+        ICollection<ActividadProyecto> objs = new List<ActividadProyecto>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var id in ids)
             {
-                var buscado = await ctx.Varias.FindAsync(id);
+                var buscado = await ctx.ActividadesProyectos.FindAsync(id);
 
                 if (buscado != null)
                 {
@@ -225,7 +265,7 @@ public class VariosService
 
             if (objs.Count > 0)
             {
-                ctx.Varias.UpdateRange(objs);
+                ctx.ActividadesProyectos.UpdateRange(objs);
 
                 try
                 {

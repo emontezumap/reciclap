@@ -6,23 +6,23 @@ using Services;
 
 namespace Validadores;
 
-public class ValidadorSecuencia : IValidadorEntidad
+public class ValidadorActividadRutaProyecto : IValidadorEntidad
 {
     private Dictionary<string, HashSet<CodigosError>> mensajes;
-    private SecuenciaDTO dto;
+    private ActividadRutaProyectoDTO dto;
     private Operacion op;
     private SSDBContext ctx;
     private bool SinReferencias;
 
     public bool Ok { get; set; } = false;
 
-    public ValidadorSecuencia(SecuenciaDTO dto, Operacion op, SSDBContext ctx, bool SinReferencias = false)
+    public ValidadorActividadRutaProyecto(ActividadRutaProyectoDTO dto, Operacion op, SSDBContext ctx, bool SinReferencias = false)
     {
         mensajes = new Dictionary<string, HashSet<CodigosError>>() {
 			{ "Id", new HashSet<CodigosError>() },
-			{ "Prefijo", new HashSet<CodigosError>() },
-			{ "Serie", new HashSet<CodigosError>() },
-			{ "Incremento", new HashSet<CodigosError>() },
+			{ "IdRutaProyecto", new HashSet<CodigosError>() },
+			{ "Descripcion", new HashSet<CodigosError>() },
+			{ "Secuencia", new HashSet<CodigosError>() },
 			{ "Activo", new HashSet<CodigosError>() }
         };
 
@@ -39,20 +39,26 @@ public class ValidadorSecuencia : IValidadorEntidad
         {
             if (dto.Id == null)
                 mensajes["Id"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
-            else if (await ctx.Secuencias.FindAsync(dto.Id) == null)
+            else if (await ctx.ActividadesRutasProyectos.FindAsync(dto.Id) == null)
                 mensajes["Id"].Add(CodigosError.ERR_ID_INEXISTENTE);
         }
 
-        if (string.IsNullOrEmpty(dto.Prefijo))
+        if (op == Operacion.Creacion && dto.IdRutaProyecto == null)
+            mensajes["IdRutaProyecto"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
+
+        if (!SinReferencias && dto.IdRutaProyecto != null && await ctx.Varias.FindAsync(dto.IdRutaProyecto) == null)
+            mensajes["IdRutaProyecto"].Add(CodigosError.ERR_ID_INEXISTENTE);
+
+        if (string.IsNullOrEmpty(dto.Descripcion))
         {
             if (op == Operacion.Creacion)
-                mensajes["Prefijo"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
-            else if (dto.Prefijo != null)   // Cadena vacia
-                mensajes["Prefijo"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
+                mensajes["Descripcion"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
+            else if (dto.Descripcion != null)   // Cadena vacia
+                mensajes["Descripcion"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
         }
 
-        if (dto.Prefijo != null && dto.Prefijo.Length > 10)
-            mensajes["Prefijo"].Add(CodigosError.ERR_CADENA_MUY_LARGA);        
+        if (dto.Descripcion != null && dto.Descripcion.Length > 450)
+            mensajes["Descripcion"].Add(CodigosError.ERR_CADENA_MUY_LARGA);        
 
         bool hayError = false;
 

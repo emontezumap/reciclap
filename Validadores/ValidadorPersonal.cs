@@ -1,3 +1,4 @@
+
 using DB;
 using DTOs;
 using Herramientas;
@@ -7,89 +8,60 @@ namespace Validadores;
 
 public class ValidadorPersonal : IValidadorEntidad
 {
-    private Dictionary<string, List<string>> mensajes;
+    private Dictionary<string, HashSet<CodigosError>> mensajes;
     private PersonalDTO dto;
     private Operacion op;
     private SSDBContext ctx;
+    private bool SinReferencias;
+
     public bool Ok { get; set; } = false;
 
-    public ValidadorPersonal(PersonalDTO dto, Operacion op, SSDBContext ctx)
+    public ValidadorPersonal(PersonalDTO dto, Operacion op, SSDBContext ctx, bool SinReferencias = false)
     {
-        mensajes = new Dictionary<string, List<string>>() {
-            { "IdPublicacion", new List<string>() },
-            { "IdUsuario", new List<string>() },
-            { "Fecha", new List<string>()},
-            { "IdRol", new List<string>()},
-            { "Activo", new List<string>()}
+        mensajes = new Dictionary<string, HashSet<CodigosError>>() {
+			{ "IdPublicacion", new HashSet<CodigosError>() },
+			{ "IdUsuario", new HashSet<CodigosError>() },
+			{ "Fecha", new HashSet<CodigosError>() },
+			{ "IdRol", new HashSet<CodigosError>() },
+			{ "Activo", new HashSet<CodigosError>() }
         };
 
         this.dto = dto;
         this.op = op;
         this.ctx = ctx;
+        this.SinReferencias = SinReferencias;
     }
 
     public async Task<ResultadoValidacion> Validar()
     {
+
+        if (op == Operacion.Creacion && dto.IdPublicacion == null)
+            mensajes["IdPublicacion"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
+
+        if (!SinReferencias && dto.IdPublicacion != null && await ctx.Publicaciones.FindAsync(dto.IdPublicacion) == null)
+            mensajes["IdPublicacion"].Add(CodigosError.ERR_ID_INEXISTENTE);
+
+        if (op == Operacion.Creacion && dto.IdUsuario == null)
+            mensajes["IdUsuario"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
+
+        if (!SinReferencias && dto.IdUsuario != null && await ctx.Usuarios.FindAsync(dto.IdUsuario) == null)
+            mensajes["IdUsuario"].Add(CodigosError.ERR_ID_INEXISTENTE);
+
+        if (op == Operacion.Creacion && dto.IdRol == null)
+            mensajes["IdRol"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
+
+        if (!SinReferencias && dto.IdRol != null && await ctx.Varias.FindAsync(dto.IdRol) == null)
+            mensajes["IdRol"].Add(CodigosError.ERR_ID_INEXISTENTE);
+
         bool hayError = false;
 
-        if (dto.IdPublicacion == null)
+        foreach (KeyValuePair<string, HashSet<CodigosError>> entry in mensajes)
         {
-            mensajes["IdPublicacion"].Add("Se debe especificar una publicación");
-            hayError = true;
-        }
-        else if (op == Operacion.Modificacion && await ctx.Publicaciones.FindAsync(dto.IdPublicacion) == null)
-        {
-            mensajes["IdPublicacion"].Add("La publicación especificada no existe");
-            hayError = true;
-        }
-
-        if (dto.IdUsuario == null)
-        {
-            mensajes["IdUsuario"].Add("Se requiere el usuario asignado a la publicación");
-            hayError = true;
-        }
-        else if (op == Operacion.Modificacion && await ctx.Usuarios.FindAsync(dto.IdUsuario) == null)
-        {
-            mensajes["IdUsuario"].Add("El usuario especificado no existe");
-            hayError = true;
-        }
-
-        if (op == Operacion.Modificacion && dto.IdPublicacion != null && dto.IdUsuario != null && await ctx.Personal.FindAsync(dto.IdPublicacion, dto.IdUsuario) == null)
-        {
-            mensajes["IdPublicacion"].Add("La combinación Publicacion-Usuario especificada no existe");
-            mensajes["IdUsuario"].Add("La combinación Publicacion-Usuario especificada no existe");
-            hayError = true;
-        }
-
-        if (op == Operacion.Creacion && dto.Fecha == null)
-        {
-            mensajes["Fecha"].Add("Se requiere la fecha de asignación del personal");
-            hayError = true;
-        }
-
-        if (op == Operacion.Creacion)
-        {
-            if (dto.IdRol == null)
+            if (entry.Value.Count > 0)
             {
-                mensajes["IdRol"].Add("Se debe indicar el rol del personal");
                 hayError = true;
+                break;
             }
-            else if (await ctx.Varias.FindAsync(dto.IdRol) == null)
-            {
-                mensajes["IdRol"].Add("El rol especificado no existe");
-                hayError = true;
-            }
-        }
-        else if (dto.IdRol != null && await ctx.Varias.FindAsync(dto.IdRol) == null)
-        {
-            mensajes["IdRol"].Add("El rol especificado no existe");
-            hayError = true;
-        }
-
-        if ((op == Operacion.Creacion && dto.Activo == null))
-        {
-            mensajes["Activo"].Add("Se requiere un valor para el campo Activo");
-            hayError = true;
         }
 
         ResultadoValidacion v = new ResultadoValidacion();

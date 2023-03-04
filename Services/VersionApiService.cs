@@ -12,31 +12,31 @@ namespace Services;
 
 [ExtendObjectType("Mutacion")]
 
-public class SecuenciaService
+public class VersionApiService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public SecuenciaService(IDbContextFactory<SSDBContext> ctxFactory)
+    public VersionApiService(IDbContextFactory<SSDBContext> ctxFactory)
     {
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<Secuencia> CrearSecuencia(SecuenciaDTO nuevo, ClaimsPrincipal claims)
+    public async Task<VersionApi> CrearVersionApi(VersionApiDTO nuevo, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorSecuencia vc = new ValidadorSecuencia(nuevo, Operacion.Creacion, ctx);
+            ValidadorVersionApi vc = new ValidadorVersionApi(nuevo, Operacion.Creacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
                 Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Secuencia obj = new Secuencia();
+                VersionApi obj = new VersionApi();
                 Mapear(obj, nuevo, id, Operacion.Creacion);
 
                 try
                 {
-                    ctx.Secuencias.Add(obj);
+                    ctx.VersionesApi.Add(obj);
                     await ctx.SaveChangesAsync();
 
                     return obj;
@@ -55,7 +55,7 @@ public class SecuenciaService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteSecuencia(List<SecuenciaDTO> nuevos, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteVersionApi(List<VersionApiDTO> nuevos, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
 
@@ -65,14 +65,14 @@ public class SecuenciaService
 
             foreach (var nuevo in nuevos)
             {
-                ValidadorSecuencia vc = new ValidadorSecuencia(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorVersionApi vc = new ValidadorVersionApi(nuevo, Operacion.Creacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Secuencia obj = new Secuencia();
+                    VersionApi obj = new VersionApi();
                     Mapear(obj, nuevo, id, Operacion.Creacion);
-                    ctx.Secuencias.Add(obj);
+                    ctx.VersionesApi.Add(obj);
                 }
                 else
                     res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
@@ -98,16 +98,16 @@ public class SecuenciaService
         }
     }
 
-    public async Task<bool> ModificarSecuencia(SecuenciaDTO modif, ClaimsPrincipal claims)
+    public async Task<bool> ModificarVersionApi(VersionApiDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorSecuencia vc = new ValidadorSecuencia(modif, Operacion.Modificacion, ctx);
+            ValidadorVersionApi vc = new ValidadorVersionApi(modif, Operacion.Modificacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
-                var buscado = await ctx.Secuencias.FindAsync(modif.Id);
+                var buscado = await ctx.VersionesApi.FindAsync(modif.Id);
 
                 if (buscado != null)
                 {
@@ -136,22 +136,22 @@ public class SecuenciaService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteSecuencia(List<SecuenciaDTO> modifs, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteVersionApi(List<VersionApiDTO> modifs, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
         Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-        ICollection<Secuencia> objs = new List<Secuencia>();
+        ICollection<VersionApi> objs = new List<VersionApi>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorSecuencia vc = new ValidadorSecuencia(modif, Operacion.Modificacion, ctx, true);
+                ValidadorVersionApi vc = new ValidadorVersionApi(modif, Operacion.Modificacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Secuencia obj = new Secuencia();
+                    VersionApi obj = new VersionApi();
                     Mapear(obj, modif, id, Operacion.Modificacion);
                     objs.Add(obj);
                 }
@@ -161,32 +161,31 @@ public class SecuenciaService
 
             if (res.Count == 0)
             {
-                ctx.Secuencias.UpdateRange(objs);
+                ctx.VersionesApi.UpdateRange(objs);
                 await ctx.SaveChangesAsync();
             }
             return res;
         }
     }
 
-    public async Task<bool> EliminarSecuencia(int id, ClaimsPrincipal claims)
+    public async Task<bool> EliminarVersionApi(int id, ClaimsPrincipal claims)
     {
-        SecuenciaDTO pub = new SecuenciaDTO()
+        VersionApiDTO pub = new VersionApiDTO()
         {
 			Id = id,
 
             Activo = false
         };
 
-        return await ModificarSecuencia(pub, claims);
+        return await ModificarVersionApi(pub, claims);
     }
 
-    public void Mapear(Secuencia obj, SecuenciaDTO dto, Guid id, Operacion op)
+    public void Mapear(VersionApi obj, VersionApiDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
-			obj.Prefijo = dto.Prefijo!;
-			obj.Serie = (long)dto.Serie!;
-			obj.Incremento = (int)dto.Incremento!;
+			obj.Version = dto.Version!;
+			obj.VigenteDesde = (DateTime)dto.VigenteDesde!;
 			obj.IdCreador = id;
 			obj.FechaCreacion = DateTime.UtcNow;
 			obj.IdModificador = id;
@@ -195,24 +194,23 @@ public class SecuenciaService
         }
         else
         {
-			obj.Prefijo = dto.Prefijo == null ? obj.Prefijo : dto.Prefijo;
-			obj.Serie = dto.Serie == null ? obj.Serie : (long)dto.Serie;
-			obj.Incremento = dto.Incremento == null ? obj.Incremento : (int)dto.Incremento;
+			obj.Version = dto.Version == null ? obj.Version : dto.Version;
+			obj.VigenteDesde = dto.VigenteDesde == null ? obj.VigenteDesde : (DateTime)dto.VigenteDesde;
 			obj.IdModificador = id;
 			obj.FechaModificacion = DateTime.UtcNow;
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
 
-    public async Task<bool> EliminarLoteSecuencia(List<Guid> ids, ClaimsPrincipal claims)
+    public async Task<bool> EliminarLoteVersionApi(List<Guid> ids, ClaimsPrincipal claims)
     {
-        ICollection<Secuencia> objs = new List<Secuencia>();
+        ICollection<VersionApi> objs = new List<VersionApi>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var id in ids)
             {
-                var buscado = await ctx.Secuencias.FindAsync(id);
+                var buscado = await ctx.VersionesApi.FindAsync(id);
 
                 if (buscado != null)
                 {
@@ -223,7 +221,7 @@ public class SecuenciaService
 
             if (objs.Count > 0)
             {
-                ctx.Secuencias.UpdateRange(objs);
+                ctx.VersionesApi.UpdateRange(objs);
 
                 try
                 {

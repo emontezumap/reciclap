@@ -12,31 +12,31 @@ namespace Services;
 
 [ExtendObjectType("Mutacion")]
 
-public class ChatService
+public class ProyectoService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public ChatService(IDbContextFactory<SSDBContext> ctxFactory)
+    public ProyectoService(IDbContextFactory<SSDBContext> ctxFactory)
     {
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<Chat> CrearChat(ChatDTO nuevo, ClaimsPrincipal claims)
+    public async Task<Proyecto> CrearProyecto(ProyectoDTO nuevo, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorChat vc = new ValidadorChat(nuevo, Operacion.Creacion, ctx);
+            ValidadorProyecto vc = new ValidadorProyecto(nuevo, Operacion.Creacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
                 Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Chat obj = new Chat();
+                Proyecto obj = new Proyecto();
                 Mapear(obj, nuevo, id, Operacion.Creacion);
 
                 try
                 {
-                    ctx.Chats.Add(obj);
+                    ctx.Proyectos.Add(obj);
                     await ctx.SaveChangesAsync();
 
                     return obj;
@@ -55,7 +55,7 @@ public class ChatService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteChat(List<ChatDTO> nuevos, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteProyecto(List<ProyectoDTO> nuevos, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
 
@@ -65,14 +65,14 @@ public class ChatService
 
             foreach (var nuevo in nuevos)
             {
-                ValidadorChat vc = new ValidadorChat(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorProyecto vc = new ValidadorProyecto(nuevo, Operacion.Creacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Chat obj = new Chat();
+                    Proyecto obj = new Proyecto();
                     Mapear(obj, nuevo, id, Operacion.Creacion);
-                    ctx.Chats.Add(obj);
+                    ctx.Proyectos.Add(obj);
                 }
                 else
                     res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
@@ -98,16 +98,16 @@ public class ChatService
         }
     }
 
-    public async Task<bool> ModificarChat(ChatDTO modif, ClaimsPrincipal claims)
+    public async Task<bool> ModificarProyecto(ProyectoDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorChat vc = new ValidadorChat(modif, Operacion.Modificacion, ctx);
+            ValidadorProyecto vc = new ValidadorProyecto(modif, Operacion.Modificacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
-                var buscado = await ctx.Chats.FindAsync(modif.Id);
+                var buscado = await ctx.Proyectos.FindAsync(modif.Id);
 
                 if (buscado != null)
                 {
@@ -136,22 +136,22 @@ public class ChatService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteChat(List<ChatDTO> modifs, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteProyecto(List<ProyectoDTO> modifs, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
         Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-        ICollection<Chat> objs = new List<Chat>();
+        ICollection<Proyecto> objs = new List<Proyecto>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorChat vc = new ValidadorChat(modif, Operacion.Modificacion, ctx, true);
+                ValidadorProyecto vc = new ValidadorProyecto(modif, Operacion.Modificacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Chat obj = new Chat();
+                    Proyecto obj = new Proyecto();
                     Mapear(obj, modif, id, Operacion.Modificacion);
                     objs.Add(obj);
                 }
@@ -161,33 +161,57 @@ public class ChatService
 
             if (res.Count == 0)
             {
-                ctx.Chats.UpdateRange(objs);
+                ctx.Proyectos.UpdateRange(objs);
                 await ctx.SaveChangesAsync();
             }
             return res;
         }
     }
 
-    public async Task<bool> EliminarChat(Guid id, ClaimsPrincipal claims)
+    public async Task<bool> EliminarProyecto(Guid id, ClaimsPrincipal claims)
     {
-        ChatDTO pub = new ChatDTO()
+        ProyectoDTO pub = new ProyectoDTO()
         {
 			Id = id,
 
             Activo = false
         };
 
-        return await ModificarChat(pub, claims);
+        return await ModificarProyecto(pub, claims);
     }
 
-    public void Mapear(Chat obj, ChatDTO dto, Guid id, Operacion op)
+    public void Mapear(Proyecto obj, ProyectoDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
 			obj.Id = Guid.NewGuid();
-			obj.IdPublicacion = (Guid)dto.IdPublicacion!;
 			obj.Titulo = dto.Titulo!;
-			obj.Fecha = (DateTime)dto.Fecha!;
+			obj.Descripcion = dto.Descripcion!;
+			obj.FechaInicio = (DateTime)dto.FechaInicio!;
+			obj.IdGerente = (Guid)dto.IdGerente!;
+			obj.IdRevisor = (Guid?)dto.IdRevisor!;
+			obj.Gustan = (int)dto.Gustan!;
+			obj.NoGustan = (int)dto.NoGustan!;
+			obj.IdEstatusPublicacion = (int)dto.IdEstatusPublicacion!;
+			obj.IdEstatusProyecto = (int)dto.IdEstatusProyecto!;
+			obj.IdRevisadaPor = (Guid)dto.IdRevisadaPor!;
+			obj.IdImagenPrincipal = (Guid?)dto.IdImagenPrincipal!;
+			obj.IdTipoProyecto = (int)dto.IdTipoProyecto!;
+			obj.TiempoEstimado = (int)dto.TiempoEstimado!;
+			obj.ProgresoEstimado = (int)dto.ProgresoEstimado!;
+			obj.ProgresoReal = (int)dto.ProgresoReal!;
+			obj.Evaluacion = (decimal)dto.Evaluacion!;
+			obj.IdRutaProyecto = (int)dto.IdRutaProyecto!;
+			obj.IdFaseAnterior = (int?)dto.IdFaseAnterior!;
+			obj.IdFaseSiguiente = (int?)dto.IdFaseSiguiente!;
+			obj.FechaDisponible = (DateTime?)dto.FechaDisponible!;
+			obj.TotalArticulos = (decimal)dto.TotalArticulos!;
+			obj.CostoEstimado = (decimal)dto.CostoEstimado!;
+			obj.IdMonedaCostoEstimado = dto.IdMonedaCostoEstimado!;
+			obj.TipoCambioCostoEstimado = (decimal)dto.TipoCambioCostoEstimado!;
+			obj.CostoReal = (decimal)dto.CostoReal!;
+			obj.IdMonedaCostoReal = dto.IdMonedaCostoReal!;
+			obj.TipoCambioCostoReal = (decimal)dto.TipoCambioCostoReal!;
 			obj.IdCreador = id;
 			obj.FechaCreacion = DateTime.UtcNow;
 			obj.IdModificador = id;
@@ -196,24 +220,48 @@ public class ChatService
         }
         else
         {
-			obj.IdPublicacion = dto.IdPublicacion == null ? obj.IdPublicacion : (Guid)dto.IdPublicacion;
 			obj.Titulo = dto.Titulo == null ? obj.Titulo : dto.Titulo;
-			obj.Fecha = dto.Fecha == null ? obj.Fecha : (DateTime)dto.Fecha;
+			obj.Descripcion = dto.Descripcion == null ? obj.Descripcion : dto.Descripcion;
+			obj.FechaInicio = dto.FechaInicio == null ? obj.FechaInicio : (DateTime)dto.FechaInicio;
+			obj.IdGerente = dto.IdGerente == null ? obj.IdGerente : (Guid)dto.IdGerente;
+			obj.IdRevisor = dto.IdRevisor == null ? obj.IdRevisor : (Guid?)dto.IdRevisor;
+			obj.Gustan = dto.Gustan == null ? obj.Gustan : (int)dto.Gustan;
+			obj.NoGustan = dto.NoGustan == null ? obj.NoGustan : (int)dto.NoGustan;
+			obj.IdEstatusPublicacion = dto.IdEstatusPublicacion == null ? obj.IdEstatusPublicacion : (int)dto.IdEstatusPublicacion;
+			obj.IdEstatusProyecto = dto.IdEstatusProyecto == null ? obj.IdEstatusProyecto : (int)dto.IdEstatusProyecto;
+			obj.IdRevisadaPor = dto.IdRevisadaPor == null ? obj.IdRevisadaPor : (Guid)dto.IdRevisadaPor;
+			obj.IdImagenPrincipal = dto.IdImagenPrincipal == null ? obj.IdImagenPrincipal : (Guid?)dto.IdImagenPrincipal;
+			obj.IdTipoProyecto = dto.IdTipoProyecto == null ? obj.IdTipoProyecto : (int)dto.IdTipoProyecto;
+			obj.TiempoEstimado = dto.TiempoEstimado == null ? obj.TiempoEstimado : (int)dto.TiempoEstimado;
+			obj.ProgresoEstimado = dto.ProgresoEstimado == null ? obj.ProgresoEstimado : (int)dto.ProgresoEstimado;
+			obj.ProgresoReal = dto.ProgresoReal == null ? obj.ProgresoReal : (int)dto.ProgresoReal;
+			obj.Evaluacion = dto.Evaluacion == null ? obj.Evaluacion : (decimal)dto.Evaluacion;
+			obj.IdRutaProyecto = dto.IdRutaProyecto == null ? obj.IdRutaProyecto : (int)dto.IdRutaProyecto;
+			obj.IdFaseAnterior = dto.IdFaseAnterior == null ? obj.IdFaseAnterior : (int?)dto.IdFaseAnterior;
+			obj.IdFaseSiguiente = dto.IdFaseSiguiente == null ? obj.IdFaseSiguiente : (int?)dto.IdFaseSiguiente;
+			obj.FechaDisponible = dto.FechaDisponible == null ? obj.FechaDisponible : (DateTime?)dto.FechaDisponible;
+			obj.TotalArticulos = dto.TotalArticulos == null ? obj.TotalArticulos : (decimal)dto.TotalArticulos;
+			obj.CostoEstimado = dto.CostoEstimado == null ? obj.CostoEstimado : (decimal)dto.CostoEstimado;
+			obj.IdMonedaCostoEstimado = dto.IdMonedaCostoEstimado == null ? obj.IdMonedaCostoEstimado : dto.IdMonedaCostoEstimado;
+			obj.TipoCambioCostoEstimado = dto.TipoCambioCostoEstimado == null ? obj.TipoCambioCostoEstimado : (decimal)dto.TipoCambioCostoEstimado;
+			obj.CostoReal = dto.CostoReal == null ? obj.CostoReal : (decimal)dto.CostoReal;
+			obj.IdMonedaCostoReal = dto.IdMonedaCostoReal == null ? obj.IdMonedaCostoReal : dto.IdMonedaCostoReal;
+			obj.TipoCambioCostoReal = dto.TipoCambioCostoReal == null ? obj.TipoCambioCostoReal : (decimal)dto.TipoCambioCostoReal;
 			obj.IdModificador = id;
 			obj.FechaModificacion = DateTime.UtcNow;
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
 
-    public async Task<bool> EliminarLoteChat(List<Guid> ids, ClaimsPrincipal claims)
+    public async Task<bool> EliminarLoteProyecto(List<Guid> ids, ClaimsPrincipal claims)
     {
-        ICollection<Chat> objs = new List<Chat>();
+        ICollection<Proyecto> objs = new List<Proyecto>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var id in ids)
             {
-                var buscado = await ctx.Chats.FindAsync(id);
+                var buscado = await ctx.Proyectos.FindAsync(id);
 
                 if (buscado != null)
                 {
@@ -224,7 +272,7 @@ public class ChatService
 
             if (objs.Count > 0)
             {
-                ctx.Chats.UpdateRange(objs);
+                ctx.Proyectos.UpdateRange(objs);
 
                 try
                 {

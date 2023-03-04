@@ -12,31 +12,31 @@ namespace Services;
 
 [ExtendObjectType("Mutacion")]
 
-public class SecuenciaService
+public class RastreoPublicacionService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
 
-    public SecuenciaService(IDbContextFactory<SSDBContext> ctxFactory)
+    public RastreoPublicacionService(IDbContextFactory<SSDBContext> ctxFactory)
     {
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<Secuencia> CrearSecuencia(SecuenciaDTO nuevo, ClaimsPrincipal claims)
+    public async Task<RastreoPublicacion> CrearRastreoPublicacion(RastreoPublicacionDTO nuevo, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorSecuencia vc = new ValidadorSecuencia(nuevo, Operacion.Creacion, ctx);
+            ValidadorRastreoPublicacion vc = new ValidadorRastreoPublicacion(nuevo, Operacion.Creacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
                 Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Secuencia obj = new Secuencia();
+                RastreoPublicacion obj = new RastreoPublicacion();
                 Mapear(obj, nuevo, id, Operacion.Creacion);
 
                 try
                 {
-                    ctx.Secuencias.Add(obj);
+                    ctx.RastreoPublicaciones.Add(obj);
                     await ctx.SaveChangesAsync();
 
                     return obj;
@@ -55,7 +55,7 @@ public class SecuenciaService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteSecuencia(List<SecuenciaDTO> nuevos, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteRastreoPublicacion(List<RastreoPublicacionDTO> nuevos, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
 
@@ -65,14 +65,14 @@ public class SecuenciaService
 
             foreach (var nuevo in nuevos)
             {
-                ValidadorSecuencia vc = new ValidadorSecuencia(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorRastreoPublicacion vc = new ValidadorRastreoPublicacion(nuevo, Operacion.Creacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Secuencia obj = new Secuencia();
+                    RastreoPublicacion obj = new RastreoPublicacion();
                     Mapear(obj, nuevo, id, Operacion.Creacion);
-                    ctx.Secuencias.Add(obj);
+                    ctx.RastreoPublicaciones.Add(obj);
                 }
                 else
                     res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
@@ -98,16 +98,16 @@ public class SecuenciaService
         }
     }
 
-    public async Task<bool> ModificarSecuencia(SecuenciaDTO modif, ClaimsPrincipal claims)
+    public async Task<bool> ModificarRastreoPublicacion(RastreoPublicacionDTO modif, ClaimsPrincipal claims)
     {
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            ValidadorSecuencia vc = new ValidadorSecuencia(modif, Operacion.Modificacion, ctx);
+            ValidadorRastreoPublicacion vc = new ValidadorRastreoPublicacion(modif, Operacion.Modificacion, ctx);
             ResultadoValidacion rv = await vc.Validar();
 
             if (rv.ValidacionOk)
             {
-                var buscado = await ctx.Secuencias.FindAsync(modif.Id);
+                var buscado = await ctx.RastreoPublicaciones.FindAsync(modif.Id);
 
                 if (buscado != null)
                 {
@@ -136,22 +136,22 @@ public class SecuenciaService
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteSecuencia(List<SecuenciaDTO> modifs, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteRastreoPublicacion(List<RastreoPublicacionDTO> modifs, ClaimsPrincipal claims)
     {
         Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
         Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-        ICollection<Secuencia> objs = new List<Secuencia>();
+        ICollection<RastreoPublicacion> objs = new List<RastreoPublicacion>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorSecuencia vc = new ValidadorSecuencia(modif, Operacion.Modificacion, ctx, true);
+                ValidadorRastreoPublicacion vc = new ValidadorRastreoPublicacion(modif, Operacion.Modificacion, ctx, true);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Secuencia obj = new Secuencia();
+                    RastreoPublicacion obj = new RastreoPublicacion();
                     Mapear(obj, modif, id, Operacion.Modificacion);
                     objs.Add(obj);
                 }
@@ -161,32 +161,37 @@ public class SecuenciaService
 
             if (res.Count == 0)
             {
-                ctx.Secuencias.UpdateRange(objs);
+                ctx.RastreoPublicaciones.UpdateRange(objs);
                 await ctx.SaveChangesAsync();
             }
             return res;
         }
     }
 
-    public async Task<bool> EliminarSecuencia(int id, ClaimsPrincipal claims)
+    public async Task<bool> EliminarRastreoPublicacion(long id, ClaimsPrincipal claims)
     {
-        SecuenciaDTO pub = new SecuenciaDTO()
+        RastreoPublicacionDTO pub = new RastreoPublicacionDTO()
         {
 			Id = id,
 
             Activo = false
         };
 
-        return await ModificarSecuencia(pub, claims);
+        return await ModificarRastreoPublicacion(pub, claims);
     }
 
-    public void Mapear(Secuencia obj, SecuenciaDTO dto, Guid id, Operacion op)
+    public void Mapear(RastreoPublicacion obj, RastreoPublicacionDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
-			obj.Prefijo = dto.Prefijo!;
-			obj.Serie = (long)dto.Serie!;
-			obj.Incremento = (int)dto.Incremento!;
+			obj.IdPublicacion = (Guid)dto.IdPublicacion!;
+			obj.IdFasePublicacion = (int)dto.IdFasePublicacion!;
+			obj.Fecha = (DateTime)dto.Fecha!;
+			obj.IdUsuario = (Guid)dto.IdUsuario!;
+			obj.TiempoEstimado = (long)dto.TiempoEstimado!;
+			obj.IdFaseAnterior = (int?)dto.IdFaseAnterior!;
+			obj.IdFaseSiguiente = (int?)dto.IdFaseSiguiente!;
+			obj.Comentarios = dto.Comentarios!;
 			obj.IdCreador = id;
 			obj.FechaCreacion = DateTime.UtcNow;
 			obj.IdModificador = id;
@@ -195,24 +200,29 @@ public class SecuenciaService
         }
         else
         {
-			obj.Prefijo = dto.Prefijo == null ? obj.Prefijo : dto.Prefijo;
-			obj.Serie = dto.Serie == null ? obj.Serie : (long)dto.Serie;
-			obj.Incremento = dto.Incremento == null ? obj.Incremento : (int)dto.Incremento;
+			obj.IdPublicacion = dto.IdPublicacion == null ? obj.IdPublicacion : (Guid)dto.IdPublicacion;
+			obj.IdFasePublicacion = dto.IdFasePublicacion == null ? obj.IdFasePublicacion : (int)dto.IdFasePublicacion;
+			obj.Fecha = dto.Fecha == null ? obj.Fecha : (DateTime)dto.Fecha;
+			obj.IdUsuario = dto.IdUsuario == null ? obj.IdUsuario : (Guid)dto.IdUsuario;
+			obj.TiempoEstimado = dto.TiempoEstimado == null ? obj.TiempoEstimado : (long)dto.TiempoEstimado;
+			obj.IdFaseAnterior = dto.IdFaseAnterior == null ? obj.IdFaseAnterior : (int?)dto.IdFaseAnterior;
+			obj.IdFaseSiguiente = dto.IdFaseSiguiente == null ? obj.IdFaseSiguiente : (int?)dto.IdFaseSiguiente;
+			obj.Comentarios = dto.Comentarios == null ? obj.Comentarios : dto.Comentarios;
 			obj.IdModificador = id;
 			obj.FechaModificacion = DateTime.UtcNow;
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
 
-    public async Task<bool> EliminarLoteSecuencia(List<Guid> ids, ClaimsPrincipal claims)
+    public async Task<bool> EliminarLoteRastreoPublicacion(List<Guid> ids, ClaimsPrincipal claims)
     {
-        ICollection<Secuencia> objs = new List<Secuencia>();
+        ICollection<RastreoPublicacion> objs = new List<RastreoPublicacion>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var id in ids)
             {
-                var buscado = await ctx.Secuencias.FindAsync(id);
+                var buscado = await ctx.RastreoPublicaciones.FindAsync(id);
 
                 if (buscado != null)
                 {
@@ -223,7 +233,7 @@ public class SecuenciaService
 
             if (objs.Count > 0)
             {
-                ctx.Secuencias.UpdateRange(objs);
+                ctx.RastreoPublicaciones.UpdateRange(objs);
 
                 try
                 {

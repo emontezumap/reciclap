@@ -1,98 +1,100 @@
+
+using DB;
 using DTOs;
 using Herramientas;
-using DB;
+using Services;
 
 namespace Validadores;
 
 public class ValidadorVarios : IValidadorEntidad
 {
-    private Dictionary<string, List<string>> mensajes;
+    private Dictionary<string, HashSet<CodigosError>> mensajes;
     private VariosDTO dto;
     private Operacion op;
     private SSDBContext ctx;
+    private bool SinReferencias;
+
     public bool Ok { get; set; } = false;
 
-    public ValidadorVarios(VariosDTO dto, Operacion op, SSDBContext ctx)
+    public ValidadorVarios(VariosDTO dto, Operacion op, SSDBContext ctx, bool SinReferencias = false)
     {
-        mensajes = new Dictionary<string, List<string>>() {
-            { "Id", new List<string>() },
-            { "IdTabla", new List<string>()},
-            { "Descripcion", new List<string>()},
-            { "Referencia", new List<string>()},
-            { "IdPadre", new List<string>()},
-            { "Activo", new List<string>()},
-            { "VersionAPI", new List<string>()}
+        mensajes = new Dictionary<string, HashSet<CodigosError>>() {
+			{ "Id", new HashSet<CodigosError>() },
+			{ "IdTabla", new HashSet<CodigosError>() },
+			{ "Descripcion", new HashSet<CodigosError>() },
+			{ "Referencia", new HashSet<CodigosError>() },
+			{ "IdPadre", new HashSet<CodigosError>() },
+			{ "Activo", new HashSet<CodigosError>() }
         };
 
         this.dto = dto;
         this.op = op;
         this.ctx = ctx;
+        this.SinReferencias = SinReferencias;
     }
 
     public async Task<ResultadoValidacion> Validar()
     {
-        bool hayError = false;
 
         if (op == Operacion.Modificacion)
         {
             if (dto.Id == null)
-            {
-                mensajes["Id"].Add("Se requiere el identificador (clave) del objeto a modificar");
-                hayError = true;
-            }
+                mensajes["Id"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
             else if (await ctx.Varias.FindAsync(dto.Id) == null)
-            {
-                mensajes["Id"].Add("El objeto especificado no existe");
-                hayError = true;
-            }
+                mensajes["Id"].Add(CodigosError.ERR_ID_INEXISTENTE);
         }
 
-        if (dto.IdTabla == null)
+        if (string.IsNullOrEmpty(dto.IdTabla))
         {
-            mensajes["IdTabla"].Add("Se debe especificar el Id de tabla");
-            hayError = true;
+            if (op == Operacion.Creacion)
+                mensajes["IdTabla"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
+            else if (dto.IdTabla != null)   // Cadena vacia
+                mensajes["IdTabla"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
         }
-        else if (await ctx.Varias.FindAsync(dto.IdTabla) == null)
-        {
-            mensajes["IdTabla"].Add("La tabla especificada no existe");
-            hayError = true;
-        }
+
+        if (dto.IdTabla != null && dto.IdTabla.Length > 10)
+            mensajes["IdTabla"].Add(CodigosError.ERR_CADENA_MUY_LARGA);        
+
+        if (op == Operacion.Creacion && dto.IdTabla == null)
+            mensajes["IdTabla"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
+
+        if (!SinReferencias && dto.IdTabla != null && await ctx.Tablas.FindAsync(dto.IdTabla) == null)
+            mensajes["IdTabla"].Add(CodigosError.ERR_ID_INEXISTENTE);
 
         if (string.IsNullOrEmpty(dto.Descripcion))
         {
             if (op == Operacion.Creacion)
-            {
-                mensajes["Descripcion"].Add("Se requiere una descripción");
-                hayError = true;
-            }
-            else if (dto.Descripcion != null)
-            {
-                mensajes["Descripcion"].Add("Se requiere una descripción");
-                hayError = true;
-            }
-        }
-        else if (dto.Descripcion.Length > 200)
-        {
-            mensajes["Descripcion"].Add("La descripción del objeto no debe exceder los 200 caracteres");
-            hayError = true;
+                mensajes["Descripcion"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
+            else if (dto.Descripcion != null)   // Cadena vacia
+                mensajes["Descripcion"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
         }
 
-        if (op == Operacion.Creacion && dto.Activo == null)
+        if (dto.Descripcion != null && dto.Descripcion.Length > 1000)
+            mensajes["Descripcion"].Add(CodigosError.ERR_CADENA_MUY_LARGA);        
+
+        if (string.IsNullOrEmpty(dto.Referencia))
         {
-            mensajes["Activo"].Add("Se requiere un valor para el campo Activo");
-            hayError = true;
+            if (op == Operacion.Creacion)
+                mensajes["Referencia"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
+            else if (dto.Referencia != null)   // Cadena vacia
+                mensajes["Referencia"].Add(CodigosError.ERR_CAMPO_REQUERIDO);
         }
 
         if (dto.Referencia != null && dto.Referencia.Length > 50)
-        {
-            mensajes["Referencia"].Add("La referencia no debe exceder los 50 caracteres");
-            hayError = true;
-        }
+            mensajes["Referencia"].Add(CodigosError.ERR_CADENA_MUY_LARGA);        
 
-        if (dto.IdPadre != null && await ctx.Varias.FindAsync(dto.IdPadre) == null)
+        if (!SinReferencias && dto.IdPadre != null && await ctx.Varias.FindAsync(dto.IdPadre) == null)
+            mensajes["IdPadre"].Add(CodigosError.ERR_ID_INEXISTENTE);
+
+        bool hayError = false;
+
+        foreach (KeyValuePair<string, HashSet<CodigosError>> entry in mensajes)
         {
-            mensajes["IdPadre"].Add("El objeto padre especificado no existe");
-            hayError = true;
+            if (entry.Value.Count > 0)
+            {
+                hayError = true;
+                break;
+            }
         }
 
         ResultadoValidacion v = new ResultadoValidacion();

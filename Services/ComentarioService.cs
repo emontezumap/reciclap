@@ -1,15 +1,17 @@
+
 using Microsoft.EntityFrameworkCore;
-using DTOs;
 using Entidades;
+using DB;
+using DTOs;
 using System.Security.Claims;
 using Herramientas;
 using Validadores;
 using HotChocolate.Types;
-using DB;
 
 namespace Services;
 
 [ExtendObjectType("Mutacion")]
+
 public class ComentarioService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
@@ -17,22 +19,6 @@ public class ComentarioService
     public ComentarioService(IDbContextFactory<SSDBContext> ctxFactory)
     {
         this.ctxFactory = ctxFactory;
-    }
-
-    public async Task<IEnumerable<Comentario>> TodosLosComentarios()
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            return await ctx.Comentarios.ToListAsync<Comentario>();
-        }
-    }
-
-    public async Task<Comentario?> UnComentario(Guid id)
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            return await ctx.Comentarios.FindAsync(id);
-        }
     }
 
     public async Task<Comentario> CrearComentario(ComentarioDTO nuevo, ClaimsPrincipal claims)
@@ -45,30 +31,19 @@ public class ComentarioService
             if (rv.ValidacionOk)
             {
                 Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Comentario com = new Comentario()
-                {
-                    Activo = nuevo.Activo,
-                    Fecha = (DateTime)nuevo.Fecha!,
-                    FechaCreacion = DateTime.UtcNow,
-                    FechaModificacion = DateTime.UtcNow,
-                    Id = Guid.NewGuid(),
-                    IdChat = (Guid)nuevo.IdChat!,
-                    IdComentario = (Guid)nuevo.IdComentario!,
-                    IdCreador = id,
-                    IdModificador = id,
-                    IdUsuario = (Guid)nuevo.IdUsuario!,
-                    Texto = nuevo.Texto!,
-                };
+                Comentario obj = new Comentario();
+                Mapear(obj, nuevo, id, Operacion.Creacion);
 
                 try
                 {
-                    ctx.Comentarios.Add(com);
+                    ctx.Comentarios.Add(obj);
                     await ctx.SaveChangesAsync();
-                    return com;
+
+                    return obj;
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El comentario");
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
                 catch (Exception ex)
                 {
@@ -77,6 +52,49 @@ public class ComentarioService
             }
             else
                 throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+        }
+    }
+
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteComentario(List<ComentarioDTO> nuevos, ClaimsPrincipal claims)
+    {
+        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
+
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+
+            foreach (var nuevo in nuevos)
+            {
+                ValidadorComentario vc = new ValidadorComentario(nuevo, Operacion.Creacion, ctx, true);
+                ResultadoValidacion rv = await vc.Validar();
+
+                if (rv.ValidacionOk)
+                {
+                    Comentario obj = new Comentario();
+                    Mapear(obj, nuevo, id, Operacion.Creacion);
+                    ctx.Comentarios.Add(obj);
+                }
+                else
+                    res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
+            }
+
+            if (res.Count == 0)
+            {
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+            }
+
+            return res;
         }
     }
 
@@ -94,15 +112,7 @@ public class ComentarioService
                 if (buscado != null)
                 {
                     Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
-                    buscado.Activo = modif.Activo == null ? buscado.Activo : modif.Activo;
-                    buscado.Fecha = modif.Fecha == null ? buscado.Fecha : (DateTime)modif.Fecha;
-                    buscado.FechaModificacion = buscado.FechaCreacion;
-                    buscado.IdChat = modif.IdChat == null ? buscado.IdChat : (Guid)modif.IdChat;
-                    buscado.IdComentario = modif.IdComentario == null ? buscado.IdComentario : (Guid)modif.IdComentario;
-                    buscado.IdModificador = id;
-                    buscado.IdUsuario = modif.IdUsuario == null ? buscado.IdUsuario : (Guid)modif.IdUsuario;
-                    buscado.Texto = modif.Texto == null ? buscado.Texto : modif.Texto;
+                    Mapear(buscado, modif, id, Operacion.Modificacion);
 
                     try
                     {
@@ -111,7 +121,7 @@ public class ComentarioService
                     }
                     catch (DbUpdateException ex)
                     {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El comentario");
+                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                     }
                     catch (Exception ex)
                     {
@@ -126,33 +136,117 @@ public class ComentarioService
         }
     }
 
-    public async Task<bool> EliminarComentario(Guid id, ClaimsPrincipal claims)
+    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteComentario(List<ComentarioDTO> modifs, ClaimsPrincipal claims)
     {
+        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
+        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+        ICollection<Comentario> objs = new List<Comentario>();
+
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            try
+            foreach (var modif in modifs)
             {
-                Comentario o = new Comentario() { Id = id };
-                ctx.Comentarios.Remove(o);
+                ValidadorComentario vc = new ValidadorComentario(modif, Operacion.Modificacion, ctx, true);
+                ResultadoValidacion rv = await vc.Validar();
+
+                if (rv.ValidacionOk)
+                {
+                    Comentario obj = new Comentario();
+                    Mapear(obj, modif, id, Operacion.Modificacion);
+                    objs.Add(obj);
+                }
+                else
+                    res.Add((modif.Id.ToString())!, rv.Mensajes!);
+            }
+
+            if (res.Count == 0)
+            {
+                ctx.Comentarios.UpdateRange(objs);
                 await ctx.SaveChangesAsync();
-                return true;
             }
-            catch (DbUpdateException ex)
-            {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex, "El comentario");
-            }
-            catch (Exception ex)
-            {
-                throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-            }
+            return res;
         }
-
-        // ComentarioDTO com = new ComentarioDTO()
-        // {
-        //     Id = id,
-        //     Activo = false
-        // };
-
-        // return await ModificarComentario(com, claims);
     }
+
+    public async Task<bool> EliminarComentario(Guid id, ClaimsPrincipal claims)
+    {
+        ComentarioDTO pub = new ComentarioDTO()
+        {
+			Id = id,
+
+            Activo = false
+        };
+
+        return await ModificarComentario(pub, claims);
+    }
+
+    public void Mapear(Comentario obj, ComentarioDTO dto, Guid id, Operacion op)
+    {
+        if (op == Operacion.Creacion)
+        {
+			obj.Id = Guid.NewGuid();
+			obj.IdChat = (Guid)dto.IdChat!;
+			obj.IdUsuario = (Guid)dto.IdUsuario!;
+			obj.Fecha = (DateTime)dto.Fecha!;
+			obj.Texto = dto.Texto!;
+			obj.IdCita = (Guid?)dto.IdCita!;
+			obj.IdCreador = id;
+			obj.FechaCreacion = DateTime.UtcNow;
+			obj.IdModificador = id;
+			obj.FechaModificacion = DateTime.UtcNow;
+			obj.Activo = (bool?)dto.Activo!;
+        }
+        else
+        {
+			obj.IdChat = dto.IdChat == null ? obj.IdChat : (Guid)dto.IdChat;
+			obj.IdUsuario = dto.IdUsuario == null ? obj.IdUsuario : (Guid)dto.IdUsuario;
+			obj.Fecha = dto.Fecha == null ? obj.Fecha : (DateTime)dto.Fecha;
+			obj.Texto = dto.Texto == null ? obj.Texto : dto.Texto;
+			obj.IdCita = dto.IdCita == null ? obj.IdCita : (Guid?)dto.IdCita;
+			obj.IdModificador = id;
+			obj.FechaModificacion = DateTime.UtcNow;
+			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
+        }
+    }
+
+    public async Task<bool> EliminarLoteComentario(List<Guid> ids, ClaimsPrincipal claims)
+    {
+        ICollection<Comentario> objs = new List<Comentario>();
+
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            foreach (var id in ids)
+            {
+                var buscado = await ctx.Comentarios.FindAsync(id);
+
+                if (buscado != null)
+                {
+                    buscado.Activo = false;
+                    objs.Add(buscado);
+                }
+            }
+
+            if (objs.Count > 0)
+            {
+                ctx.Comentarios.UpdateRange(objs);
+
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                    return true;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+            }
+            else
+                return false;
+        }
+    }
+
 }
