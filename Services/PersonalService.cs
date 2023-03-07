@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DB;
@@ -21,61 +20,28 @@ public class PersonalService
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<Personal> CrearPersonal(PersonalDTO nuevo, ClaimsPrincipal claims)
+    public async Task<ICollection<long>> CrearPersonal(List<PersonalDTO> nuevos, ClaimsPrincipal claims)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorPersonal vc = new ValidadorPersonal(nuevo, Operacion.Creacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Personal obj = new Personal();
-                Mapear(obj, nuevo, id, Operacion.Creacion);
-
-                try
-                {
-                    ctx.Personal.Add(obj);
-                    await ctx.SaveChangesAsync();
-
-                    return obj;
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-            }
-            else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
-        }
-    }
-
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLotePersonal(List<PersonalDTO> nuevos, ClaimsPrincipal claims)
-    {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        ICollection<long> codigos = new List<long>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
             foreach (var nuevo in nuevos)
             {
-                ValidadorPersonal vc = new ValidadorPersonal(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorPersonal vc = new ValidadorPersonal(nuevo, Operacion.Creacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
                     Personal obj = new Personal();
-                    Mapear(obj, nuevo, id, Operacion.Creacion);
+                    Mapear(obj, nuevo, idUsr, Operacion.Creacion);
                     ctx.Personal.Add(obj);
+                    codigos.Add(obj.Id);
                 }
                 else
-                    res.Add((nuevo.IdPublicacion.ToString() + "+" + nuevo.IdUsuario.ToString())!, rv.Mensajes!);
+                    res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
             }
 
             if (res.Count == 0)
@@ -93,119 +59,70 @@ public class PersonalService
                     throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
-
-            return res;
-        }
-    }
-
-    public async Task<bool> ModificarPersonal(PersonalDTO modif, ClaimsPrincipal claims)
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorPersonal vc = new ValidadorPersonal(modif, Operacion.Modificacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                var buscado = await ctx.Personal.FindAsync(modif.IdPublicacion, modif.IdUsuario);
-
-                if (buscado != null)
-                {
-                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                    Mapear(buscado, modif, id, Operacion.Modificacion);
-
-                    try
-                    {
-                        await ctx.SaveChangesAsync();
-                        return true;
-                    }
-                    catch (DbUpdateException ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                }
-                else
-                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
-            }
             else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLotePersonal(List<PersonalDTO> modifs, ClaimsPrincipal claims)
+    public async Task<ICollection<long>> ModificarPersonal(List<PersonalDTO> modifs, ClaimsPrincipal claims)
     {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
         ICollection<Personal> objs = new List<Personal>();
+        ICollection<long> codigos = new List<long>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorPersonal vc = new ValidadorPersonal(modif, Operacion.Modificacion, ctx, true);
+                ValidadorPersonal vc = new ValidadorPersonal(modif, Operacion.Modificacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Personal obj = new Personal();
-                    Mapear(obj, modif, id, Operacion.Modificacion);
-                    objs.Add(obj);
+                    var obj = await ctx.Personal.FindAsync(modif.Id);
+
+                    if (obj != null) {
+                        Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                        objs.Add(obj);
+                        codigos.Add(obj.Id);
+                    }
                 }
                 else
-                    res.Add((modif.IdPublicacion.ToString() + "+" + modif.IdUsuario.ToString())!, rv.Mensajes!);
+                    res.Add((modif.Id.ToString())!, rv.Mensajes!);
             }
 
             if (res.Count == 0)
             {
                 ctx.Personal.UpdateRange(objs);
-                await ctx.SaveChangesAsync();
+
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
             }
-            return res;
+            else
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
-    public async Task<bool> EliminarPersonal(Guid id_publicacion, Guid id_usuario, ClaimsPrincipal claims)
+    public async Task<ICollection<long>> EliminarPersonal(List<long> ids, ClaimsPrincipal claims)
     {
-        PersonalDTO pub = new PersonalDTO()
-        {
-			IdPublicacion = id_publicacion,
-			IdUsuario = id_usuario,
-
-            Activo = false
-        };
-
-        return await ModificarPersonal(pub, claims);
-    }
-
-    public void Mapear(Personal obj, PersonalDTO dto, Guid id, Operacion op)
-    {
-        if (op == Operacion.Creacion)
-        {
-			obj.Fecha = (DateTime)dto.Fecha!;
-			obj.IdRol = (int)dto.IdRol!;
-			obj.IdCreador = id;
-			obj.FechaCreacion = DateTime.UtcNow;
-			obj.IdModificador = id;
-			obj.FechaModificacion = DateTime.UtcNow;
-			obj.Activo = (bool?)dto.Activo!;
-        }
-        else
-        {
-			obj.Fecha = dto.Fecha == null ? obj.Fecha : (DateTime)dto.Fecha;
-			obj.IdRol = dto.IdRol == null ? obj.IdRol : (int)dto.IdRol;
-			obj.IdModificador = id;
-			obj.FechaModificacion = DateTime.UtcNow;
-			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
-        }
-    }
-
-    public async Task<bool> EliminarLotePersonal(List<Guid> ids, ClaimsPrincipal claims)
-    {
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
         ICollection<Personal> objs = new List<Personal>();
+        ICollection<long> codigos = new List<long>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
@@ -215,8 +132,11 @@ public class PersonalService
 
                 if (buscado != null)
                 {
+                    buscado.IdModificador = idUsr;
+                    buscado.FechaModificacion = DateTime.UtcNow;
                     buscado.Activo = false;
                     objs.Add(buscado);
+                    codigos.Add(buscado.Id);
                 }
             }
 
@@ -227,7 +147,6 @@ public class PersonalService
                 try
                 {
                     await ctx.SaveChangesAsync();
-                    return true;
                 }
                 catch (DbUpdateException ex)
                 {
@@ -238,9 +157,34 @@ public class PersonalService
                     throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
-            else
-                return false;
+
+            return codigos;
         }
     }
 
+    public void Mapear(Personal obj, PersonalDTO dto, Guid id, Operacion op)
+    {
+        if (op == Operacion.Creacion)
+        {
+			obj.IdPublicacion = (Guid)dto.IdPublicacion!;
+			obj.IdUsuario = (Guid)dto.IdUsuario!;
+			obj.Fecha = (DateTime)dto.Fecha!;
+			obj.IdRol = (int)dto.IdRol!;
+			obj.IdCreador = id;
+			obj.FechaCreacion = DateTime.UtcNow;
+			obj.IdModificador = id;
+			obj.FechaModificacion = DateTime.UtcNow;
+			obj.Activo = (bool?)dto.Activo!;
+        }
+        else
+        {
+			obj.IdPublicacion = dto.IdPublicacion == null ? obj.IdPublicacion : (Guid)dto.IdPublicacion;
+			obj.IdUsuario = dto.IdUsuario == null ? obj.IdUsuario : (Guid)dto.IdUsuario;
+			obj.Fecha = dto.Fecha == null ? obj.Fecha : (DateTime)dto.Fecha;
+			obj.IdRol = dto.IdRol == null ? obj.IdRol : (int)dto.IdRol;
+			obj.IdModificador = id;
+			obj.FechaModificacion = DateTime.UtcNow;
+			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
+        }
+    }
 }

@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DB;
@@ -21,58 +20,25 @@ public class PublicacionService
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<Publicacion> CrearPublicacion(PublicacionDTO nuevo, ClaimsPrincipal claims)
+    public async Task<ICollection<Guid>> CrearPublicacion(List<PublicacionDTO> nuevos, ClaimsPrincipal claims)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorPublicacion vc = new ValidadorPublicacion(nuevo, Operacion.Creacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Publicacion obj = new Publicacion();
-                Mapear(obj, nuevo, id, Operacion.Creacion);
-
-                try
-                {
-                    ctx.Publicaciones.Add(obj);
-                    await ctx.SaveChangesAsync();
-
-                    return obj;
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-            }
-            else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
-        }
-    }
-
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLotePublicacion(List<PublicacionDTO> nuevos, ClaimsPrincipal claims)
-    {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        ICollection<Guid> codigos = new List<Guid>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
             foreach (var nuevo in nuevos)
             {
-                ValidadorPublicacion vc = new ValidadorPublicacion(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorPublicacion vc = new ValidadorPublicacion(nuevo, Operacion.Creacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
                     Publicacion obj = new Publicacion();
-                    Mapear(obj, nuevo, id, Operacion.Creacion);
+                    Mapear(obj, nuevo, idUsr, Operacion.Creacion);
                     ctx.Publicaciones.Add(obj);
+                    codigos.Add(obj.Id);
                 }
                 else
                     res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
@@ -93,67 +59,36 @@ public class PublicacionService
                     throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
-
-            return res;
-        }
-    }
-
-    public async Task<bool> ModificarPublicacion(PublicacionDTO modif, ClaimsPrincipal claims)
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorPublicacion vc = new ValidadorPublicacion(modif, Operacion.Modificacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                var buscado = await ctx.Publicaciones.FindAsync(modif.Id);
-
-                if (buscado != null)
-                {
-                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                    Mapear(buscado, modif, id, Operacion.Modificacion);
-
-                    try
-                    {
-                        await ctx.SaveChangesAsync();
-                        return true;
-                    }
-                    catch (DbUpdateException ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                }
-                else
-                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
-            }
             else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLotePublicacion(List<PublicacionDTO> modifs, ClaimsPrincipal claims)
+    public async Task<ICollection<Guid>> ModificarPublicacion(List<PublicacionDTO> modifs, ClaimsPrincipal claims)
     {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
         ICollection<Publicacion> objs = new List<Publicacion>();
+        ICollection<Guid> codigos = new List<Guid>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorPublicacion vc = new ValidadorPublicacion(modif, Operacion.Modificacion, ctx, true);
+                ValidadorPublicacion vc = new ValidadorPublicacion(modif, Operacion.Modificacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Publicacion obj = new Publicacion();
-                    Mapear(obj, modif, id, Operacion.Modificacion);
-                    objs.Add(obj);
+                    var obj = await ctx.Publicaciones.FindAsync(modif.Id);
+
+                    if (obj != null) {
+                        Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                        objs.Add(obj);
+                        codigos.Add(obj.Id);
+                    }
                 }
                 else
                     res.Add((modif.Id.ToString())!, rv.Mensajes!);
@@ -162,22 +97,69 @@ public class PublicacionService
             if (res.Count == 0)
             {
                 ctx.Publicaciones.UpdateRange(objs);
-                await ctx.SaveChangesAsync();
+
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
             }
-            return res;
+            else
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
-    public async Task<bool> EliminarPublicacion(Guid id, ClaimsPrincipal claims)
+    public async Task<ICollection<Guid>> EliminarPublicacion(List<Guid> ids, ClaimsPrincipal claims)
     {
-        PublicacionDTO pub = new PublicacionDTO()
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        ICollection<Publicacion> objs = new List<Publicacion>();
+        ICollection<Guid> codigos = new List<Guid>();
+
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-			Id = id,
+            foreach (var id in ids)
+            {
+                var buscado = await ctx.Publicaciones.FindAsync(id);
 
-            Activo = false
-        };
+                if (buscado != null)
+                {
+                    buscado.IdModificador = idUsr;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+                    buscado.Activo = false;
+                    objs.Add(buscado);
+                    codigos.Add(buscado.Id);
+                }
+            }
 
-        return await ModificarPublicacion(pub, claims);
+            if (objs.Count > 0)
+            {
+                ctx.Publicaciones.UpdateRange(objs);
+
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+            }
+
+            return codigos;
+        }
     }
 
     public void Mapear(Publicacion obj, PublicacionDTO dto, Guid id, Operacion op)
@@ -188,7 +170,7 @@ public class PublicacionService
 			obj.Titulo = dto.Titulo!;
 			obj.Descripcion = dto.Descripcion!;
 			obj.Fecha = (DateTime)dto.Fecha!;
-			obj.Consecutivo = (int)dto.Consecutivo!;
+			obj.Consecutivo = (long)dto.Consecutivo!;
 			obj.IdPublicador = (Guid)dto.IdPublicador!;
 			obj.Gustan = (int)dto.Gustan!;
 			obj.NoGustan = (int)dto.NoGustan!;
@@ -208,7 +190,7 @@ public class PublicacionService
 			obj.Direccion = dto.Direccion!;
 			obj.ReferenciasDireccion = dto.ReferenciasDireccion!;
 			obj.FechaDisponible = (DateTime?)dto.FechaDisponible!;
-			obj.TotalArticulos = (int)dto.TotalArticulos!;
+			obj.TotalArticulos = (decimal)dto.TotalArticulos!;
 			obj.IdProyecto = (Guid?)dto.IdProyecto!;
 			obj.CostoEstimado = (decimal)dto.CostoEstimado!;
 			obj.IdMonedaCostoEstimado = dto.IdMonedaCostoEstimado!;
@@ -229,7 +211,7 @@ public class PublicacionService
 			obj.Titulo = dto.Titulo == null ? obj.Titulo : dto.Titulo;
 			obj.Descripcion = dto.Descripcion == null ? obj.Descripcion : dto.Descripcion;
 			obj.Fecha = dto.Fecha == null ? obj.Fecha : (DateTime)dto.Fecha;
-			obj.Consecutivo = dto.Consecutivo == null ? obj.Consecutivo : (int)dto.Consecutivo;
+			obj.Consecutivo = dto.Consecutivo == null ? obj.Consecutivo : (long)dto.Consecutivo;
 			obj.IdPublicador = dto.IdPublicador == null ? obj.IdPublicador : (Guid)dto.IdPublicador;
 			obj.Gustan = dto.Gustan == null ? obj.Gustan : (int)dto.Gustan;
 			obj.NoGustan = dto.NoGustan == null ? obj.NoGustan : (int)dto.NoGustan;
@@ -249,7 +231,7 @@ public class PublicacionService
 			obj.Direccion = dto.Direccion == null ? obj.Direccion : dto.Direccion;
 			obj.ReferenciasDireccion = dto.ReferenciasDireccion == null ? obj.ReferenciasDireccion : dto.ReferenciasDireccion;
 			obj.FechaDisponible = dto.FechaDisponible == null ? obj.FechaDisponible : (DateTime?)dto.FechaDisponible;
-			obj.TotalArticulos = dto.TotalArticulos == null ? obj.TotalArticulos : (int)dto.TotalArticulos;
+			obj.TotalArticulos = dto.TotalArticulos == null ? obj.TotalArticulos : (decimal)dto.TotalArticulos;
 			obj.IdProyecto = dto.IdProyecto == null ? obj.IdProyecto : (Guid?)dto.IdProyecto;
 			obj.CostoEstimado = dto.CostoEstimado == null ? obj.CostoEstimado : (decimal)dto.CostoEstimado;
 			obj.IdMonedaCostoEstimado = dto.IdMonedaCostoEstimado == null ? obj.IdMonedaCostoEstimado : dto.IdMonedaCostoEstimado;
@@ -264,45 +246,4 @@ public class PublicacionService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-    public async Task<bool> EliminarLotePublicacion(List<Guid> ids, ClaimsPrincipal claims)
-    {
-        ICollection<Publicacion> objs = new List<Publicacion>();
-
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            foreach (var id in ids)
-            {
-                var buscado = await ctx.Publicaciones.FindAsync(id);
-
-                if (buscado != null)
-                {
-                    buscado.Activo = false;
-                    objs.Add(buscado);
-                }
-            }
-
-            if (objs.Count > 0)
-            {
-                ctx.Publicaciones.UpdateRange(objs);
-
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                    return true;
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-            }
-            else
-                return false;
-        }
-    }
-
 }

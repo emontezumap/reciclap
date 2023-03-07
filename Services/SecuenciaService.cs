@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DB;
@@ -21,58 +20,25 @@ public class SecuenciaService
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<Secuencia> CrearSecuencia(SecuenciaDTO nuevo, ClaimsPrincipal claims)
+    public async Task<ICollection<int>> CrearSecuencia(List<SecuenciaDTO> nuevos, ClaimsPrincipal claims)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorSecuencia vc = new ValidadorSecuencia(nuevo, Operacion.Creacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Secuencia obj = new Secuencia();
-                Mapear(obj, nuevo, id, Operacion.Creacion);
-
-                try
-                {
-                    ctx.Secuencias.Add(obj);
-                    await ctx.SaveChangesAsync();
-
-                    return obj;
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-            }
-            else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
-        }
-    }
-
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteSecuencia(List<SecuenciaDTO> nuevos, ClaimsPrincipal claims)
-    {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        ICollection<int> codigos = new List<int>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
             foreach (var nuevo in nuevos)
             {
-                ValidadorSecuencia vc = new ValidadorSecuencia(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorSecuencia vc = new ValidadorSecuencia(nuevo, Operacion.Creacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
                     Secuencia obj = new Secuencia();
-                    Mapear(obj, nuevo, id, Operacion.Creacion);
+                    Mapear(obj, nuevo, idUsr, Operacion.Creacion);
                     ctx.Secuencias.Add(obj);
+                    codigos.Add(obj.Id);
                 }
                 else
                     res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
@@ -93,67 +59,36 @@ public class SecuenciaService
                     throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
-
-            return res;
-        }
-    }
-
-    public async Task<bool> ModificarSecuencia(SecuenciaDTO modif, ClaimsPrincipal claims)
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorSecuencia vc = new ValidadorSecuencia(modif, Operacion.Modificacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                var buscado = await ctx.Secuencias.FindAsync(modif.Id);
-
-                if (buscado != null)
-                {
-                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                    Mapear(buscado, modif, id, Operacion.Modificacion);
-
-                    try
-                    {
-                        await ctx.SaveChangesAsync();
-                        return true;
-                    }
-                    catch (DbUpdateException ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                }
-                else
-                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
-            }
             else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteSecuencia(List<SecuenciaDTO> modifs, ClaimsPrincipal claims)
+    public async Task<ICollection<int>> ModificarSecuencia(List<SecuenciaDTO> modifs, ClaimsPrincipal claims)
     {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
         ICollection<Secuencia> objs = new List<Secuencia>();
+        ICollection<int> codigos = new List<int>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorSecuencia vc = new ValidadorSecuencia(modif, Operacion.Modificacion, ctx, true);
+                ValidadorSecuencia vc = new ValidadorSecuencia(modif, Operacion.Modificacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Secuencia obj = new Secuencia();
-                    Mapear(obj, modif, id, Operacion.Modificacion);
-                    objs.Add(obj);
+                    var obj = await ctx.Secuencias.FindAsync(modif.Id);
+
+                    if (obj != null) {
+                        Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                        objs.Add(obj);
+                        codigos.Add(obj.Id);
+                    }
                 }
                 else
                     res.Add((modif.Id.ToString())!, rv.Mensajes!);
@@ -162,22 +97,69 @@ public class SecuenciaService
             if (res.Count == 0)
             {
                 ctx.Secuencias.UpdateRange(objs);
-                await ctx.SaveChangesAsync();
+
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
             }
-            return res;
+            else
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
-    public async Task<bool> EliminarSecuencia(int id, ClaimsPrincipal claims)
+    public async Task<ICollection<int>> EliminarSecuencia(List<int> ids, ClaimsPrincipal claims)
     {
-        SecuenciaDTO pub = new SecuenciaDTO()
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        ICollection<Secuencia> objs = new List<Secuencia>();
+        ICollection<int> codigos = new List<int>();
+
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-			Id = id,
+            foreach (var id in ids)
+            {
+                var buscado = await ctx.Secuencias.FindAsync(id);
 
-            Activo = false
-        };
+                if (buscado != null)
+                {
+                    buscado.IdModificador = idUsr;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+                    buscado.Activo = false;
+                    objs.Add(buscado);
+                    codigos.Add(buscado.Id);
+                }
+            }
 
-        return await ModificarSecuencia(pub, claims);
+            if (objs.Count > 0)
+            {
+                ctx.Secuencias.UpdateRange(objs);
+
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+            }
+
+            return codigos;
+        }
     }
 
     public void Mapear(Secuencia obj, SecuenciaDTO dto, Guid id, Operacion op)
@@ -203,45 +185,4 @@ public class SecuenciaService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-    public async Task<bool> EliminarLoteSecuencia(List<Guid> ids, ClaimsPrincipal claims)
-    {
-        ICollection<Secuencia> objs = new List<Secuencia>();
-
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            foreach (var id in ids)
-            {
-                var buscado = await ctx.Secuencias.FindAsync(id);
-
-                if (buscado != null)
-                {
-                    buscado.Activo = false;
-                    objs.Add(buscado);
-                }
-            }
-
-            if (objs.Count > 0)
-            {
-                ctx.Secuencias.UpdateRange(objs);
-
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                    return true;
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-            }
-            else
-                return false;
-        }
-    }
-
 }

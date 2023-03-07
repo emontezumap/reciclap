@@ -23,8 +23,10 @@ public class LoginService
                 u.Email == usuario.Email &&
                 u.Clave == Cripto.CodigoSHA256(usuario.Clave));
 
-            if (usr != null)
-                ctx.Entry(usr).Reference(u => u.Grupo).Load();
+            // TODO: Habilitar este codigo cuandoo se implemente la seguridad
+
+            // if (usr != null)
+            //     ctx.Entry(usr).Reference(u => u.Grupo).Load();
 
             return usr;
         }

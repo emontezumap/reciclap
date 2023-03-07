@@ -44,7 +44,8 @@ public class LoginController : ControllerBase
         {
             new Claim("Id", usr.Id.ToString()),
             new Claim(ClaimTypes.Email, usr.Email),
-            new Claim("Grupo", usr.Grupo!.Descripcion ),
+            // TODO: Habilitar este codigo cuando se implemente la seguridad
+            // new Claim("Grupo", usr.Grupo!.Descripcion ),
         };
 
         var clave = new SymmetricSecurityKey(

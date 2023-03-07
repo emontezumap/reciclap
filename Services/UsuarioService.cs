@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DB;
@@ -21,58 +20,25 @@ public class UsuarioService
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<Usuario> CrearUsuario(UsuarioDTO nuevo, ClaimsPrincipal claims)
+    public async Task<ICollection<Guid>> CrearUsuario(List<UsuarioDTO> nuevos, ClaimsPrincipal claims)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorUsuario vc = new ValidadorUsuario(nuevo, Operacion.Creacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                Usuario obj = new Usuario();
-                Mapear(obj, nuevo, id, Operacion.Creacion);
-
-                try
-                {
-                    ctx.Usuarios.Add(obj);
-                    await ctx.SaveChangesAsync();
-
-                    return obj;
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-            }
-            else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
-        }
-    }
-
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteUsuario(List<UsuarioDTO> nuevos, ClaimsPrincipal claims)
-    {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        ICollection<Guid> codigos = new List<Guid>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
             foreach (var nuevo in nuevos)
             {
-                ValidadorUsuario vc = new ValidadorUsuario(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorUsuario vc = new ValidadorUsuario(nuevo, Operacion.Creacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
                     Usuario obj = new Usuario();
-                    Mapear(obj, nuevo, id, Operacion.Creacion);
+                    Mapear(obj, nuevo, idUsr, Operacion.Creacion);
                     ctx.Usuarios.Add(obj);
+                    codigos.Add(obj.Id);
                 }
                 else
                     res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
@@ -93,67 +59,36 @@ public class UsuarioService
                     throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
-
-            return res;
-        }
-    }
-
-    public async Task<bool> ModificarUsuario(UsuarioDTO modif, ClaimsPrincipal claims)
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorUsuario vc = new ValidadorUsuario(modif, Operacion.Modificacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                var buscado = await ctx.Usuarios.FindAsync(modif.Id);
-
-                if (buscado != null)
-                {
-                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                    Mapear(buscado, modif, id, Operacion.Modificacion);
-
-                    try
-                    {
-                        await ctx.SaveChangesAsync();
-                        return true;
-                    }
-                    catch (DbUpdateException ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                }
-                else
-                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
-            }
             else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteUsuario(List<UsuarioDTO> modifs, ClaimsPrincipal claims)
+    public async Task<ICollection<Guid>> ModificarUsuario(List<UsuarioDTO> modifs, ClaimsPrincipal claims)
     {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
         ICollection<Usuario> objs = new List<Usuario>();
+        ICollection<Guid> codigos = new List<Guid>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorUsuario vc = new ValidadorUsuario(modif, Operacion.Modificacion, ctx, true);
+                ValidadorUsuario vc = new ValidadorUsuario(modif, Operacion.Modificacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    Usuario obj = new Usuario();
-                    Mapear(obj, modif, id, Operacion.Modificacion);
-                    objs.Add(obj);
+                    var obj = await ctx.Usuarios.FindAsync(modif.Id);
+
+                    if (obj != null) {
+                        Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                        objs.Add(obj);
+                        codigos.Add(obj.Id);
+                    }
                 }
                 else
                     res.Add((modif.Id.ToString())!, rv.Mensajes!);
@@ -162,106 +97,10 @@ public class UsuarioService
             if (res.Count == 0)
             {
                 ctx.Usuarios.UpdateRange(objs);
-                await ctx.SaveChangesAsync();
-            }
-            return res;
-        }
-    }
-
-    public async Task<bool> EliminarUsuario(Guid id, ClaimsPrincipal claims)
-    {
-        UsuarioDTO pub = new UsuarioDTO()
-        {
-			Id = id,
-
-            Activo = false
-        };
-
-        return await ModificarUsuario(pub, claims);
-    }
-
-    public void Mapear(Usuario obj, UsuarioDTO dto, Guid id, Operacion op)
-    {
-        if (op == Operacion.Creacion)
-        {
-			obj.Id = Guid.NewGuid();
-			obj.Nombre = dto.Nombre!;
-			obj.Apellido = dto.Apellido!;
-			obj.SegundoNombre = dto.SegundoNombre!;
-			obj.SegundoApellido = dto.SegundoApellido!;
-			obj.Perfil = dto.Perfil!;
-			obj.Direccion = dto.Direccion!;
-			obj.IdCiudad = (int?)dto.IdCiudad!;
-			obj.Telefono = dto.Telefono!;
-			obj.Telefono2 = dto.Telefono2!;
-			obj.Email = dto.Email!;
-			obj.Clave = dto.Clave!;
-			obj.Email2 = dto.Email2!;
-			obj.IdProfesion = (int?)dto.IdProfesion!;
-			obj.MaximoPublicaciones = (int)dto.MaximoPublicaciones!;
-			obj.IdGrupo = (int?)dto.IdGrupo!;
-			obj.Estatus = dto.Estatus!;
-			obj.IdTipoUsuario = (int)dto.IdTipoUsuario!;
-			obj.IdRol = (int?)dto.IdRol!;
-			obj.UltimaIp = dto.UltimaIp!;
-			obj.IdCreador = id;
-			obj.FechaCreacion = DateTime.UtcNow;
-			obj.IdModificador = id;
-			obj.FechaModificacion = DateTime.UtcNow;
-			obj.Activo = (bool?)dto.Activo!;
-        }
-        else
-        {
-			obj.Nombre = dto.Nombre == null ? obj.Nombre : dto.Nombre;
-			obj.Apellido = dto.Apellido == null ? obj.Apellido : dto.Apellido;
-			obj.SegundoNombre = dto.SegundoNombre == null ? obj.SegundoNombre : dto.SegundoNombre;
-			obj.SegundoApellido = dto.SegundoApellido == null ? obj.SegundoApellido : dto.SegundoApellido;
-			obj.Perfil = dto.Perfil == null ? obj.Perfil : dto.Perfil;
-			obj.Direccion = dto.Direccion == null ? obj.Direccion : dto.Direccion;
-			obj.IdCiudad = dto.IdCiudad == null ? obj.IdCiudad : (int?)dto.IdCiudad;
-			obj.Telefono = dto.Telefono == null ? obj.Telefono : dto.Telefono;
-			obj.Telefono2 = dto.Telefono2 == null ? obj.Telefono2 : dto.Telefono2;
-			obj.Email = dto.Email == null ? obj.Email : dto.Email;
-			obj.Clave = dto.Clave == null ? obj.Clave : dto.Clave;
-			obj.Email2 = dto.Email2 == null ? obj.Email2 : dto.Email2;
-			obj.IdProfesion = dto.IdProfesion == null ? obj.IdProfesion : (int?)dto.IdProfesion;
-			obj.MaximoPublicaciones = dto.MaximoPublicaciones == null ? obj.MaximoPublicaciones : (int)dto.MaximoPublicaciones;
-			obj.IdGrupo = dto.IdGrupo == null ? obj.IdGrupo : (int?)dto.IdGrupo;
-			obj.Estatus = dto.Estatus == null ? obj.Estatus : dto.Estatus;
-			obj.IdTipoUsuario = dto.IdTipoUsuario == null ? obj.IdTipoUsuario : (int)dto.IdTipoUsuario;
-			obj.IdRol = dto.IdRol == null ? obj.IdRol : (int?)dto.IdRol;
-			obj.UltimaIp = dto.UltimaIp == null ? obj.UltimaIp : dto.UltimaIp;
-			obj.IdModificador = id;
-			obj.FechaModificacion = DateTime.UtcNow;
-			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
-        }
-    }
-
-    public async Task<bool> EliminarLoteUsuario(List<Guid> ids, ClaimsPrincipal claims)
-    {
-        ICollection<Usuario> objs = new List<Usuario>();
-
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            foreach (var id in ids)
-            {
-                var buscado = await ctx.Usuarios.FindAsync(id);
-
-                if (buscado != null)
-                {
-                    buscado.Activo = false;
-                    objs.Add(buscado);
-                }
-            }
-
-            if (objs.Count > 0)
-            {
-                ctx.Usuarios.UpdateRange(objs);
 
                 try
                 {
                     await ctx.SaveChangesAsync();
-                    return true;
                 }
                 catch (DbUpdateException ex)
                 {
@@ -273,8 +112,110 @@ public class UsuarioService
                 }
             }
             else
-                return false;
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
+    public async Task<ICollection<Guid>> EliminarUsuario(List<Guid> ids, ClaimsPrincipal claims)
+    {
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        ICollection<Usuario> objs = new List<Usuario>();
+        ICollection<Guid> codigos = new List<Guid>();
+
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            foreach (var id in ids)
+            {
+                var buscado = await ctx.Usuarios.FindAsync(id);
+
+                if (buscado != null)
+                {
+                    buscado.IdModificador = idUsr;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+                    buscado.Activo = false;
+                    objs.Add(buscado);
+                    codigos.Add(buscado.Id);
+                }
+            }
+
+            if (objs.Count > 0)
+            {
+                ctx.Usuarios.UpdateRange(objs);
+
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+            }
+
+            return codigos;
+        }
+    }
+
+    public void Mapear(Usuario obj, UsuarioDTO dto, Guid id, Operacion op)
+    {
+        if (op == Operacion.Creacion)
+        {
+			obj.Id = Guid.NewGuid();
+			obj.Nombre = dto.Nombre!;
+			obj.Apellido = dto.Apellido!;
+			obj.SegundoNombre = (string?)dto.SegundoNombre!;
+			obj.SegundoApellido = (string?)dto.SegundoApellido!;
+			obj.Perfil = (string?)dto.Perfil!;
+			obj.Direccion = dto.Direccion!;
+			obj.IdCiudad = (int)dto.IdCiudad!;
+			obj.Telefono = dto.Telefono!;
+			obj.Telefono2 = (string?)dto.Telefono2!;
+			obj.Email = dto.Email!;
+			obj.Clave = Cripto.CodigoSHA256(dto.Clave!);
+			obj.Email2 = (string?)dto.Email2!;
+			obj.IdProfesion = (int?)dto.IdProfesion!;
+			obj.MaximoPublicaciones = (int?)dto.MaximoPublicaciones!;
+			obj.IdGrupo = (int)dto.IdGrupo!;
+			obj.Estatus = (string?)dto.Estatus!;
+			obj.IdTipoUsuario = (int)dto.IdTipoUsuario!;
+			obj.IdRol = (int?)dto.IdRol!;
+			obj.UltimaIp = (string?)dto.UltimaIp!;
+			obj.IdCreador = id;
+			obj.FechaCreacion = DateTime.UtcNow;
+			obj.IdModificador = id;
+			obj.FechaModificacion = DateTime.UtcNow;
+			obj.Activo = (bool?)dto.Activo!;
+        }
+        else
+        {
+			obj.Nombre = dto.Nombre == null ? obj.Nombre : dto.Nombre;
+			obj.Apellido = dto.Apellido == null ? obj.Apellido : dto.Apellido;
+			obj.SegundoNombre = dto.SegundoNombre == null ? obj.SegundoNombre : (string?)dto.SegundoNombre;
+			obj.SegundoApellido = dto.SegundoApellido == null ? obj.SegundoApellido : (string?)dto.SegundoApellido;
+			obj.Perfil = dto.Perfil == null ? obj.Perfil : (string?)dto.Perfil;
+			obj.Direccion = dto.Direccion == null ? obj.Direccion : dto.Direccion;
+			obj.IdCiudad = dto.IdCiudad == null ? obj.IdCiudad : (int)dto.IdCiudad;
+			obj.Telefono = dto.Telefono == null ? obj.Telefono : dto.Telefono;
+			obj.Telefono2 = dto.Telefono2 == null ? obj.Telefono2 : (string?)dto.Telefono2;
+			obj.Email = dto.Email == null ? obj.Email : dto.Email;
+			obj.Clave = dto.Clave == null ? obj.Clave : Cripto.CodigoSHA256(dto.Clave);
+			obj.Email2 = dto.Email2 == null ? obj.Email2 : (string?)dto.Email2;
+			obj.IdProfesion = dto.IdProfesion == null ? obj.IdProfesion : (int?)dto.IdProfesion;
+			obj.MaximoPublicaciones = dto.MaximoPublicaciones == null ? obj.MaximoPublicaciones : (int?)dto.MaximoPublicaciones;
+			obj.IdGrupo = dto.IdGrupo == null ? obj.IdGrupo : (int)dto.IdGrupo;
+			obj.Estatus = dto.Estatus == null ? obj.Estatus : (string?)dto.Estatus;
+			obj.IdTipoUsuario = dto.IdTipoUsuario == null ? obj.IdTipoUsuario : (int)dto.IdTipoUsuario;
+			obj.IdRol = dto.IdRol == null ? obj.IdRol : (int?)dto.IdRol;
+			obj.UltimaIp = dto.UltimaIp == null ? obj.UltimaIp : (string?)dto.UltimaIp;
+			obj.IdModificador = id;
+			obj.FechaModificacion = DateTime.UtcNow;
+			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
+        }
+    }
 }

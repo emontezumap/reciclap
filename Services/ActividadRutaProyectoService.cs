@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DB;
@@ -21,58 +20,25 @@ public class ActividadRutaProyectoService
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<ActividadRutaProyecto> CrearActividadRutaProyecto(ActividadRutaProyectoDTO nuevo, ClaimsPrincipal claims)
+    public async Task<ICollection<int>> CrearActividadRutaProyecto(List<ActividadRutaProyectoDTO> nuevos, ClaimsPrincipal claims)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorActividadRutaProyecto vc = new ValidadorActividadRutaProyecto(nuevo, Operacion.Creacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                ActividadRutaProyecto obj = new ActividadRutaProyecto();
-                Mapear(obj, nuevo, id, Operacion.Creacion);
-
-                try
-                {
-                    ctx.ActividadesRutasProyectos.Add(obj);
-                    await ctx.SaveChangesAsync();
-
-                    return obj;
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-            }
-            else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
-        }
-    }
-
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteActividadRutaProyecto(List<ActividadRutaProyectoDTO> nuevos, ClaimsPrincipal claims)
-    {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        ICollection<int> codigos = new List<int>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
             foreach (var nuevo in nuevos)
             {
-                ValidadorActividadRutaProyecto vc = new ValidadorActividadRutaProyecto(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorActividadRutaProyecto vc = new ValidadorActividadRutaProyecto(nuevo, Operacion.Creacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
                     ActividadRutaProyecto obj = new ActividadRutaProyecto();
-                    Mapear(obj, nuevo, id, Operacion.Creacion);
+                    Mapear(obj, nuevo, idUsr, Operacion.Creacion);
                     ctx.ActividadesRutasProyectos.Add(obj);
+                    codigos.Add(obj.Id);
                 }
                 else
                     res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
@@ -93,67 +59,36 @@ public class ActividadRutaProyectoService
                     throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
-
-            return res;
-        }
-    }
-
-    public async Task<bool> ModificarActividadRutaProyecto(ActividadRutaProyectoDTO modif, ClaimsPrincipal claims)
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorActividadRutaProyecto vc = new ValidadorActividadRutaProyecto(modif, Operacion.Modificacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                var buscado = await ctx.ActividadesRutasProyectos.FindAsync(modif.Id);
-
-                if (buscado != null)
-                {
-                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                    Mapear(buscado, modif, id, Operacion.Modificacion);
-
-                    try
-                    {
-                        await ctx.SaveChangesAsync();
-                        return true;
-                    }
-                    catch (DbUpdateException ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                }
-                else
-                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
-            }
             else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteActividadRutaProyecto(List<ActividadRutaProyectoDTO> modifs, ClaimsPrincipal claims)
+    public async Task<ICollection<int>> ModificarActividadRutaProyecto(List<ActividadRutaProyectoDTO> modifs, ClaimsPrincipal claims)
     {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
         ICollection<ActividadRutaProyecto> objs = new List<ActividadRutaProyecto>();
+        ICollection<int> codigos = new List<int>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorActividadRutaProyecto vc = new ValidadorActividadRutaProyecto(modif, Operacion.Modificacion, ctx, true);
+                ValidadorActividadRutaProyecto vc = new ValidadorActividadRutaProyecto(modif, Operacion.Modificacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    ActividadRutaProyecto obj = new ActividadRutaProyecto();
-                    Mapear(obj, modif, id, Operacion.Modificacion);
-                    objs.Add(obj);
+                    var obj = await ctx.ActividadesRutasProyectos.FindAsync(modif.Id);
+
+                    if (obj != null) {
+                        Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                        objs.Add(obj);
+                        codigos.Add(obj.Id);
+                    }
                 }
                 else
                     res.Add((modif.Id.ToString())!, rv.Mensajes!);
@@ -162,22 +97,69 @@ public class ActividadRutaProyectoService
             if (res.Count == 0)
             {
                 ctx.ActividadesRutasProyectos.UpdateRange(objs);
-                await ctx.SaveChangesAsync();
+
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
             }
-            return res;
+            else
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
-    public async Task<bool> EliminarActividadRutaProyecto(int id, ClaimsPrincipal claims)
+    public async Task<ICollection<int>> EliminarActividadRutaProyecto(List<int> ids, ClaimsPrincipal claims)
     {
-        ActividadRutaProyectoDTO pub = new ActividadRutaProyectoDTO()
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        ICollection<ActividadRutaProyecto> objs = new List<ActividadRutaProyecto>();
+        ICollection<int> codigos = new List<int>();
+
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-			Id = id,
+            foreach (var id in ids)
+            {
+                var buscado = await ctx.ActividadesRutasProyectos.FindAsync(id);
 
-            Activo = false
-        };
+                if (buscado != null)
+                {
+                    buscado.IdModificador = idUsr;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+                    buscado.Activo = false;
+                    objs.Add(buscado);
+                    codigos.Add(buscado.Id);
+                }
+            }
 
-        return await ModificarActividadRutaProyecto(pub, claims);
+            if (objs.Count > 0)
+            {
+                ctx.ActividadesRutasProyectos.UpdateRange(objs);
+
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+            }
+
+            return codigos;
+        }
     }
 
     public void Mapear(ActividadRutaProyecto obj, ActividadRutaProyectoDTO dto, Guid id, Operacion op)
@@ -203,45 +185,4 @@ public class ActividadRutaProyectoService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-    public async Task<bool> EliminarLoteActividadRutaProyecto(List<Guid> ids, ClaimsPrincipal claims)
-    {
-        ICollection<ActividadRutaProyecto> objs = new List<ActividadRutaProyecto>();
-
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            foreach (var id in ids)
-            {
-                var buscado = await ctx.ActividadesRutasProyectos.FindAsync(id);
-
-                if (buscado != null)
-                {
-                    buscado.Activo = false;
-                    objs.Add(buscado);
-                }
-            }
-
-            if (objs.Count > 0)
-            {
-                ctx.ActividadesRutasProyectos.UpdateRange(objs);
-
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                    return true;
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-            }
-            else
-                return false;
-        }
-    }
-
 }

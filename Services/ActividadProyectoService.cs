@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Entidades;
 using DB;
@@ -21,58 +20,25 @@ public class ActividadProyectoService
         this.ctxFactory = ctxFactory;
     }
 
-    public async Task<ActividadProyecto> CrearActividadProyecto(ActividadProyectoDTO nuevo, ClaimsPrincipal claims)
+    public async Task<ICollection<long>> CrearActividadProyecto(List<ActividadProyectoDTO> nuevos, ClaimsPrincipal claims)
     {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorActividadProyecto vc = new ValidadorActividadProyecto(nuevo, Operacion.Creacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                ActividadProyecto obj = new ActividadProyecto();
-                Mapear(obj, nuevo, id, Operacion.Creacion);
-
-                try
-                {
-                    ctx.ActividadesProyectos.Add(obj);
-                    await ctx.SaveChangesAsync();
-
-                    return obj;
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-            }
-            else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
-        }
-    }
-
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> CrearLoteActividadProyecto(List<ActividadProyectoDTO> nuevos, ClaimsPrincipal claims)
-    {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        ICollection<long> codigos = new List<long>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
-            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-
             foreach (var nuevo in nuevos)
             {
-                ValidadorActividadProyecto vc = new ValidadorActividadProyecto(nuevo, Operacion.Creacion, ctx, true);
+                ValidadorActividadProyecto vc = new ValidadorActividadProyecto(nuevo, Operacion.Creacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
                     ActividadProyecto obj = new ActividadProyecto();
-                    Mapear(obj, nuevo, id, Operacion.Creacion);
+                    Mapear(obj, nuevo, idUsr, Operacion.Creacion);
                     ctx.ActividadesProyectos.Add(obj);
+                    codigos.Add(obj.Id);
                 }
                 else
                     res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
@@ -93,67 +59,36 @@ public class ActividadProyectoService
                     throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
                 }
             }
-
-            return res;
-        }
-    }
-
-    public async Task<bool> ModificarActividadProyecto(ActividadProyectoDTO modif, ClaimsPrincipal claims)
-    {
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            ValidadorActividadProyecto vc = new ValidadorActividadProyecto(modif, Operacion.Modificacion, ctx);
-            ResultadoValidacion rv = await vc.Validar();
-
-            if (rv.ValidacionOk)
-            {
-                var buscado = await ctx.ActividadesProyectos.FindAsync(modif.Id);
-
-                if (buscado != null)
-                {
-                    Guid id = Guid.Parse(claims.FindFirstValue("Id"));
-                    Mapear(buscado, modif, id, Operacion.Modificacion);
-
-                    try
-                    {
-                        await ctx.SaveChangesAsync();
-                        return true;
-                    }
-                    catch (DbUpdateException ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                    }
-                }
-                else
-                    throw (new Excepcionador()).ExcepcionRegistroEliminado();
-            }
             else
-                throw (new Excepcionador(rv)).ExcepcionDatosNoValidos();
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
-    public async Task<Dictionary<string, Dictionary<string, HashSet<CodigosError>>>> ModificarLoteActividadProyecto(List<ActividadProyectoDTO> modifs, ClaimsPrincipal claims)
+    public async Task<ICollection<long>> ModificarActividadProyecto(List<ActividadProyectoDTO> modifs, ClaimsPrincipal claims)
     {
-        Dictionary<string, Dictionary<string, HashSet<CodigosError>>> res = new Dictionary<string, Dictionary<string, HashSet<CodigosError>>>();
-        Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
         ICollection<ActividadProyecto> objs = new List<ActividadProyecto>();
+        ICollection<long> codigos = new List<long>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var modif in modifs)
             {
-                ValidadorActividadProyecto vc = new ValidadorActividadProyecto(modif, Operacion.Modificacion, ctx, true);
+                ValidadorActividadProyecto vc = new ValidadorActividadProyecto(modif, Operacion.Modificacion, ctx);
                 ResultadoValidacion rv = await vc.Validar();
 
                 if (rv.ValidacionOk)
                 {
-                    ActividadProyecto obj = new ActividadProyecto();
-                    Mapear(obj, modif, id, Operacion.Modificacion);
-                    objs.Add(obj);
+                    var obj = await ctx.ActividadesProyectos.FindAsync(modif.Id);
+
+                    if (obj != null) {
+                        Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                        objs.Add(obj);
+                        codigos.Add(obj.Id);
+                    }
                 }
                 else
                     res.Add((modif.Id.ToString())!, rv.Mensajes!);
@@ -162,22 +97,69 @@ public class ActividadProyectoService
             if (res.Count == 0)
             {
                 ctx.ActividadesProyectos.UpdateRange(objs);
-                await ctx.SaveChangesAsync();
+
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
             }
-            return res;
+            else
+                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+
+            return codigos;
         }
     }
 
-    public async Task<bool> EliminarActividadProyecto(long id, ClaimsPrincipal claims)
+    public async Task<ICollection<long>> EliminarActividadProyecto(List<long> ids, ClaimsPrincipal claims)
     {
-        ActividadProyectoDTO pub = new ActividadProyectoDTO()
+        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        ICollection<ActividadProyecto> objs = new List<ActividadProyecto>();
+        ICollection<long> codigos = new List<long>();
+
+        using (var ctx = ctxFactory.CreateDbContext())
         {
-			Id = id,
+            foreach (var id in ids)
+            {
+                var buscado = await ctx.ActividadesProyectos.FindAsync(id);
 
-            Activo = false
-        };
+                if (buscado != null)
+                {
+                    buscado.IdModificador = idUsr;
+                    buscado.FechaModificacion = DateTime.UtcNow;
+                    buscado.Activo = false;
+                    objs.Add(buscado);
+                    codigos.Add(buscado.Id);
+                }
+            }
 
-        return await ModificarActividadProyecto(pub, claims);
+            if (objs.Count > 0)
+            {
+                ctx.ActividadesProyectos.UpdateRange(objs);
+
+                try
+                {
+                    await ctx.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+                catch (Exception ex)
+                {
+                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                }
+            }
+
+            return codigos;
+        }
     }
 
     public void Mapear(ActividadProyecto obj, ActividadProyectoDTO dto, Guid id, Operacion op)
@@ -245,45 +227,4 @@ public class ActividadProyectoService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-    public async Task<bool> EliminarLoteActividadProyecto(List<Guid> ids, ClaimsPrincipal claims)
-    {
-        ICollection<ActividadProyecto> objs = new List<ActividadProyecto>();
-
-        using (var ctx = ctxFactory.CreateDbContext())
-        {
-            foreach (var id in ids)
-            {
-                var buscado = await ctx.ActividadesProyectos.FindAsync(id);
-
-                if (buscado != null)
-                {
-                    buscado.Activo = false;
-                    objs.Add(buscado);
-                }
-            }
-
-            if (objs.Count > 0)
-            {
-                ctx.ActividadesProyectos.UpdateRange(objs);
-
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                    return true;
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-            }
-            else
-                return false;
-        }
-    }
-
 }

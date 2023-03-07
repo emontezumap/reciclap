@@ -6,7 +6,7 @@ public class PublicacionDTO
 	public string? Titulo { get; set; } = null;
 	public string? Descripcion { get; set; } = null;
 	public DateTime? Fecha { get; set; } = null;
-	public int? Consecutivo { get; set; } = null;
+	public long? Consecutivo { get; set; } = null;
 	public Guid? IdPublicador { get; set; } = null;
 	public int? Gustan { get; set; } = null;
 	public int? NoGustan { get; set; } = null;
@@ -26,7 +26,7 @@ public class PublicacionDTO
 	public string? Direccion { get; set; } = null;
 	public string? ReferenciasDireccion { get; set; } = null;
 	public DateTime? FechaDisponible { get; set; } = null;
-	public int? TotalArticulos { get; set; } = null;
+	public decimal? TotalArticulos { get; set; } = null;
 	public Guid? IdProyecto { get; set; } = null;
 	public decimal? CostoEstimado { get; set; } = null;
 	public string? IdMonedaCostoEstimado { get; set; } = null;
