@@ -5,7 +5,7 @@ using DTOs;
 using System.Security.Claims;
 using Herramientas;
 using Validadores;
-using HotChocolate.Types;
+using FluentValidation.Results;
 
 namespace Services;
 
@@ -14,53 +14,46 @@ namespace Services;
 public class ActividadRutaProyectoService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
+    private readonly ValidadorActividadRutaProyectoRequeridos validadorReqs;
+    private readonly ValidadorActividadRutaProyecto validador;
 
-    public ActividadRutaProyectoService(IDbContextFactory<SSDBContext> ctxFactory)
+    public ActividadRutaProyectoService(IDbContextFactory<SSDBContext> ctxFactory, ValidadorActividadRutaProyectoRequeridos validadorReqs, ValidadorActividadRutaProyecto validador)
     {
         this.ctxFactory = ctxFactory;
+        this.validadorReqs = validadorReqs;
+        this.validador = validador;
     }
 
     public async Task<ICollection<int>> CrearActividadRutaProyecto(List<ActividadRutaProyectoDTO> nuevos, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
-        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<int> codigos = new List<int>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var nuevo in nuevos)
             {
-                ValidadorActividadRutaProyecto vc = new ValidadorActividadRutaProyecto(nuevo, Operacion.Creacion, ctx);
-                ResultadoValidacion rv = await vc.Validar();
 
-                if (rv.ValidacionOk)
-                {
-                    ActividadRutaProyecto obj = new ActividadRutaProyecto();
-                    Mapear(obj, nuevo, idUsr, Operacion.Creacion);
-                    ctx.ActividadesRutasProyectos.Add(obj);
-                    codigos.Add(obj.Id);
-                }
-                else
-                    res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
+                ValidarDatos(nuevo, Operacion.Creacion);
+
+                ActividadRutaProyecto obj = new ActividadRutaProyecto();
+                Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+                var v = ctx.ActividadesRutasProyectos.Add(obj);
+                codigos.Add(v.Entity.Id);
             }
 
-            if (res.Count == 0)
+            try
             {
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
+                await ctx.SaveChangesAsync();
             }
-            else
-                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
 
             return codigos;
         }
@@ -68,8 +61,7 @@ public class ActividadRutaProyectoService
 
     public async Task<ICollection<int>> ModificarActividadRutaProyecto(List<ActividadRutaProyectoDTO> modifs, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
-        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<ActividadRutaProyecto> objs = new List<ActividadRutaProyecto>();
         ICollection<int> codigos = new List<int>();
 
@@ -77,42 +69,34 @@ public class ActividadRutaProyectoService
         {
             foreach (var modif in modifs)
             {
-                ValidadorActividadRutaProyecto vc = new ValidadorActividadRutaProyecto(modif, Operacion.Modificacion, ctx);
-                ResultadoValidacion rv = await vc.Validar();
+                if (modif.Id == null)
+                    throw new GraphQLException("Id: " + CodigosError.ERR_CAMPO_REQUERIDO.ToString());
 
-                if (rv.ValidacionOk)
-                {
-                    var obj = await ctx.ActividadesRutasProyectos.FindAsync(modif.Id);
+                ValidarDatos(modif);
 
-                    if (obj != null) {
-                        Mapear(obj, modif, idUsr, Operacion.Modificacion);
-                        objs.Add(obj);
-                        codigos.Add(obj.Id);
-                    }
+                var obj = await ctx.ActividadesRutasProyectos.FindAsync(modif.Id);
+
+                if (obj != null) {
+                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    objs.Add(obj);
+                    codigos.Add(obj.Id);
                 }
-                else
-                    res.Add((modif.Id.ToString())!, rv.Mensajes!);
             }
 
-            if (res.Count == 0)
+            ctx.ActividadesRutasProyectos.UpdateRange(objs);
+
+            try
             {
-                ctx.ActividadesRutasProyectos.UpdateRange(objs);
-
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
+                await ctx.SaveChangesAsync();
             }
-            else
-                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
 
             return codigos;
         }
@@ -120,7 +104,7 @@ public class ActividadRutaProyectoService
 
     public async Task<ICollection<int>> EliminarActividadRutaProyecto(List<int> ids, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<ActividadRutaProyecto> objs = new List<ActividadRutaProyecto>();
         ICollection<int> codigos = new List<int>();
 
@@ -150,16 +134,34 @@ public class ActividadRutaProyectoService
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
                 }
                 catch (Exception ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
                 }
             }
 
             return codigos;
         }
+    }
+
+    private void ValidarDatos(ActividadRutaProyectoDTO dto, Operacion op = Operacion.Modificacion)
+    {
+        ValidationResult vr;
+
+        if (op == Operacion.Creacion)
+        {
+            vr = validadorReqs.Validate(dto);
+
+            if (!vr.IsValid)
+                throw new GraphQLException(vr.ToString());
+        }
+
+        vr = validador.Validate(dto);
+
+        if (!vr.IsValid)
+            throw new GraphQLException(vr.ToString());
     }
 
     public void Mapear(ActividadRutaProyecto obj, ActividadRutaProyectoDTO dto, Guid id, Operacion op)
@@ -183,6 +185,19 @@ public class ActividadRutaProyectoService
 			obj.IdModificador = id;
 			obj.FechaModificacion = DateTime.UtcNow;
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
+        }
+    }
+
+    private Guid AutenticarUsuario(ClaimsPrincipal claims)
+    {
+        try
+        {
+            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+            return id;
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw (new Excepcionador(ex)).ExcepcionAutenticacion();
         }
     }
 }

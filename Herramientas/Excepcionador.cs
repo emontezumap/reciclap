@@ -1,24 +1,19 @@
-using HotChocolate;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace Herramientas;
 
 public class Excepcionador
 {
-    private readonly Dictionary<string, Dictionary<string, HashSet<string>>>? rvs;
-    private const string MENSAJE_ERROR_POR_DEFECTO = "Error no especificado";
-    private const string MENSAJE_ERROR_REGISTRO_ELIMINADO = "El registro fue eliminado";
-    private const string MENSAJE_ERROR_DATOS_NO_VALIDOS = "Datos no válidos";
-    private const string MENSAJE_ERROR_REGISTRO_NO_EXISTE = "El registro especificado no existe";
-    public Excepcionador() { }
+    Exception? ex;
 
-    public Excepcionador(Dictionary<string, Dictionary<string, HashSet<string>>> rvs)
+    public Excepcionador(Exception ex)
     {
-        this.rvs = rvs;
+        this.ex = ex;
     }
 
-    public GraphQLException ProcesarExcepcionActualizacionDB(Exception? ex)
+
+    public GraphQLException ProcesarExcepcionActualizacionDB()
     {
         string mensaje;
 
@@ -37,23 +32,38 @@ public class Excepcionador
         List<string> listaReferencia = new List<string>() { "conflicted", "FOREIGN KEY constraint" };
 
         if (listaDuplicados.All(p => mensaje.Contains(p, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            string dup2 = @"duplicate key value is (\(.+\))";
+            Match match = Regex.Match(mensaje, dup2, RegexOptions.IgnoreCase);
+            string valor = match.Groups[1].Value;
+
             error = (ErrorBuilder)ErrorBuilder.New()
-               .SetMessage("Registro duplicado")
+               .SetMessage("Registro duplicado: " + valor)
                .SetCode(CodigosError.ERR_REGISTRO_DUPLICADO.ToString());
+        }
         else if (listaReferencia.All(p => mensaje.Contains(p, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            string inex = @"conflicted with the FOREIGN KEY constraint .+(FK_.+)\. ";
+            Match match = Regex.Match(mensaje, inex, RegexOptions.IgnoreCase);
+            string fk = match.Groups[1].Value.Replace("\\", "").Replace("\"", "");
+            string valor = fk.Substring(fk.LastIndexOf("_id_") + 1);
+
             error = (ErrorBuilder)ErrorBuilder.New()
-               .SetMessage("Id de objeto inexistente")
+               .SetMessage("Id de objeto inexistente: " + valor)
                .SetCode(CodigosError.ERR_ID_INEXISTENTE.ToString());
+        }
         else
+        {
             error = (ErrorBuilder)ErrorBuilder.New()
                .SetMessage("Error no especificado")
                .SetMessage("Mensaje original:" + mensaje)
                .SetCode(CodigosError.ERR_ERROR_NO_ESPECIFICADO.ToString());
+        }
 
         return new GraphQLException(error.Build());
     }
 
-    public GraphQLException ExcepcionRegistroNoExiste()
+    private GraphQLException ExcepcionRegistroNoExiste()
     {
         var error = ErrorBuilder.New()
             .SetMessage("Registro eliminado")
@@ -63,17 +73,13 @@ public class Excepcionador
         return new GraphQLException(error);
     }
 
-    public GraphQLException ExcepcionDatosNoValidos()
+    public GraphQLException ExcepcionAutenticacion()
     {
-        var error = ErrorBuilder.New();
-        error.SetMessage("Datos no válidos");
-        error.SetCode(CodigosError.ERR_DATOS_NO_VALIDOS.ToString());
+        var error = ErrorBuilder.New()
+            .SetMessage("Usuario no autenticado")
+            .SetCode(CodigosError.ERR_NO_AUTENTICADO.ToString())
+            .Build();
 
-        if (rvs != null)
-        {
-            foreach (KeyValuePair<string, Dictionary<string, HashSet<string>>> obj in rvs)
-                error.SetExtension(obj.Key, JsonConvert.SerializeObject(obj.Value));
-        }
-        return new GraphQLException(error.Build());
+        return new GraphQLException(error);
     }
 }

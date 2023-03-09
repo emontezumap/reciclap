@@ -5,7 +5,7 @@ using DTOs;
 using System.Security.Claims;
 using Herramientas;
 using Validadores;
-using HotChocolate.Types;
+using FluentValidation.Results;
 
 namespace Services;
 
@@ -14,53 +14,46 @@ namespace Services;
 public class BitacoraProyectoService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
+    private readonly ValidadorBitacoraProyectoRequeridos validadorReqs;
+    private readonly ValidadorBitacoraProyecto validador;
 
-    public BitacoraProyectoService(IDbContextFactory<SSDBContext> ctxFactory)
+    public BitacoraProyectoService(IDbContextFactory<SSDBContext> ctxFactory, ValidadorBitacoraProyectoRequeridos validadorReqs, ValidadorBitacoraProyecto validador)
     {
         this.ctxFactory = ctxFactory;
+        this.validadorReqs = validadorReqs;
+        this.validador = validador;
     }
 
     public async Task<ICollection<long>> CrearBitacoraProyecto(List<BitacoraProyectoDTO> nuevos, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
-        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<long> codigos = new List<long>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var nuevo in nuevos)
             {
-                ValidadorBitacoraProyecto vc = new ValidadorBitacoraProyecto(nuevo, Operacion.Creacion, ctx);
-                ResultadoValidacion rv = await vc.Validar();
 
-                if (rv.ValidacionOk)
-                {
-                    BitacoraProyecto obj = new BitacoraProyecto();
-                    Mapear(obj, nuevo, idUsr, Operacion.Creacion);
-                    ctx.BitacorasProyectos.Add(obj);
-                    codigos.Add(obj.Id);
-                }
-                else
-                    res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
+                ValidarDatos(nuevo, Operacion.Creacion);
+
+                BitacoraProyecto obj = new BitacoraProyecto();
+                Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+                var v = ctx.BitacorasProyectos.Add(obj);
+                codigos.Add(v.Entity.Id);
             }
 
-            if (res.Count == 0)
+            try
             {
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
+                await ctx.SaveChangesAsync();
             }
-            else
-                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
 
             return codigos;
         }
@@ -68,8 +61,7 @@ public class BitacoraProyectoService
 
     public async Task<ICollection<long>> ModificarBitacoraProyecto(List<BitacoraProyectoDTO> modifs, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
-        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<BitacoraProyecto> objs = new List<BitacoraProyecto>();
         ICollection<long> codigos = new List<long>();
 
@@ -77,42 +69,34 @@ public class BitacoraProyectoService
         {
             foreach (var modif in modifs)
             {
-                ValidadorBitacoraProyecto vc = new ValidadorBitacoraProyecto(modif, Operacion.Modificacion, ctx);
-                ResultadoValidacion rv = await vc.Validar();
+                if (modif.Id == null)
+                    throw new GraphQLException("Id: " + CodigosError.ERR_CAMPO_REQUERIDO.ToString());
 
-                if (rv.ValidacionOk)
-                {
-                    var obj = await ctx.BitacorasProyectos.FindAsync(modif.Id);
+                ValidarDatos(modif);
 
-                    if (obj != null) {
-                        Mapear(obj, modif, idUsr, Operacion.Modificacion);
-                        objs.Add(obj);
-                        codigos.Add(obj.Id);
-                    }
+                var obj = await ctx.BitacorasProyectos.FindAsync(modif.Id);
+
+                if (obj != null) {
+                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    objs.Add(obj);
+                    codigos.Add(obj.Id);
                 }
-                else
-                    res.Add((modif.Id.ToString())!, rv.Mensajes!);
             }
 
-            if (res.Count == 0)
+            ctx.BitacorasProyectos.UpdateRange(objs);
+
+            try
             {
-                ctx.BitacorasProyectos.UpdateRange(objs);
-
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
+                await ctx.SaveChangesAsync();
             }
-            else
-                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
 
             return codigos;
         }
@@ -120,7 +104,7 @@ public class BitacoraProyectoService
 
     public async Task<ICollection<long>> EliminarBitacoraProyecto(List<long> ids, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<BitacoraProyecto> objs = new List<BitacoraProyecto>();
         ICollection<long> codigos = new List<long>();
 
@@ -150,16 +134,34 @@ public class BitacoraProyectoService
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
                 }
                 catch (Exception ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
                 }
             }
 
             return codigos;
         }
+    }
+
+    private void ValidarDatos(BitacoraProyectoDTO dto, Operacion op = Operacion.Modificacion)
+    {
+        ValidationResult vr;
+
+        if (op == Operacion.Creacion)
+        {
+            vr = validadorReqs.Validate(dto);
+
+            if (!vr.IsValid)
+                throw new GraphQLException(vr.ToString());
+        }
+
+        vr = validador.Validate(dto);
+
+        if (!vr.IsValid)
+            throw new GraphQLException(vr.ToString());
     }
 
     public void Mapear(BitacoraProyecto obj, BitacoraProyectoDTO dto, Guid id, Operacion op)
@@ -189,6 +191,19 @@ public class BitacoraProyectoService
 			obj.IdModificador = id;
 			obj.FechaModificacion = DateTime.UtcNow;
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
+        }
+    }
+
+    private Guid AutenticarUsuario(ClaimsPrincipal claims)
+    {
+        try
+        {
+            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+            return id;
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw (new Excepcionador(ex)).ExcepcionAutenticacion();
         }
     }
 }

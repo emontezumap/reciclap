@@ -5,7 +5,7 @@ using DTOs;
 using System.Security.Claims;
 using Herramientas;
 using Validadores;
-using HotChocolate.Types;
+using FluentValidation.Results;
 
 namespace Services;
 
@@ -14,53 +14,46 @@ namespace Services;
 public class ActividadProyectoService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
+    private readonly ValidadorActividadProyectoRequeridos validadorReqs;
+    private readonly ValidadorActividadProyecto validador;
 
-    public ActividadProyectoService(IDbContextFactory<SSDBContext> ctxFactory)
+    public ActividadProyectoService(IDbContextFactory<SSDBContext> ctxFactory, ValidadorActividadProyectoRequeridos validadorReqs, ValidadorActividadProyecto validador)
     {
         this.ctxFactory = ctxFactory;
+        this.validadorReqs = validadorReqs;
+        this.validador = validador;
     }
 
     public async Task<ICollection<long>> CrearActividadProyecto(List<ActividadProyectoDTO> nuevos, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
-        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<long> codigos = new List<long>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var nuevo in nuevos)
             {
-                ValidadorActividadProyecto vc = new ValidadorActividadProyecto(nuevo, Operacion.Creacion, ctx);
-                ResultadoValidacion rv = await vc.Validar();
 
-                if (rv.ValidacionOk)
-                {
-                    ActividadProyecto obj = new ActividadProyecto();
-                    Mapear(obj, nuevo, idUsr, Operacion.Creacion);
-                    ctx.ActividadesProyectos.Add(obj);
-                    codigos.Add(obj.Id);
-                }
-                else
-                    res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
+                ValidarDatos(nuevo, Operacion.Creacion);
+
+                ActividadProyecto obj = new ActividadProyecto();
+                Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+                var v = ctx.ActividadesProyectos.Add(obj);
+                codigos.Add(v.Entity.Id);
             }
 
-            if (res.Count == 0)
+            try
             {
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
+                await ctx.SaveChangesAsync();
             }
-            else
-                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
 
             return codigos;
         }
@@ -68,8 +61,7 @@ public class ActividadProyectoService
 
     public async Task<ICollection<long>> ModificarActividadProyecto(List<ActividadProyectoDTO> modifs, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
-        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<ActividadProyecto> objs = new List<ActividadProyecto>();
         ICollection<long> codigos = new List<long>();
 
@@ -77,42 +69,34 @@ public class ActividadProyectoService
         {
             foreach (var modif in modifs)
             {
-                ValidadorActividadProyecto vc = new ValidadorActividadProyecto(modif, Operacion.Modificacion, ctx);
-                ResultadoValidacion rv = await vc.Validar();
+                if (modif.Id == null)
+                    throw new GraphQLException("Id: " + CodigosError.ERR_CAMPO_REQUERIDO.ToString());
 
-                if (rv.ValidacionOk)
-                {
-                    var obj = await ctx.ActividadesProyectos.FindAsync(modif.Id);
+                ValidarDatos(modif);
 
-                    if (obj != null) {
-                        Mapear(obj, modif, idUsr, Operacion.Modificacion);
-                        objs.Add(obj);
-                        codigos.Add(obj.Id);
-                    }
+                var obj = await ctx.ActividadesProyectos.FindAsync(modif.Id);
+
+                if (obj != null) {
+                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    objs.Add(obj);
+                    codigos.Add(obj.Id);
                 }
-                else
-                    res.Add((modif.Id.ToString())!, rv.Mensajes!);
             }
 
-            if (res.Count == 0)
+            ctx.ActividadesProyectos.UpdateRange(objs);
+
+            try
             {
-                ctx.ActividadesProyectos.UpdateRange(objs);
-
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
+                await ctx.SaveChangesAsync();
             }
-            else
-                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
 
             return codigos;
         }
@@ -120,7 +104,7 @@ public class ActividadProyectoService
 
     public async Task<ICollection<long>> EliminarActividadProyecto(List<long> ids, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<ActividadProyecto> objs = new List<ActividadProyecto>();
         ICollection<long> codigos = new List<long>();
 
@@ -150,16 +134,34 @@ public class ActividadProyectoService
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
                 }
                 catch (Exception ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
                 }
             }
 
             return codigos;
         }
+    }
+
+    private void ValidarDatos(ActividadProyectoDTO dto, Operacion op = Operacion.Modificacion)
+    {
+        ValidationResult vr;
+
+        if (op == Operacion.Creacion)
+        {
+            vr = validadorReqs.Validate(dto);
+
+            if (!vr.IsValid)
+                throw new GraphQLException(vr.ToString());
+        }
+
+        vr = validador.Validate(dto);
+
+        if (!vr.IsValid)
+            throw new GraphQLException(vr.ToString());
     }
 
     public void Mapear(ActividadProyecto obj, ActividadProyectoDTO dto, Guid id, Operacion op)
@@ -225,6 +227,19 @@ public class ActividadProyectoService
 			obj.IdModificador = id;
 			obj.FechaModificacion = DateTime.UtcNow;
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
+        }
+    }
+
+    private Guid AutenticarUsuario(ClaimsPrincipal claims)
+    {
+        try
+        {
+            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+            return id;
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw (new Excepcionador(ex)).ExcepcionAutenticacion();
         }
     }
 }

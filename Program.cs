@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Services;
 using DB;
+using FluentValidation.AspNetCore;
+using Validadores;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +41,40 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Admin", policy => policy.RequireClaim("Grupo", "Administradores"));
     options.AddPolicy("Usuarios", policy => policy.RequireClaim("Grupo", "Usuarios"));
 });
+
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+builder.Services.AddTransient<ValidadorActividadProyectoRequeridos>();
+builder.Services.AddTransient<ValidadorActividadRutaProyectoRequeridos>();
+builder.Services.AddTransient<ValidadorBitacoraProyectoRequeridos>();
+builder.Services.AddTransient<ValidadorChatRequeridos>();
+builder.Services.AddTransient<ValidadorComentarioRequeridos>();
+builder.Services.AddTransient<ValidadorMonedaRequeridos>();
+builder.Services.AddTransient<ValidadorPersonalRequeridos>();
+builder.Services.AddTransient<ValidadorProyectoRequeridos>();
+builder.Services.AddTransient<ValidadorPublicacionRequeridos>();
+builder.Services.AddTransient<ValidadorRastreoPublicacionRequeridos>();
+builder.Services.AddTransient<ValidadorRecursoPublicacionRequeridos>();
+builder.Services.AddTransient<ValidadorSecuenciaRequeridos>();
+builder.Services.AddTransient<ValidadorTablaRequeridos>();
+builder.Services.AddTransient<ValidadorUsuarioRequeridos>();
+builder.Services.AddTransient<ValidadorVariosRequeridos>();
+builder.Services.AddTransient<ValidadorVersionApiRequeridos>();
+builder.Services.AddTransient<ValidadorActividadProyecto>();
+builder.Services.AddTransient<ValidadorActividadRutaProyecto>();
+builder.Services.AddTransient<ValidadorBitacoraProyecto>();
+builder.Services.AddTransient<ValidadorChat>();
+builder.Services.AddTransient<ValidadorComentario>();
+builder.Services.AddTransient<ValidadorMoneda>();
+builder.Services.AddTransient<ValidadorPersonal>();
+builder.Services.AddTransient<ValidadorProyecto>();
+builder.Services.AddTransient<ValidadorPublicacion>();
+builder.Services.AddTransient<ValidadorRastreoPublicacion>();
+builder.Services.AddTransient<ValidadorRecursoPublicacion>();
+builder.Services.AddTransient<ValidadorSecuencia>();
+builder.Services.AddTransient<ValidadorTabla>();
+builder.Services.AddTransient<ValidadorUsuario>();
+builder.Services.AddTransient<ValidadorVarios>();
+builder.Services.AddTransient<ValidadorVersionApi>();
 
 builder.Services.AddGraphQLServer()
     .AddAuthorization()

@@ -5,7 +5,7 @@ using DTOs;
 using System.Security.Claims;
 using Herramientas;
 using Validadores;
-using HotChocolate.Types;
+using FluentValidation.Results;
 
 namespace Services;
 
@@ -14,53 +14,46 @@ namespace Services;
 public class ComentarioService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
+    private readonly ValidadorComentarioRequeridos validadorReqs;
+    private readonly ValidadorComentario validador;
 
-    public ComentarioService(IDbContextFactory<SSDBContext> ctxFactory)
+    public ComentarioService(IDbContextFactory<SSDBContext> ctxFactory, ValidadorComentarioRequeridos validadorReqs, ValidadorComentario validador)
     {
         this.ctxFactory = ctxFactory;
+        this.validadorReqs = validadorReqs;
+        this.validador = validador;
     }
 
     public async Task<ICollection<Guid>> CrearComentario(List<ComentarioDTO> nuevos, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
-        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<Guid> codigos = new List<Guid>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var nuevo in nuevos)
             {
-                ValidadorComentario vc = new ValidadorComentario(nuevo, Operacion.Creacion, ctx);
-                ResultadoValidacion rv = await vc.Validar();
 
-                if (rv.ValidacionOk)
-                {
-                    Comentario obj = new Comentario();
-                    Mapear(obj, nuevo, idUsr, Operacion.Creacion);
-                    ctx.Comentarios.Add(obj);
-                    codigos.Add(obj.Id);
-                }
-                else
-                    res.Add((nuevo.Id.ToString())!, rv.Mensajes!);
+                ValidarDatos(nuevo, Operacion.Creacion);
+
+                Comentario obj = new Comentario();
+                Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+                var v = ctx.Comentarios.Add(obj);
+                codigos.Add(v.Entity.Id);
             }
 
-            if (res.Count == 0)
+            try
             {
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
+                await ctx.SaveChangesAsync();
             }
-            else
-                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
 
             return codigos;
         }
@@ -68,8 +61,7 @@ public class ComentarioService
 
     public async Task<ICollection<Guid>> ModificarComentario(List<ComentarioDTO> modifs, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
-        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<Comentario> objs = new List<Comentario>();
         ICollection<Guid> codigos = new List<Guid>();
 
@@ -77,42 +69,34 @@ public class ComentarioService
         {
             foreach (var modif in modifs)
             {
-                ValidadorComentario vc = new ValidadorComentario(modif, Operacion.Modificacion, ctx);
-                ResultadoValidacion rv = await vc.Validar();
+                if (modif.Id == null)
+                    throw new GraphQLException("Id: " + CodigosError.ERR_CAMPO_REQUERIDO.ToString());
 
-                if (rv.ValidacionOk)
-                {
-                    var obj = await ctx.Comentarios.FindAsync(modif.Id);
+                ValidarDatos(modif);
 
-                    if (obj != null) {
-                        Mapear(obj, modif, idUsr, Operacion.Modificacion);
-                        objs.Add(obj);
-                        codigos.Add(obj.Id);
-                    }
+                var obj = await ctx.Comentarios.FindAsync(modif.Id);
+
+                if (obj != null) {
+                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    objs.Add(obj);
+                    codigos.Add(obj.Id);
                 }
-                else
-                    res.Add((modif.Id.ToString())!, rv.Mensajes!);
             }
 
-            if (res.Count == 0)
+            ctx.Comentarios.UpdateRange(objs);
+
+            try
             {
-                ctx.Comentarios.UpdateRange(objs);
-
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
+                await ctx.SaveChangesAsync();
             }
-            else
-                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
 
             return codigos;
         }
@@ -120,7 +104,7 @@ public class ComentarioService
 
     public async Task<ICollection<Guid>> EliminarComentario(List<Guid> ids, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<Comentario> objs = new List<Comentario>();
         ICollection<Guid> codigos = new List<Guid>();
 
@@ -150,16 +134,34 @@ public class ComentarioService
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
                 }
                 catch (Exception ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
                 }
             }
 
             return codigos;
         }
+    }
+
+    private void ValidarDatos(ComentarioDTO dto, Operacion op = Operacion.Modificacion)
+    {
+        ValidationResult vr;
+
+        if (op == Operacion.Creacion)
+        {
+            vr = validadorReqs.Validate(dto);
+
+            if (!vr.IsValid)
+                throw new GraphQLException(vr.ToString());
+        }
+
+        vr = validador.Validate(dto);
+
+        if (!vr.IsValid)
+            throw new GraphQLException(vr.ToString());
     }
 
     public void Mapear(Comentario obj, ComentarioDTO dto, Guid id, Operacion op)
@@ -188,6 +190,19 @@ public class ComentarioService
 			obj.IdModificador = id;
 			obj.FechaModificacion = DateTime.UtcNow;
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
+        }
+    }
+
+    private Guid AutenticarUsuario(ClaimsPrincipal claims)
+    {
+        try
+        {
+            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+            return id;
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw (new Excepcionador(ex)).ExcepcionAutenticacion();
         }
     }
 }

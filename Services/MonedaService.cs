@@ -5,7 +5,7 @@ using DTOs;
 using System.Security.Claims;
 using Herramientas;
 using Validadores;
-using HotChocolate.Types;
+using FluentValidation.Results;
 
 namespace Services;
 
@@ -14,53 +14,48 @@ namespace Services;
 public class MonedaService
 {
     private readonly IDbContextFactory<SSDBContext> ctxFactory;
+    private readonly ValidadorMonedaRequeridos validadorReqs;
+    private readonly ValidadorMoneda validador;
 
-    public MonedaService(IDbContextFactory<SSDBContext> ctxFactory)
+    public MonedaService(IDbContextFactory<SSDBContext> ctxFactory, ValidadorMonedaRequeridos validadorReqs, ValidadorMoneda validador)
     {
         this.ctxFactory = ctxFactory;
+        this.validadorReqs = validadorReqs;
+        this.validador = validador;
     }
 
     public async Task<ICollection<string>> CrearMoneda(List<MonedaDTO> nuevos, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
-        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<string> codigos = new List<string>();
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
             foreach (var nuevo in nuevos)
             {
-                ValidadorMoneda vc = new ValidadorMoneda(nuevo, Operacion.Creacion, ctx);
-                ResultadoValidacion rv = await vc.Validar();
+                if (nuevo.Id == null || nuevo.Id == "")
+                    throw new GraphQLException("Id: " + CodigosError.ERR_CAMPO_REQUERIDO.ToString());
 
-                if (rv.ValidacionOk)
-                {
-                    Moneda obj = new Moneda();
-                    Mapear(obj, nuevo, idUsr, Operacion.Creacion);
-                    ctx.Monedas.Add(obj);
-                    codigos.Add(obj.Id);
-                }
-                else
-                    res.Add(nuevo.Id!, rv.Mensajes!);
+                ValidarDatos(nuevo, Operacion.Creacion);
+
+                Moneda obj = new Moneda();
+                Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+                var v = ctx.Monedas.Add(obj);
+                codigos.Add(v.Entity.Id);
             }
 
-            if (res.Count == 0)
+            try
             {
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
+                await ctx.SaveChangesAsync();
             }
-            else
-                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
 
             return codigos;
         }
@@ -68,8 +63,7 @@ public class MonedaService
 
     public async Task<ICollection<string>> ModificarMoneda(List<MonedaDTO> modifs, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
-        Dictionary<string, Dictionary<string, HashSet<string>>> res = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<Moneda> objs = new List<Moneda>();
         ICollection<string> codigos = new List<string>();
 
@@ -77,42 +71,34 @@ public class MonedaService
         {
             foreach (var modif in modifs)
             {
-                ValidadorMoneda vc = new ValidadorMoneda(modif, Operacion.Modificacion, ctx);
-                ResultadoValidacion rv = await vc.Validar();
+                if (modif.Id == null || modif.Id == "")
+                    throw new GraphQLException("Id: " + CodigosError.ERR_CAMPO_REQUERIDO.ToString());
 
-                if (rv.ValidacionOk)
-                {
-                    var obj = await ctx.Monedas.FindAsync(modif.Id);
+                ValidarDatos(modif);
 
-                    if (obj != null) {
-                        Mapear(obj, modif, idUsr, Operacion.Modificacion);
-                        objs.Add(obj);
-                        codigos.Add(obj.Id);
-                    }
+                var obj = await ctx.Monedas.FindAsync(modif.Id);
+
+                if (obj != null) {
+                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    objs.Add(obj);
+                    codigos.Add(obj.Id);
                 }
-                else
-                    res.Add(modif.Id!, rv.Mensajes!);
             }
 
-            if (res.Count == 0)
+            ctx.Monedas.UpdateRange(objs);
+
+            try
             {
-                ctx.Monedas.UpdateRange(objs);
-
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
-                }
+                await ctx.SaveChangesAsync();
             }
-            else
-                throw (new Excepcionador(res)).ExcepcionDatosNoValidos();
+            catch (DbUpdateException ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
+            catch (Exception ex)
+            {
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
 
             return codigos;
         }
@@ -120,7 +106,7 @@ public class MonedaService
 
     public async Task<ICollection<string>> EliminarMoneda(List<string> ids, ClaimsPrincipal claims)
     {
-        Guid idUsr = Guid.Parse(claims.FindFirstValue("Id"));
+        Guid idUsr = AutenticarUsuario(claims);
         ICollection<Moneda> objs = new List<Moneda>();
         ICollection<string> codigos = new List<string>();
 
@@ -150,16 +136,34 @@ public class MonedaService
                 }
                 catch (DbUpdateException ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
                 }
                 catch (Exception ex)
                 {
-                    throw (new Excepcionador()).ProcesarExcepcionActualizacionDB(ex);
+                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
                 }
             }
 
             return codigos;
         }
+    }
+
+    private void ValidarDatos(MonedaDTO dto, Operacion op = Operacion.Modificacion)
+    {
+        ValidationResult vr;
+
+        if (op == Operacion.Creacion)
+        {
+            vr = validadorReqs.Validate(dto);
+
+            if (!vr.IsValid)
+                throw new GraphQLException(vr.ToString());
+        }
+
+        vr = validador.Validate(dto);
+
+        if (!vr.IsValid)
+            throw new GraphQLException(vr.ToString());
     }
 
     public void Mapear(Moneda obj, MonedaDTO dto, Guid id, Operacion op)
@@ -184,6 +188,19 @@ public class MonedaService
 			obj.IdModificador = id;
 			obj.FechaModificacion = DateTime.UtcNow;
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
+        }
+    }
+
+    private Guid AutenticarUsuario(ClaimsPrincipal claims)
+    {
+        try
+        {
+            Guid id = Guid.Parse(claims.FindFirstValue("Id"));
+            return id;
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw (new Excepcionador(ex)).ExcepcionAutenticacion();
         }
     }
 }

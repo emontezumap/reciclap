@@ -1,0 +1,748 @@
+mutation {
+    crearUsuario(nuevos: {[
+        {
+            nombre: "admin"
+            apellido: "admin"
+            idCiudad: 102
+            idGrupo: 98
+            idTipoUsuario: 70
+            Direccion: "Vive en Maracay"
+            telefono: "555-555-5555"
+            clave: "Admin123"
+            email: "admin@reciclapp.com"
+        },
+        {
+            nombre: "Abraham"
+            apellido: "Simpson"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "abrahamsimpson@thesimpsons.com"
+        },
+        {
+            nombre: "Agnes"
+            apellido: "Skinner"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "agnesskinner@thesimpsons.com"
+        },
+        {
+            nombre: "Akira"
+            apellido: "Kurosawa"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "akirakurosawa@thesimpsons.co"
+        },
+        {
+            nombre: "Apu"
+            apellido: "Nahasapeemapetilon"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "apunahasapeemapetilon@thesimpsons.com"
+        },
+        {
+            nombre: "Artie"
+            apellido: "Ziff"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "artieziff@thesimpsons.com"
+        },
+        {
+            nombre: "Barney"
+            apellido: "Gumble"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "barneygumble@thesimpsons.com"
+        },
+        {
+            nombre: "Bart"
+            apellido: "Simpson"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "bartsimpson@thesimpsons.com"
+        },
+        {
+            nombre: "Bernice"
+            apellido: "Hibbert"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "bernicehibbert@thesimpsons.com"
+        },
+        {
+            nombre: "Bob "
+            apellido: "Patiño"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "bobpatino@thesimpsons.com"
+        },
+        {
+            nombre: "Brandine"
+            apellido: "Spuckler"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "brandinespuckler@thesimpsons.com"
+        },
+        {
+            nombre: "Carl"
+            apellido: "Carlson"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "carlcarlson@thesimpsons.com"
+        },
+        {
+            nombre: "Charles"
+            segundoNombre: "Montgomery"
+            apellido: "Burns"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "charlesmontgomeryburns@thesimpsons.com"
+        },
+        {
+            nombre: "Clancy"
+            apellido: "Wiggum"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "clancywiggum@thesimpsons.com"
+        },
+        {
+            nombre: "Cletus"
+            apellido: "Spuckler"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "cletusspuckler@thesimpsons.com"
+        },
+        {
+            nombre: "Cookie"
+            apellido: "Kwan"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "cookiekwan@thesimpsons.com"
+        },
+        {
+            nombre: "Dolph"
+            apellido: "Starbeam"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "dolphstarbeam@thesimpsons.com"
+        },
+        {
+            nombre: "Drederick"
+            apellido: "Tatum"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "dredericktatum@thesimpsons.com"
+        },
+        {
+            nombre: "Edna"
+            apellido: "Krabappel"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "ednakrabappel@thesimpsons.com"
+        },
+        {
+            nombre: "Gary"
+            apellido: "Chalmers"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "garychalmers@thesimpsons.com"
+        },
+        {
+            nombre: "Gil"
+            apellido: "Gunderson"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "gilgunderson@thesimpsons.com"
+        },
+        {
+            nombre: "Helen"
+            apellido: "Lovejoy"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "helenlovejoy@thesimpsons.com"
+        },
+        {
+            nombre: "Homer"
+            apellido: "Simpson"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "homersimpson@thesimpsons.com"
+        },
+        {
+            nombre: "Hyman"
+            apellido: "Krustofsky"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "hymankrustofsky@thesimpsons.com"
+        },
+        {
+            nombre: "Jacqueline"
+            apellido: "Bouvier"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "jacquelinebouvier@thesimpsons.com"
+        },
+        {
+            nombre: "Jessica"
+            apellido: "Lovejoy"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "jessicalovejoy@thesimpsons.com"
+        },
+        {
+            nombre: "Jimbo"
+            apellido: "Jones"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "jimbojones@thesimpsons.com"
+        },
+        {
+            nombre: "Joe"
+            apellido: "Quimby"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "joequimby@thesimpsons.com"
+        },
+        {
+            nombre: "Julius"
+            apellido: "Hibbert"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "juliushibbert@thesimpsons.com"
+        },
+        {
+            nombre: "Kearney"
+            apellido: "Zzyzwicz"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "kearneyzzyzwicz@thesimpsons.com"
+        },
+        {
+            nombre: "Kent"
+            apellido: "Brockman"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "kentbrockman@thesimpsons.com"
+        },
+        {
+            nombre: "Kirk"
+            apellido: "Van Houten"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: ""kirkvanhouten@thesimpsons.com
+        },
+        {
+            nombre: "Lenny"
+            apellido: "Leonard"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "lennyleonard@thesimpsons.com"
+        },
+        {
+            nombre: "Lindsey"
+            apellido: "Naegle"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "lindseynaegle@thesimpsons.com"
+        },
+        {
+            nombre: "Lionel"
+            apellido: "Hutz"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "lionelhutz@thesimpsons.com"
+        },
+        {
+            nombre: "Lisa"
+            apellido: "Simpson"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "lisasimpson@thesimpsons.com"
+        },
+        {
+            nombre: "Luann"
+            apellido: "Van Houten"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "luannvanhouten@thesimpsons.com"
+        },
+        {
+            nombre: "Luigi"
+            apellido: "Risotto"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "luigirisotto@thesimpsons.com"
+        },
+        {
+            nombre: "Maggie"
+            apellido: "Simpson"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "maggiesimpson@thesimpsons.com"
+        },
+        {
+            nombre: "Manjula"
+            apellido: "Nahasapeemapetilon"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "manjulanahasapeemapetilon@thesimpsons.com"
+        },
+        {
+            nombre: "Marge"
+            apellido: "Simpson"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "margesimpson@thesimpsons.com"
+        },
+        {
+            nombre: "Martin"
+            apellido: "Prince"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "martinprince@thesimpsons.com"
+        },
+        {
+            nombre: "Marvin"
+            apellido: "Monroe"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "marvinmonroe@thesimpsons.com"
+        },
+        {
+            nombre: "Maude"
+            apellido: "Flanders"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "maudeflanders@thesimpsons.com"
+        },
+        {
+            nombre: "Mel"
+            apellido: "Patiño"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "melpatino@thesimpsons.com"
+        },
+        {
+            nombre: "Milhouse"
+            apellido: "Van Houten"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "milhousevanhouten@thesimpsons.com"
+        },
+        {
+            nombre: "Moe"
+            apellido: "Szyslak"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "moeszyslak@thesimpsons.com"
+        },
+        {
+            nombre: "Mona"
+            apellido: "Simpson"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "monasimpson@thesimpsons.com"
+        },
+        {
+            nombre: "Ned"
+            apellido: "Flanders"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "nedflanders@thesimpsons.com"
+        },
+        {
+            nombre: "Nelson"
+            apellido: "Muntz"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "nelsonmuntz@thesimpsons.com"
+        },
+        {
+            nombre: "Nick"
+            apellido: "Riviera"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "nickriviera@thesimpsons.com"
+        },
+        {
+            nombre: "Otto"
+            apellido: "Mann"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "ottomann@thesimpsons.com"
+        },
+        {
+            nombre: "Patty"
+            apellido: "Bouvier"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "pattybouvier@thesimpsons.com"
+        },
+        {
+            nombre: "Jonathan"
+            apellido: "Frink"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "jonathanfrink@thesimpsons.com"
+        },
+        {
+            nombre: "Rainier"
+            apellido: "Wolfcastle"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "rainierwolfcastle@thesimpsons.com"
+        },
+        {
+            nombre: "Ralph"
+            apellido: "Wiggum"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "ralphwiggum@thesimpsons.com"
+        },
+        {
+            nombre: "Rod"
+            apellido: "Flanders"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "rodflanders@thesimpsons.com"
+        },
+        {
+            nombre: "Sarah"
+            apellido: "Wiggum"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "sarahwiggum@thesimpsons.com"
+        },
+        {
+            nombre: "Selma"
+            apellido: "Bouvier"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "selmabouvier@thesimpsons.com"
+        },
+        {
+            nombre: "Seymour"
+            apellido: "Skinner"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "seymourskinner@thesimpsons.com"
+        },
+        {
+            nombre: "Snake"
+            apellido: "Jailbird"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "snakejailbird@thesimpsons.com"
+        },
+        {
+            nombre: "Timothy"
+            apellido: "Lovejoy"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "timothylovejoy@thesimpsons.com"
+        },
+        {
+            nombre: "Todd"
+            apellido: "Flanders"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "toddflanders@thesimpsons.com"
+        },
+        {
+            nombre: "Tony"
+            apellido: "D’Amico"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "tonydamico@thesimpsons.com"
+        },
+        {
+            nombre: "Troy"
+            apellido: "McClure"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "troymcClure@thesimpsons.com"
+        },
+        {
+            nombre: "Üter"
+            apellido: "Zörker"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "uterzorker@thesimpsons.com"
+        },
+        {
+            nombre: "Waylon"
+            apellido: "Smithers"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "waylonsmithers@thesimpsons.com"
+        },
+        {
+            nombre: "Willie"
+            apellido: "McDougall"
+            idCiudad: 110
+            email: "williemcdougall@thesimpsons.com"
+        }
+    }])
+}

@@ -47,9 +47,10 @@ public class DatosError
                 break;
             case "ERR_REGISTRO_DUPLICADO":
                 string dup1 = @"duplicate key row in object 'dbo\.(\w+)'";
-                string dup2 = @"duplicate key value is (\(.+\))";
                 match = Regex.Match(mensaje, dup1, RegexOptions.IgnoreCase);
                 Objeto = match.Groups[1].Value;
+
+                string dup2 = @"duplicate key value is (\(.+\))";
                 match = Regex.Match(mensaje, dup2, RegexOptions.IgnoreCase);
                 Valor = match.Groups[1].Value;
                 break;
