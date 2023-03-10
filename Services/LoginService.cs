@@ -23,12 +23,35 @@ public class LoginService
                 u.Email == usuario.Email &&
                 u.Clave == Cripto.CodigoSHA256(usuario.Clave));
 
-            // TODO: Habilitar este codigo cuandoo se implemente la seguridad
-
-            // if (usr != null)
-            //     ctx.Entry(usr).Reference(u => u.Grupo).Load();
+            if (usr != null)
+                ctx.Entry(usr).Reference(u => u.Grupo).Load();
 
             return usr;
+        }
+    }
+
+    public async Task<Administrador?> BuscarAdministrador(LoginDTO admin)
+    {
+        using (var ctx = ctxFactory.CreateDbContext())
+        {
+            var adm = await ctx.Administradores.SingleOrDefaultAsync(a =>
+                a.Email == admin.Email &&
+                a.Clave == Cripto.CodigoSHA256(admin.Clave!));
+
+            if (adm != null)
+                if (adm.IdGrupo != null)
+                    ctx.Entry(adm).Reference(a => a.Grupo).Load();
+                else
+                {
+                    var g = ctx.Varias.Where(v =>
+                        v.Descripcion.ToLower() == "administradores")
+                        .FirstOrDefault();
+
+                    if (g != null)
+                        adm.IdGrupo = g.Id;
+                }
+
+            return adm;
         }
     }
 }

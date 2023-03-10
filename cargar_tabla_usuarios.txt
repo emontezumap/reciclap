@@ -10,7 +10,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "Admin123"
             email: "admin@reciclapp.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Abraham"
             apellido: "Simpson"
@@ -21,7 +23,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "abrahamsimpson@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Agnes"
             apellido: "Skinner"
@@ -32,7 +36,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "agnesskinner@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Akira"
             apellido: "Kurosawa"
@@ -43,7 +49,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "akirakurosawa@thesimpsons.co"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Apu"
             apellido: "Nahasapeemapetilon"
@@ -54,7 +62,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "apunahasapeemapetilon@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Artie"
             apellido: "Ziff"
@@ -65,7 +75,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "artieziff@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Barney"
             apellido: "Gumble"
@@ -76,7 +88,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "barneygumble@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Bart"
             apellido: "Simpson"
@@ -87,7 +101,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "bartsimpson@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Bernice"
             apellido: "Hibbert"
@@ -98,7 +114,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "bernicehibbert@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Bob "
             apellido: "Patiño"
@@ -109,7 +127,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "bobpatino@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Brandine"
             apellido: "Spuckler"
@@ -120,7 +140,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "brandinespuckler@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Carl"
             apellido: "Carlson"
@@ -131,7 +153,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "carlcarlson@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Charles"
             segundoNombre: "Montgomery"
@@ -143,7 +167,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "charlesmontgomeryburns@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Clancy"
             apellido: "Wiggum"
@@ -154,7 +180,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "clancywiggum@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Cletus"
             apellido: "Spuckler"
@@ -165,7 +193,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "cletusspuckler@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Cookie"
             apellido: "Kwan"
@@ -176,7 +206,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "cookiekwan@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Dolph"
             apellido: "Starbeam"
@@ -187,7 +219,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "dolphstarbeam@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Drederick"
             apellido: "Tatum"
@@ -198,7 +232,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "dredericktatum@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Edna"
             apellido: "Krabappel"
@@ -209,7 +245,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "ednakrabappel@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Gary"
             apellido: "Chalmers"
@@ -220,7 +258,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "garychalmers@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Gil"
             apellido: "Gunderson"
@@ -231,7 +271,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "gilgunderson@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Helen"
             apellido: "Lovejoy"
@@ -242,7 +284,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "helenlovejoy@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Homer"
             apellido: "Simpson"
@@ -253,7 +297,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "homersimpson@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Hyman"
             apellido: "Krustofsky"
@@ -264,7 +310,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "hymankrustofsky@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Jacqueline"
             apellido: "Bouvier"
@@ -275,7 +323,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "jacquelinebouvier@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Jessica"
             apellido: "Lovejoy"
@@ -286,7 +336,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "jessicalovejoy@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Jimbo"
             apellido: "Jones"
@@ -297,7 +349,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "jimbojones@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Joe"
             apellido: "Quimby"
@@ -308,7 +362,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "joequimby@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Julius"
             apellido: "Hibbert"
@@ -319,7 +375,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "juliushibbert@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Kearney"
             apellido: "Zzyzwicz"
@@ -330,7 +388,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "kearneyzzyzwicz@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Kent"
             apellido: "Brockman"
@@ -341,7 +401,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "kentbrockman@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Kirk"
             apellido: "Van Houten"
@@ -352,7 +414,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: ""kirkvanhouten@thesimpsons.com
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Lenny"
             apellido: "Leonard"
@@ -363,7 +427,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "lennyleonard@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Lindsey"
             apellido: "Naegle"
@@ -374,7 +440,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "lindseynaegle@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Lionel"
             apellido: "Hutz"
@@ -385,7 +453,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "lionelhutz@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Lisa"
             apellido: "Simpson"
@@ -396,7 +466,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "lisasimpson@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Luann"
             apellido: "Van Houten"
@@ -407,7 +479,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "luannvanhouten@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Luigi"
             apellido: "Risotto"
@@ -418,7 +492,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "luigirisotto@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Maggie"
             apellido: "Simpson"
@@ -429,7 +505,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "maggiesimpson@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Manjula"
             apellido: "Nahasapeemapetilon"
@@ -440,7 +518,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "manjulanahasapeemapetilon@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Marge"
             apellido: "Simpson"
@@ -451,7 +531,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "margesimpson@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Martin"
             apellido: "Prince"
@@ -462,7 +544,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "martinprince@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Marvin"
             apellido: "Monroe"
@@ -473,7 +557,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "marvinmonroe@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Maude"
             apellido: "Flanders"
@@ -484,7 +570,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "maudeflanders@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Mel"
             apellido: "Patiño"
@@ -495,7 +583,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "melpatino@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Milhouse"
             apellido: "Van Houten"
@@ -506,7 +596,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "milhousevanhouten@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Moe"
             apellido: "Szyslak"
@@ -517,7 +609,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "moeszyslak@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Mona"
             apellido: "Simpson"
@@ -528,7 +622,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "monasimpson@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Ned"
             apellido: "Flanders"
@@ -539,7 +635,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "nedflanders@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Nelson"
             apellido: "Muntz"
@@ -550,7 +648,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "nelsonmuntz@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Nick"
             apellido: "Riviera"
@@ -561,7 +661,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "nickriviera@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Otto"
             apellido: "Mann"
@@ -572,7 +674,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "ottomann@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Patty"
             apellido: "Bouvier"
@@ -583,7 +687,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "pattybouvier@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Jonathan"
             apellido: "Frink"
@@ -594,7 +700,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "jonathanfrink@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Rainier"
             apellido: "Wolfcastle"
@@ -605,7 +713,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "rainierwolfcastle@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Ralph"
             apellido: "Wiggum"
@@ -616,7 +726,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "ralphwiggum@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Rod"
             apellido: "Flanders"
@@ -627,7 +739,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "rodflanders@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Sarah"
             apellido: "Wiggum"
@@ -638,7 +752,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "sarahwiggum@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Selma"
             apellido: "Bouvier"
@@ -649,7 +765,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "selmabouvier@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Seymour"
             apellido: "Skinner"
@@ -660,7 +778,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "seymourskinner@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Snake"
             apellido: "Jailbird"
@@ -671,7 +791,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "snakejailbird@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Timothy"
             apellido: "Lovejoy"
@@ -682,7 +804,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "timothylovejoy@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Todd"
             apellido: "Flanders"
@@ -693,7 +817,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "toddflanders@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Tony"
             apellido: "D’Amico"
@@ -704,7 +830,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "tonydamico@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Troy"
             apellido: "McClure"
@@ -715,7 +843,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "troymcClure@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Üter"
             apellido: "Zörker"
@@ -726,7 +856,9 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "uterzorker@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Waylon"
             apellido: "Smithers"
@@ -737,12 +869,21 @@ mutation {
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "waylonsmithers@thesimpsons.com"
-        },
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		},
         {
             nombre: "Willie"
             apellido: "McDougall"
             idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            Direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
             email: "williemcdougall@thesimpsons.com"
-        }
-    }])
+        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+		}
+    ]})
 }

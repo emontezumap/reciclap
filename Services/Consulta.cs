@@ -28,6 +28,14 @@ public class Consulta
     [UseDbContext(typeof(SSDBContext))]
     [UsePaging(IncludeTotalCount=true, DefaultPageSize=10)]
     [UseProjection, UseFiltering, UseSorting]
+    public IQueryable <Administrador> Administradores([ScopedService] SSDBContext ctx)
+    {
+        return ctx.Administradores;
+    }
+
+    [UseDbContext(typeof(SSDBContext))]
+    [UsePaging(IncludeTotalCount=true, DefaultPageSize=10)]
+    [UseProjection, UseFiltering, UseSorting]
     public IQueryable <BitacoraProyecto> BitacorasProyectos([ScopedService] SSDBContext ctx)
     {
         return ctx.BitacorasProyectos;

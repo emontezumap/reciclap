@@ -27,13 +27,19 @@ public class LoginController : ControllerBase
     public async Task<IActionResult> Login(LoginDTO login)
     {
         var usr = await loginSvc.BuscarUsuario(login);
+        string jwt;
 
-        if (usr == null)
+        if (usr != null)
+            jwt = GenerarToken(usr);
+        else
         {
-            return BadRequest(new { message = "No autorizado" });
-        }
+            var adm = await loginSvc.BuscarAdministrador(login);
 
-        string jwt = GenerarToken(usr);
+            if (adm == null)
+                return BadRequest(new { message = "No autorizado" });
+
+            jwt = GenerarToken(adm);
+        }
 
         return Ok(new { token = jwt });
     }
@@ -43,14 +49,37 @@ public class LoginController : ControllerBase
         var claims = new[]
         {
             new Claim("Id", usr.Id.ToString()),
-            new Claim(ClaimTypes.Email, usr.Email),
-            // TODO: Habilitar este codigo cuando se implemente la seguridad
-            // new Claim("Grupo", usr.Grupo!.Descripcion ),
+            new Claim(ClaimTypes.Email, usr.Email!),
+            new Claim("Grupo", usr.Grupo!.Descripcion ),
         };
 
         var clave = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value)
         );
+
+        var creds = new SigningCredentials(clave, SecurityAlgorithms.HmacSha256Signature);
+        var jwt = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(60),
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(jwt);
+    }
+
+    private string GenerarToken(Administrador adm)
+    {
+        var claims = new[]
+        {
+            new Claim("Id", adm.Id.ToString()),
+            new Claim(ClaimTypes.Email, adm.Email!),
+            new Claim("Grupo", adm.Grupo!.Descripcion ),
+        };
+
+        var clave = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value)
+        );
+
         var creds = new SigningCredentials(clave, SecurityAlgorithms.HmacSha256Signature);
         var jwt = new JwtSecurityToken(
             claims: claims,
