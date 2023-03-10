@@ -1,30 +1,15 @@
 mutation {
-    crearUsuario(nuevos: {[
-        {
-            nombre: "admin"
-            apellido: "admin"
-            idCiudad: 102
-            idGrupo: 98
-            idTipoUsuario: 70
-            Direccion: "Vive en Maracay"
-            telefono: "555-555-5555"
-            clave: "Admin123"
-            email: "admin@reciclapp.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-		},
+    crearUsuario(nuevos: [
         {
             nombre: "Abraham"
             apellido: "Simpson"
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "abrahamsimpson@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Agnes"
@@ -32,12 +17,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "agnesskinner@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Akira"
@@ -45,12 +28,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "akirakurosawa@thesimpsons.co"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Apu"
@@ -58,12 +39,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "apunahasapeemapetilon@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Artie"
@@ -71,12 +50,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "artieziff@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Barney"
@@ -84,12 +61,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "barneygumble@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Bart"
@@ -97,12 +72,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "bartsimpson@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Bernice"
@@ -110,12 +83,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "bernicehibbert@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Bob "
@@ -123,12 +94,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "bobpatino@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Brandine"
@@ -136,12 +105,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "brandinespuckler@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Carl"
@@ -149,12 +116,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "carlcarlson@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Charles"
@@ -163,12 +128,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "charlesmontgomeryburns@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Clancy"
@@ -176,12 +139,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "clancywiggum@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Cletus"
@@ -189,12 +150,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "cletusspuckler@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Cookie"
@@ -202,12 +161,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "cookiekwan@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Dolph"
@@ -215,12 +172,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "dolphstarbeam@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Drederick"
@@ -228,12 +183,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "dredericktatum@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Edna"
@@ -241,12 +194,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "ednakrabappel@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Gary"
@@ -254,12 +205,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "garychalmers@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Gil"
@@ -267,12 +216,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "gilgunderson@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Helen"
@@ -280,12 +227,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "helenlovejoy@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Homer"
@@ -293,12 +238,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "homersimpson@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Hyman"
@@ -306,12 +249,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "hymankrustofsky@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Jacqueline"
@@ -319,12 +260,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "jacquelinebouvier@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Jessica"
@@ -332,12 +271,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "jessicalovejoy@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Jimbo"
@@ -345,12 +282,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "jimbojones@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Joe"
@@ -358,12 +293,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "joequimby@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Julius"
@@ -371,12 +304,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "juliushibbert@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Kearney"
@@ -384,12 +315,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "kearneyzzyzwicz@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Kent"
@@ -397,12 +326,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "kentbrockman@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Kirk"
@@ -410,12 +337,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: ""kirkvanhouten@thesimpsons.com
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
+            email: "kirkvanhouten@thesimpsons.com"
 		},
         {
             nombre: "Lenny"
@@ -423,12 +348,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "lennyleonard@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Lindsey"
@@ -436,12 +359,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "lindseynaegle@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Lionel"
@@ -449,12 +370,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "lionelhutz@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Lisa"
@@ -462,12 +381,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "lisasimpson@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Luann"
@@ -475,12 +392,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "luannvanhouten@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Luigi"
@@ -488,12 +403,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "luigirisotto@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Maggie"
@@ -501,12 +414,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "maggiesimpson@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Manjula"
@@ -514,12 +425,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "manjulanahasapeemapetilon@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Marge"
@@ -527,12 +436,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "margesimpson@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Martin"
@@ -540,12 +447,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "martinprince@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Marvin"
@@ -553,12 +458,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "marvinmonroe@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Maude"
@@ -566,12 +469,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "maudeflanders@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Mel"
@@ -579,12 +480,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "melpatino@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Milhouse"
@@ -592,12 +491,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "milhousevanhouten@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Moe"
@@ -605,12 +502,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "moeszyslak@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Mona"
@@ -618,12 +513,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "monasimpson@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Ned"
@@ -631,12 +524,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "nedflanders@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Nelson"
@@ -644,12 +535,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "nelsonmuntz@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Nick"
@@ -657,12 +546,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "nickriviera@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Otto"
@@ -670,12 +557,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "ottomann@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Patty"
@@ -683,12 +568,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "pattybouvier@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Jonathan"
@@ -696,12 +579,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "jonathanfrink@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Rainier"
@@ -709,12 +590,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "rainierwolfcastle@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Ralph"
@@ -722,12 +601,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "ralphwiggum@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Rod"
@@ -735,12 +612,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "rodflanders@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Sarah"
@@ -748,12 +623,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "sarahwiggum@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Selma"
@@ -761,12 +634,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "selmabouvier@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Seymour"
@@ -774,12 +645,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "seymourskinner@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Snake"
@@ -787,12 +656,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "snakejailbird@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Timothy"
@@ -800,12 +667,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "timothylovejoy@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Todd"
@@ -813,12 +678,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "toddflanders@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Tony"
@@ -826,12 +689,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "tonydamico@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Troy"
@@ -839,12 +700,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "troymcClure@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Üter"
@@ -852,12 +711,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "uterzorker@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Waylon"
@@ -865,12 +722,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "waylonsmithers@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		},
         {
             nombre: "Willie"
@@ -878,12 +733,10 @@ mutation {
             idCiudad: 110
             idGrupo: 99
             idTipoUsuario: 70
-            Direccion: "Vive en Springfield"
+            direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
             email: "williemcdougall@thesimpsons.com"
-        	idCreador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
-			idModificador: "b2e645e8-2ace-4ed1-859d-11abed333e9c"
 		}
-    ]})
+    ])
 }

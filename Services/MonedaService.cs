@@ -118,9 +118,11 @@ public class MonedaService
 
                 if (buscado != null)
                 {
+
                     buscado.IdModificador = idUsr;
                     buscado.FechaModificacion = DateTime.UtcNow;
                     buscado.Activo = false;
+
                     objs.Add(buscado);
                     codigos.Add(buscado.Id);
                 }
@@ -172,6 +174,7 @@ public class MonedaService
         {
 			obj.Id = dto.Id!;
 			obj.Nombre = dto.Nombre!;
+			obj.Simbolo = dto.Simbolo!;
 			obj.TipoCambio = (decimal)dto.TipoCambio!;
 			obj.EsLocal = (bool?)dto.EsLocal!;
 			obj.IdCreador = id;
@@ -183,6 +186,7 @@ public class MonedaService
         else
         {
 			obj.Nombre = dto.Nombre == null ? obj.Nombre : dto.Nombre;
+			obj.Simbolo = dto.Simbolo == null ? obj.Simbolo : dto.Simbolo;
 			obj.TipoCambio = dto.TipoCambio == null ? obj.TipoCambio : (decimal)dto.TipoCambio;
 			obj.EsLocal = dto.EsLocal == null ? obj.EsLocal : (bool?)dto.EsLocal;
 			obj.IdModificador = id;

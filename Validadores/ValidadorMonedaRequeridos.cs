@@ -15,6 +15,12 @@ public class ValidadorMonedaRequeridos : AbstractValidator<MonedaDTO>
             .WithMessage("Nombre: " + CodigosError.ERR_CAMPO_REQUERIDO.ToString())
             .WithErrorCode(CodigosError.ERR_CAMPO_REQUERIDO.ToString());
 
+        RuleFor(c => c.Simbolo)
+            .NotNull()
+            .NotEmpty()
+            .WithMessage("Simbolo: " + CodigosError.ERR_CAMPO_REQUERIDO.ToString())
+            .WithErrorCode(CodigosError.ERR_CAMPO_REQUERIDO.ToString());
+
         RuleFor(c => c.TipoCambio)
             .NotNull()
             .WithMessage("TipoCambio: " + CodigosError.ERR_CAMPO_REQUERIDO.ToString())

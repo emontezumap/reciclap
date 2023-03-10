@@ -48,7 +48,10 @@ public class LoginService
                         .FirstOrDefault();
 
                     if (g != null)
+                    {
                         adm.IdGrupo = g.Id;
+                        ctx.Entry(adm).Reference(a => a.Grupo).Load();
+                    }
                 }
 
             return adm;

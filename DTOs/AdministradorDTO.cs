@@ -8,4 +8,5 @@ public class AdministradorDTO
 	public string? Telefono { get; set; } = null;
 	public string? Email { get; set; } = null;
 	public string? Clave { get; set; } = null;
+	public int? IdGrupo { get; set; } = null;
 }

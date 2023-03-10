@@ -69,13 +69,14 @@ public class AdministradorService
         {
             foreach (var modif in modifs)
             {
+                if (modif.Id == null)
+                    throw new GraphQLException("Id: " + CodigosError.ERR_CAMPO_REQUERIDO.ToString());
 
                 ValidarDatos(modif);
 
                 var obj = await ctx.Administradores.FindAsync(modif.Id);
 
-                if (obj != null)
-                {
+                if (obj != null) {
                     Mapear(obj, modif, idUsr, Operacion.Modificacion);
                     objs.Add(obj);
                     codigos.Add(obj.Id);
@@ -115,9 +116,7 @@ public class AdministradorService
 
                 if (buscado != null)
                 {
-                    buscado.IdModificador = idUsr;
-                    buscado.FechaModificacion = DateTime.UtcNow;
-                    buscado.Activo = false;
+
                     objs.Add(buscado);
                     codigos.Add(buscado.Id);
                 }
@@ -167,20 +166,22 @@ public class AdministradorService
     {
         if (op == Operacion.Creacion)
         {
-            obj.Id = Guid.NewGuid();
-            obj.Nombre = dto.Nombre!;
-            obj.Apellido = dto.Apellido!;
-            obj.Telefono = dto.Telefono!;
-            obj.Email = dto.Email!;
-            obj.Clave = Cripto.CodigoSHA256(dto.Clave!);
+			obj.Id = Guid.NewGuid();
+			obj.Nombre = dto.Nombre!;
+			obj.Apellido = dto.Apellido!;
+			obj.Telefono = dto.Telefono!;
+			obj.Email = dto.Email!;
+			obj.Clave = Cripto.CodigoSHA256(dto.Clave!);
+			obj.IdGrupo = (int?)dto.IdGrupo!;
         }
         else
         {
-            obj.Nombre = dto.Nombre == null ? obj.Nombre : dto.Nombre;
-            obj.Apellido = dto.Apellido == null ? obj.Apellido : dto.Apellido;
-            obj.Telefono = dto.Telefono == null ? obj.Telefono : dto.Telefono;
-            obj.Email = dto.Email == null ? obj.Email : dto.Email;
-            obj.Clave = dto.Clave == null ? obj.Clave : Cripto.CodigoSHA256(dto.Clave);
+			obj.Nombre = dto.Nombre == null ? obj.Nombre : dto.Nombre;
+			obj.Apellido = dto.Apellido == null ? obj.Apellido : dto.Apellido;
+			obj.Telefono = dto.Telefono == null ? obj.Telefono : dto.Telefono;
+			obj.Email = dto.Email == null ? obj.Email : dto.Email;
+			obj.Clave = dto.Clave == null ? obj.Clave : Cripto.CodigoSHA256(dto.Clave);
+			obj.IdGrupo = dto.IdGrupo == null ? obj.IdGrupo : (int?)dto.IdGrupo;
         }
     }
 

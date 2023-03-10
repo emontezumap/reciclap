@@ -116,9 +116,11 @@ public class VariosService
 
                 if (buscado != null)
                 {
+
                     buscado.IdModificador = idUsr;
                     buscado.FechaModificacion = DateTime.UtcNow;
                     buscado.Activo = false;
+
                     objs.Add(buscado);
                     codigos.Add(buscado.Id);
                 }
