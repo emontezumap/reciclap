@@ -6,6 +6,7 @@ using Services;
 using DB;
 using FluentValidation.AspNetCore;
 using Validadores;
+using Mail;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,6 +98,10 @@ builder.Services.AddGraphQLServer()
         .AddType<VariosService>()
         .AddType<VersionApiService>()
     .AddProjections().AddFiltering().AddSorting();
+
+var emailConfig = builder.Configuration.GetSection("MailSettings").Get<MailSettings>();
+builder.Services.AddSingleton(emailConfig);
+builder.Services.AddScoped<IMailService, MailService>();
 
 var app = builder.Build();
 

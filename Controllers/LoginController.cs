@@ -11,7 +11,6 @@ namespace Controllers;
 
 [ApiController]
 [Route("[controller]")]
-
 public class LoginController : ControllerBase
 {
     private readonly LoginService loginSvc;
