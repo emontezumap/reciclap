@@ -7,6 +7,7 @@ using DB;
 using FluentValidation.AspNetCore;
 using Validadores;
 using Mail;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,6 +103,12 @@ builder.Services.AddGraphQLServer()
 var emailSettings = builder.Configuration.GetSection("MailSettings").Get<MailSettings>();
 builder.Services.AddSingleton(emailSettings);
 builder.Services.AddScoped<IMailService, MailService>();
+builder.Services.Configure<FormOptions>(o =>
+{
+    o.ValueLengthLimit = int.MaxValue;
+    o.MultipartBodyLengthLimit = int.MaxValue;
+    o.MemoryBufferThreshold = int.MaxValue;
+});
 
 var app = builder.Build();
 
