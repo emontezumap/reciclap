@@ -99,8 +99,8 @@ builder.Services.AddGraphQLServer()
         .AddType<VersionApiService>()
     .AddProjections().AddFiltering().AddSorting();
 
-var emailConfig = builder.Configuration.GetSection("MailSettings").Get<MailSettings>();
-builder.Services.AddSingleton(emailConfig);
+var emailSettings = builder.Configuration.GetSection("MailSettings").Get<MailSettings>();
+builder.Services.AddSingleton(emailSettings);
 builder.Services.AddScoped<IMailService, MailService>();
 
 var app = builder.Build();

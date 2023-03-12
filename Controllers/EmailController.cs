@@ -24,8 +24,7 @@ public class EmailController : Controller
         }
         catch (Exception ex)
         {
-            Console.Write(ex.Message);
-            return BadRequest(new { message = "Email no enviado" });
+            return BadRequest(new { message = $"Email no enviado: {ex.Message}" });
         }
     }
 }
