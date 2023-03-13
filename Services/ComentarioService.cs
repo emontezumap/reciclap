@@ -31,6 +31,8 @@ public class ComentarioService
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
+            ctx.Database.BeginTransaction();
+
             foreach (var nuevo in nuevos)
             {
 
@@ -45,13 +47,16 @@ public class ComentarioService
             try
             {
                 await ctx.SaveChangesAsync();
+                ctx.Database.CommitTransaction();
             }
             catch (DbUpdateException ex)
             {
+                ctx.Database.RollbackTransaction();
                 throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
             }
             catch (Exception ex)
             {
+                ctx.Database.RollbackTransaction();
                 throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
             }
 
@@ -67,6 +72,8 @@ public class ComentarioService
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
+            ctx.Database.BeginTransaction();
+
             foreach (var modif in modifs)
             {
                 if (modif.Id == null)
@@ -88,13 +95,16 @@ public class ComentarioService
             try
             {
                 await ctx.SaveChangesAsync();
+                ctx.Database.CommitTransaction();
             }
             catch (DbUpdateException ex)
             {
+                ctx.Database.RollbackTransaction();
                 throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
             }
             catch (Exception ex)
             {
+                ctx.Database.RollbackTransaction();
                 throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
             }
 
@@ -110,6 +120,8 @@ public class ComentarioService
 
         using (var ctx = ctxFactory.CreateDbContext())
         {
+            ctx.Database.BeginTransaction();
+
             foreach (var id in ids)
             {
                 var buscado = await ctx.Comentarios.FindAsync(id);
@@ -126,22 +138,22 @@ public class ComentarioService
                 }
             }
 
-            if (objs.Count > 0)
-            {
-                ctx.Comentarios.UpdateRange(objs);
+            ctx.Comentarios.UpdateRange(objs);
 
-                try
-                {
-                    await ctx.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
-                }
-                catch (Exception ex)
-                {
-                    throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
-                }
+            try
+            {
+                await ctx.SaveChangesAsync();
+                ctx.Database.CommitTransaction();
+            }
+            catch (DbUpdateException ex)
+            {
+                ctx.Database.RollbackTransaction();
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
+            }
+            catch (Exception ex)
+            {
+                ctx.Database.RollbackTransaction();
+                throw (new Excepcionador(ex)).ProcesarExcepcionActualizacionDB();
             }
 
             return codigos;

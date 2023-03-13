@@ -9,7 +9,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "abrahamsimpson@thesimpsons.com"
+            email: "abraham_simpson@thesimpsons.com"
 		},
         {
             nombre: "Agnes"
@@ -20,7 +20,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "agnesskinner@thesimpsons.com"
+            email: "agnes_skinner@thesimpsons.com"
 		},
         {
             nombre: "Akira"
@@ -31,7 +31,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "akirakurosawa@thesimpsons.co"
+            email: "akira_kurosawa@thesimpsons.co"
 		},
         {
             nombre: "Apu"
@@ -42,7 +42,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "apunahasapeemapetilon@thesimpsons.com"
+            email: "apu_nahasapeemapetilon@thesimpsons.com"
 		},
         {
             nombre: "Artie"
@@ -53,7 +53,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "artieziff@thesimpsons.com"
+            email: "artie_ziff@thesimpsons.com"
 		},
         {
             nombre: "Barney"
@@ -64,7 +64,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "barneygumble@thesimpsons.com"
+            email: "barney_gumble@thesimpsons.com"
 		},
         {
             nombre: "Bart"
@@ -75,7 +75,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "bartsimpson@thesimpsons.com"
+            email: "bart_simpson@thesimpsons.com"
 		},
         {
             nombre: "Bernice"
@@ -86,7 +86,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "bernicehibbert@thesimpsons.com"
+            email: "bernice_hibbert@thesimpsons.com"
 		},
         {
             nombre: "Bob "
@@ -97,7 +97,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "bobpatino@thesimpsons.com"
+            email: "bob_patino@thesimpsons.com"
 		},
         {
             nombre: "Brandine"
@@ -108,7 +108,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "brandinespuckler@thesimpsons.com"
+            email: "brandine_spuckler@thesimpsons.com"
 		},
         {
             nombre: "Carl"
@@ -119,7 +119,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "carlcarlson@thesimpsons.com"
+            email: "carl_carlson@thesimpsons.com"
 		},
         {
             nombre: "Charles"
@@ -131,7 +131,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "charlesmontgomeryburns@thesimpsons.com"
+            email: "charles_montgomery_burns@thesimpsons.com"
 		},
         {
             nombre: "Clancy"
@@ -142,7 +142,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "clancywiggum@thesimpsons.com"
+            email: "clancy_wiggum@thesimpsons.com"
 		},
         {
             nombre: "Cletus"
@@ -153,7 +153,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "cletusspuckler@thesimpsons.com"
+            email: "cletus_spuckler@thesimpsons.com"
 		},
         {
             nombre: "Cookie"
@@ -164,7 +164,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "cookiekwan@thesimpsons.com"
+            email: "cookie_kwan@thesimpsons.com"
 		},
         {
             nombre: "Dolph"
@@ -175,7 +175,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "dolphstarbeam@thesimpsons.com"
+            email: "dolph_starbeam@thesimpsons.com"
 		},
         {
             nombre: "Drederick"
@@ -186,7 +186,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "dredericktatum@thesimpsons.com"
+            email: "drederick_tatum@thesimpsons.com"
 		},
         {
             nombre: "Edna"
@@ -197,7 +197,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "ednakrabappel@thesimpsons.com"
+            email: "edna_krabappel@thesimpsons.com"
 		},
         {
             nombre: "Gary"
@@ -208,7 +208,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "garychalmers@thesimpsons.com"
+            email: "gary_chalmers@thesimpsons.com"
 		},
         {
             nombre: "Gil"
@@ -219,7 +219,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "gilgunderson@thesimpsons.com"
+            email: "gil_gunderson@thesimpsons.com"
 		},
         {
             nombre: "Helen"
@@ -230,7 +230,18 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "helenlovejoy@thesimpsons.com"
+            email: "helen_lovejoy@thesimpsons.com"
+		},
+        {
+            nombre: "Herschel"
+            apellido: "Krustofsky"
+            idCiudad: 110
+            idGrupo: 99
+            idTipoUsuario: 70
+            direccion: "Vive en Springfield"
+            telefono: "555-555-5555"
+            clave: "usuario123"
+            email: "herschel_krustofsky@thesimpsons.com"
 		},
         {
             nombre: "Homer"
@@ -241,7 +252,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "homersimpson@thesimpsons.com"
+            email: "homer_simpson@thesimpsons.com"
 		},
         {
             nombre: "Hyman"
@@ -252,7 +263,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "hymankrustofsky@thesimpsons.com"
+            email: "hyman_krustofsky@thesimpsons.com"
 		},
         {
             nombre: "Jacqueline"
@@ -263,7 +274,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "jacquelinebouvier@thesimpsons.com"
+            email: "jacqueline_bouvier@thesimpsons.com"
 		},
         {
             nombre: "Jessica"
@@ -274,7 +285,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "jessicalovejoy@thesimpsons.com"
+            email: "jessica_lovejoy@thesimpsons.com"
 		},
         {
             nombre: "Jimbo"
@@ -285,7 +296,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "jimbojones@thesimpsons.com"
+            email: "jimbo_jones@thesimpsons.com"
 		},
         {
             nombre: "Joe"
@@ -296,7 +307,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "joequimby@thesimpsons.com"
+            email: "joe_quimby@thesimpsons.com"
 		},
         {
             nombre: "Julius"
@@ -307,7 +318,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "juliushibbert@thesimpsons.com"
+            email: "julius_hibbert@thesimpsons.com"
 		},
         {
             nombre: "Kearney"
@@ -318,7 +329,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "kearneyzzyzwicz@thesimpsons.com"
+            email: "kearney_zzyzwicz@thesimpsons.com"
 		},
         {
             nombre: "Kent"
@@ -329,7 +340,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "kentbrockman@thesimpsons.com"
+            email: "kent_brockman@thesimpsons.com"
 		},
         {
             nombre: "Kirk"
@@ -340,7 +351,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "kirkvanhouten@thesimpsons.com"
+            email: "kirk_vanhouten@thesimpsons.com"
 		},
         {
             nombre: "Lenny"
@@ -351,7 +362,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "lennyleonard@thesimpsons.com"
+            email: "lenny_leonard@thesimpsons.com"
 		},
         {
             nombre: "Lindsey"
@@ -362,7 +373,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "lindseynaegle@thesimpsons.com"
+            email: "lindsey_naegle@thesimpsons.com"
 		},
         {
             nombre: "Lionel"
@@ -373,7 +384,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "lionelhutz@thesimpsons.com"
+            email: "lionel_hutz@thesimpsons.com"
 		},
         {
             nombre: "Lisa"
@@ -384,7 +395,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "lisasimpson@thesimpsons.com"
+            email: "lisa_simpson@thesimpsons.com"
 		},
         {
             nombre: "Luann"
@@ -395,7 +406,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "luannvanhouten@thesimpsons.com"
+            email: "luann_vanhouten@thesimpsons.com"
 		},
         {
             nombre: "Luigi"
@@ -406,7 +417,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "luigirisotto@thesimpsons.com"
+            email: "luigi_risotto@thesimpsons.com"
 		},
         {
             nombre: "Maggie"
@@ -417,7 +428,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "maggiesimpson@thesimpsons.com"
+            email: "maggie_simpson@thesimpsons.com"
 		},
         {
             nombre: "Manjula"
@@ -428,7 +439,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "manjulanahasapeemapetilon@thesimpsons.com"
+            email: "manjula_nahasapeemapetilon@thesimpsons.com"
 		},
         {
             nombre: "Marge"
@@ -439,7 +450,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "margesimpson@thesimpsons.com"
+            email: "marge_simpson@thesimpsons.com"
 		},
         {
             nombre: "Martin"
@@ -450,7 +461,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "martinprince@thesimpsons.com"
+            email: "martin_prince@thesimpsons.com"
 		},
         {
             nombre: "Marvin"
@@ -461,7 +472,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "marvinmonroe@thesimpsons.com"
+            email: "marvin_monroe@thesimpsons.com"
 		},
         {
             nombre: "Maude"
@@ -472,7 +483,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "maudeflanders@thesimpsons.com"
+            email: "maude_flanders@thesimpsons.com"
 		},
         {
             nombre: "Mel"
@@ -483,7 +494,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "melpatino@thesimpsons.com"
+            email: "mel_patino@thesimpsons.com"
 		},
         {
             nombre: "Milhouse"
@@ -494,7 +505,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "milhousevanhouten@thesimpsons.com"
+            email: "milhouse_vanhouten@thesimpsons.com"
 		},
         {
             nombre: "Moe"
@@ -505,7 +516,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "moeszyslak@thesimpsons.com"
+            email: "moe_szyslak@thesimpsons.com"
 		},
         {
             nombre: "Mona"
@@ -516,7 +527,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "monasimpson@thesimpsons.com"
+            email: "mona_simpson@thesimpsons.com"
 		},
         {
             nombre: "Ned"
@@ -527,7 +538,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "nedflanders@thesimpsons.com"
+            email: "ned_flanders@thesimpsons.com"
 		},
         {
             nombre: "Nelson"
@@ -538,7 +549,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "nelsonmuntz@thesimpsons.com"
+            email: "nelson_muntz@thesimpsons.com"
 		},
         {
             nombre: "Nick"
@@ -549,7 +560,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "nickriviera@thesimpsons.com"
+            email: "nick_riviera@thesimpsons.com"
 		},
         {
             nombre: "Otto"
@@ -560,7 +571,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "ottomann@thesimpsons.com"
+            email: "otto_mann@thesimpsons.com"
 		},
         {
             nombre: "Patty"
@@ -571,7 +582,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "pattybouvier@thesimpsons.com"
+            email: "patty_bouvier@thesimpsons.com"
 		},
         {
             nombre: "Jonathan"
@@ -582,7 +593,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "jonathanfrink@thesimpsons.com"
+            email: "jonathan_frink@thesimpsons.com"
 		},
         {
             nombre: "Rainier"
@@ -593,7 +604,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "rainierwolfcastle@thesimpsons.com"
+            email: "rainier_wolfcastle@thesimpsons.com"
 		},
         {
             nombre: "Ralph"
@@ -604,7 +615,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "ralphwiggum@thesimpsons.com"
+            email: "ralph_wiggum@thesimpsons.com"
 		},
         {
             nombre: "Rod"
@@ -615,7 +626,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "rodflanders@thesimpsons.com"
+            email: "rod_flanders@thesimpsons.com"
 		},
         {
             nombre: "Sarah"
@@ -626,7 +637,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "sarahwiggum@thesimpsons.com"
+            email: "sarah_wiggum@thesimpsons.com"
 		},
         {
             nombre: "Selma"
@@ -637,7 +648,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "selmabouvier@thesimpsons.com"
+            email: "selma_bouvier@thesimpsons.com"
 		},
         {
             nombre: "Seymour"
@@ -648,7 +659,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "seymourskinner@thesimpsons.com"
+            email: "seymour_skinner@thesimpsons.com"
 		},
         {
             nombre: "Snake"
@@ -659,7 +670,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "snakejailbird@thesimpsons.com"
+            email: "snake_jailbird@thesimpsons.com"
 		},
         {
             nombre: "Timothy"
@@ -670,7 +681,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "timothylovejoy@thesimpsons.com"
+            email: "timothy_lovejoy@thesimpsons.com"
 		},
         {
             nombre: "Todd"
@@ -681,7 +692,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "toddflanders@thesimpsons.com"
+            email: "todd_flanders@thesimpsons.com"
 		},
         {
             nombre: "Tony"
@@ -692,7 +703,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "tonydamico@thesimpsons.com"
+            email: "tony_damico@thesimpsons.com"
 		},
         {
             nombre: "Troy"
@@ -703,7 +714,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "troymcClure@thesimpsons.com"
+            email: "troy_mcclure@thesimpsons.com"
 		},
         {
             nombre: "Üter"
@@ -714,7 +725,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "uterzorker@thesimpsons.com"
+            email: "uter_zorker@thesimpsons.com"
 		},
         {
             nombre: "Waylon"
@@ -725,7 +736,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "waylonsmithers@thesimpsons.com"
+            email: "waylon_smithers@thesimpsons.com"
 		},
         {
             nombre: "Willie"
@@ -736,7 +747,7 @@ mutation {
             direccion: "Vive en Springfield"
             telefono: "555-555-5555"
             clave: "usuario123"
-            email: "williemcdougall@thesimpsons.com"
+            email: "willie_mcdougall@thesimpsons.com"
 		}
     ])
 }
