@@ -84,7 +84,7 @@ public class BitacoraProyectoService
                 var obj = await ctx.BitacorasProyectos.FindAsync(modif.Id);
 
                 if (obj != null) {
-                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    Mapear(obj, modif, idUsr, Operacion.Creacion);
                     objs.Add(obj);
                     codigos.Add(obj.Id);
                 }
@@ -178,7 +178,7 @@ public class BitacoraProyectoService
             throw new GraphQLException(vr.ToString());
     }
 
-    public void Mapear(BitacoraProyecto obj, BitacoraProyectoDTO dto, Guid id, Operacion op)
+	public void Mapear(BitacoraProyecto obj, BitacoraProyectoDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -207,6 +207,8 @@ public class BitacoraProyectoService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
+
+
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

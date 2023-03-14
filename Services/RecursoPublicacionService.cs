@@ -84,7 +84,7 @@ public class RecursoPublicacionService
                 var obj = await ctx.RecursosPublicaciones.FindAsync(modif.Id);
 
                 if (obj != null) {
-                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    Mapear(obj, modif, idUsr, Operacion.Creacion);
                     objs.Add(obj);
                     codigos.Add(obj.Id);
                 }
@@ -178,7 +178,7 @@ public class RecursoPublicacionService
             throw new GraphQLException(vr.ToString());
     }
 
-    public void Mapear(RecursoPublicacion obj, RecursoPublicacionDTO dto, Guid id, Operacion op)
+	public void Mapear(RecursoPublicacion obj, RecursoPublicacionDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -218,6 +218,8 @@ public class RecursoPublicacionService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
+
+
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

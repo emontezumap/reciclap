@@ -84,7 +84,7 @@ public class AdministradorService
                 var obj = await ctx.Administradores.FindAsync(modif.Id);
 
                 if (obj != null) {
-                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    Mapear(obj, modif, idUsr, Operacion.Creacion);
                     objs.Add(obj);
                     codigos.Add(obj.Id);
                 }
@@ -174,7 +174,7 @@ public class AdministradorService
             throw new GraphQLException(vr.ToString());
     }
 
-    public void Mapear(Administrador obj, AdministradorDTO dto, Guid id, Operacion op)
+	public void Mapear(Administrador obj, AdministradorDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -196,6 +196,22 @@ public class AdministradorService
 			obj.IdGrupo = dto.IdGrupo == null ? obj.IdGrupo : (int?)dto.IdGrupo;
         }
     }
+
+
+    private long SiguienteConsecutivo(string prefijo, SSDBContext ctx)
+    {
+        var sec = ctx.Secuencias.Where(s => s.Prefijo == prefijo).SingleOrDefault();
+
+        if (sec != null)
+        {
+            sec.Serie++;
+            ctx.SaveChanges();
+            return sec.Serie;
+        }
+
+        return 1L;
+    }
+
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

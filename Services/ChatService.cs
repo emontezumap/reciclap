@@ -84,7 +84,7 @@ public class ChatService
                 var obj = await ctx.Chats.FindAsync(modif.Id);
 
                 if (obj != null) {
-                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    Mapear(obj, modif, idUsr, Operacion.Creacion);
                     objs.Add(obj);
                     codigos.Add(obj.Id);
                 }
@@ -178,7 +178,7 @@ public class ChatService
             throw new GraphQLException(vr.ToString());
     }
 
-    public void Mapear(Chat obj, ChatDTO dto, Guid id, Operacion op)
+	public void Mapear(Chat obj, ChatDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -202,6 +202,8 @@ public class ChatService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
+
+
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

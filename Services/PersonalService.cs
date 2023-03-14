@@ -84,7 +84,7 @@ public class PersonalService
                 var obj = await ctx.Personal.FindAsync(modif.Id);
 
                 if (obj != null) {
-                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    Mapear(obj, modif, idUsr, Operacion.Creacion);
                     objs.Add(obj);
                     codigos.Add(obj.Id);
                 }
@@ -178,7 +178,7 @@ public class PersonalService
             throw new GraphQLException(vr.ToString());
     }
 
-    public void Mapear(Personal obj, PersonalDTO dto, Guid id, Operacion op)
+	public void Mapear(Personal obj, PersonalDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -203,6 +203,8 @@ public class PersonalService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
+
+
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

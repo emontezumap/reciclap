@@ -84,7 +84,7 @@ public class VersionApiService
                 var obj = await ctx.VersionesApi.FindAsync(modif.Id);
 
                 if (obj != null) {
-                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    Mapear(obj, modif, idUsr, Operacion.Creacion);
                     objs.Add(obj);
                     codigos.Add(obj.Id);
                 }
@@ -178,7 +178,7 @@ public class VersionApiService
             throw new GraphQLException(vr.ToString());
     }
 
-    public void Mapear(VersionApi obj, VersionApiDTO dto, Guid id, Operacion op)
+	public void Mapear(VersionApi obj, VersionApiDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -199,6 +199,8 @@ public class VersionApiService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
+
+
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

@@ -84,7 +84,7 @@ public class ProyectoService
                 var obj = await ctx.Proyectos.FindAsync(modif.Id);
 
                 if (obj != null) {
-                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    Mapear(obj, modif, idUsr, Operacion.Creacion);
                     objs.Add(obj);
                     codigos.Add(obj.Id);
                 }
@@ -178,7 +178,7 @@ public class ProyectoService
             throw new GraphQLException(vr.ToString());
     }
 
-    public void Mapear(Proyecto obj, ProyectoDTO dto, Guid id, Operacion op)
+	public void Mapear(Proyecto obj, ProyectoDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -250,6 +250,8 @@ public class ProyectoService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
+
+
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

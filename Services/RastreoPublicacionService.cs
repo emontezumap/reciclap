@@ -84,7 +84,7 @@ public class RastreoPublicacionService
                 var obj = await ctx.RastreoPublicaciones.FindAsync(modif.Id);
 
                 if (obj != null) {
-                    Mapear(obj, modif, idUsr, Operacion.Modificacion);
+                    Mapear(obj, modif, idUsr, Operacion.Creacion);
                     objs.Add(obj);
                     codigos.Add(obj.Id);
                 }
@@ -178,7 +178,7 @@ public class RastreoPublicacionService
             throw new GraphQLException(vr.ToString());
     }
 
-    public void Mapear(RastreoPublicacion obj, RastreoPublicacionDTO dto, Guid id, Operacion op)
+	public void Mapear(RastreoPublicacion obj, RastreoPublicacionDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -211,6 +211,8 @@ public class RastreoPublicacionService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
+
+
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {
