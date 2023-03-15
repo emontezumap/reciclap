@@ -38,8 +38,18 @@ public class PublicacionService
 
                 ValidarDatos(nuevo, Operacion.Creacion);
 
+                var sec = await ctx.Secuencias.Where(s => s.Prefijo == "PUB").SingleOrDefaultAsync();
+                long n = 1L;
+
+                if (sec != null)
+                {
+                    sec.Serie++;
+                    n = sec.Serie;
+                }
+
                 Publicacion obj = new Publicacion();
-                Mapear(obj, nuevo, idUsr, Operacion.Creacion, ctx);
+                Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+				obj.Consecutivo = n;
                 var v = ctx.Publicaciones.Add(obj);
                 codigos.Add(v.Entity.Id);
             }
@@ -84,7 +94,7 @@ public class PublicacionService
                 var obj = await ctx.Publicaciones.FindAsync(modif.Id);
 
                 if (obj != null) {
-                    Mapear(obj, modif, idUsr, Operacion.Creacion, ctx);
+                    Mapear(obj, modif, idUsr, Operacion.Creacion);
                     objs.Add(obj);
                     codigos.Add(obj.Id);
                 }
@@ -178,7 +188,7 @@ public class PublicacionService
             throw new GraphQLException(vr.ToString());
     }
 
-	public void Mapear(Publicacion obj, PublicacionDTO dto, Guid id, Operacion op, SSDBContext ctx)
+    public void Mapear(Publicacion obj, PublicacionDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -186,7 +196,6 @@ public class PublicacionService
 			obj.Titulo = dto.Titulo!;
 			obj.Descripcion = dto.Descripcion!;
 			obj.Fecha = (DateTime)dto.Fecha!;
-			obj.Consecutivo = SiguienteConsecutivo("PUB", ctx);
 			obj.IdPublicador = (Guid)dto.IdPublicador!;
 			obj.Gustan = (int)dto.Gustan!;
 			obj.NoGustan = (int)dto.NoGustan!;
@@ -261,22 +270,6 @@ public class PublicacionService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-
-    private long SiguienteConsecutivo(string prefijo, SSDBContext ctx)
-    {
-        var sec = ctx.Secuencias.Where(s => s.Prefijo == prefijo).SingleOrDefault();
-
-        if (sec != null)
-        {
-            sec.Serie++;
-            ctx.SaveChanges();
-            return sec.Serie;
-        }
-
-        return 1L;
-    }
-
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

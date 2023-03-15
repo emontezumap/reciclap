@@ -40,6 +40,7 @@ public class ComentarioService
 
                 Comentario obj = new Comentario();
                 Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+
                 var v = ctx.Comentarios.Add(obj);
                 codigos.Add(v.Entity.Id);
             }
@@ -178,7 +179,7 @@ public class ComentarioService
             throw new GraphQLException(vr.ToString());
     }
 
-	public void Mapear(Comentario obj, ComentarioDTO dto, Guid id, Operacion op)
+    public void Mapear(Comentario obj, ComentarioDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -206,8 +207,6 @@ public class ComentarioService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

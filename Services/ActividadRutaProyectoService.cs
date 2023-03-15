@@ -40,6 +40,7 @@ public class ActividadRutaProyectoService
 
                 ActividadRutaProyecto obj = new ActividadRutaProyecto();
                 Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+
                 var v = ctx.ActividadesRutasProyectos.Add(obj);
                 codigos.Add(v.Entity.Id);
             }
@@ -178,7 +179,7 @@ public class ActividadRutaProyectoService
             throw new GraphQLException(vr.ToString());
     }
 
-	public void Mapear(ActividadRutaProyecto obj, ActividadRutaProyectoDTO dto, Guid id, Operacion op)
+    public void Mapear(ActividadRutaProyecto obj, ActividadRutaProyectoDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -201,8 +202,6 @@ public class ActividadRutaProyectoService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

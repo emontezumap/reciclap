@@ -40,6 +40,7 @@ public class ActividadProyectoService
 
                 ActividadProyecto obj = new ActividadProyecto();
                 Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+
                 var v = ctx.ActividadesProyectos.Add(obj);
                 codigos.Add(v.Entity.Id);
             }
@@ -178,7 +179,7 @@ public class ActividadProyectoService
             throw new GraphQLException(vr.ToString());
     }
 
-	public void Mapear(ActividadProyecto obj, ActividadProyectoDTO dto, Guid id, Operacion op)
+    public void Mapear(ActividadProyecto obj, ActividadProyectoDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -243,8 +244,6 @@ public class ActividadProyectoService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

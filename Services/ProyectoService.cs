@@ -40,6 +40,7 @@ public class ProyectoService
 
                 Proyecto obj = new Proyecto();
                 Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+
                 var v = ctx.Proyectos.Add(obj);
                 codigos.Add(v.Entity.Id);
             }
@@ -178,7 +179,7 @@ public class ProyectoService
             throw new GraphQLException(vr.ToString());
     }
 
-	public void Mapear(Proyecto obj, ProyectoDTO dto, Guid id, Operacion op)
+    public void Mapear(Proyecto obj, ProyectoDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -250,8 +251,6 @@ public class ProyectoService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

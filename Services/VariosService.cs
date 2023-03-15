@@ -40,6 +40,7 @@ public class VariosService
 
                 Varios obj = new Varios();
                 Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+
                 var v = ctx.Varias.Add(obj);
                 codigos.Add(v.Entity.Id);
             }
@@ -178,7 +179,7 @@ public class VariosService
             throw new GraphQLException(vr.ToString());
     }
 
-	public void Mapear(Varios obj, VariosDTO dto, Guid id, Operacion op)
+    public void Mapear(Varios obj, VariosDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -203,8 +204,6 @@ public class VariosService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

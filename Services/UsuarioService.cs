@@ -40,6 +40,7 @@ public class UsuarioService
 
                 Usuario obj = new Usuario();
                 Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+
                 var v = ctx.Usuarios.Add(obj);
                 codigos.Add(v.Entity.Id);
             }
@@ -178,7 +179,7 @@ public class UsuarioService
             throw new GraphQLException(vr.ToString());
     }
 
-	public void Mapear(Usuario obj, UsuarioDTO dto, Guid id, Operacion op)
+    public void Mapear(Usuario obj, UsuarioDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -234,8 +235,6 @@ public class UsuarioService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

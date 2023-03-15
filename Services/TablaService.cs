@@ -42,6 +42,7 @@ public class TablaService
 
                 Tabla obj = new Tabla();
                 Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+
                 var v = ctx.Tablas.Add(obj);
                 codigos.Add(v.Entity.Id);
             }
@@ -180,7 +181,7 @@ public class TablaService
             throw new GraphQLException(vr.ToString());
     }
 
-	public void Mapear(Tabla obj, TablaDTO dto, Guid id, Operacion op)
+    public void Mapear(Tabla obj, TablaDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -202,8 +203,6 @@ public class TablaService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

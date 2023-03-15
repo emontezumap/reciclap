@@ -40,6 +40,7 @@ public class PersonalService
 
                 Personal obj = new Personal();
                 Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+
                 var v = ctx.Personal.Add(obj);
                 codigos.Add(v.Entity.Id);
             }
@@ -178,7 +179,7 @@ public class PersonalService
             throw new GraphQLException(vr.ToString());
     }
 
-	public void Mapear(Personal obj, PersonalDTO dto, Guid id, Operacion op)
+    public void Mapear(Personal obj, PersonalDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -203,8 +204,6 @@ public class PersonalService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {

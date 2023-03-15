@@ -40,6 +40,7 @@ public class VersionApiService
 
                 VersionApi obj = new VersionApi();
                 Mapear(obj, nuevo, idUsr, Operacion.Creacion);
+
                 var v = ctx.VersionesApi.Add(obj);
                 codigos.Add(v.Entity.Id);
             }
@@ -178,7 +179,7 @@ public class VersionApiService
             throw new GraphQLException(vr.ToString());
     }
 
-	public void Mapear(VersionApi obj, VersionApiDTO dto, Guid id, Operacion op)
+    public void Mapear(VersionApi obj, VersionApiDTO dto, Guid id, Operacion op)
     {
         if (op == Operacion.Creacion)
         {
@@ -199,8 +200,6 @@ public class VersionApiService
 			obj.Activo = dto.Activo == null ? obj.Activo : (bool?)dto.Activo;
         }
     }
-
-
 
     private Guid AutenticarUsuario(ClaimsPrincipal claims)
     {
